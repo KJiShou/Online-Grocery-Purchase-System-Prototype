@@ -1,15 +1,122 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Nunito+Sans:wght@300;400;500;600;700&family=Plus+Jakarta+Sans:wght@400;700;800&family=Rubik:wght@300;400;500;600;700&display=swap');
 
-:root {
-  font-family: 'Plus Jakarta Sans', sans-serif;
-  color: #1c1b1b;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --color-primary-6: #2563eb;
+    --color-primary-5: #3b82f6;
+    --color-primary-4: #60a5fa;
+    --color-primary-3: #93c5fd;
+    --color-primary-2: #bfdbfe;
+    --color-primary-1: #dbeafe;
+    --color-text-1: #1e293b;
+    --color-border-2: #e2e8f0;
+    --radius-small: 8px;
+    --radius-medium: 12px;
+  }
+
+  * {
+    box-sizing: border-box;
+  }
+
+  html,
+  body,
+  #root {
+    width: 100%;
+    min-height: 100%;
+  }
+
+  body {
+    margin: 0;
+    font-family: 'Nunito Sans', sans-serif;
+    color: #1e293b;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    background: #f8fafc;
+  }
 }
 
-body {
-  margin: 0;
-  min-width: 320px;
-  min-height: 100vh;
-  background: #ecf3ec;
+@layer components {
+  .hide-scrollbar::-webkit-scrollbar {
+    width: 0;
+    height: 0;
+  }
+
+  .hide-scrollbar {
+    scrollbar-width: none;
+  }
+
+  .home-carousel .arco-carousel-indicator-wrapper {
+    display: none;
+  }
+
+  .home-carousel .arco-carousel {
+    height: 100%;
+  }
+
+  .home-carousel .arco-carousel-item {
+    height: 155px;
+  }
+
+  .wifi-icon {
+    position: relative;
+    width: 14.26px;
+    height: 11px;
+  }
+
+  .wifi-icon::before,
+  .wifi-icon::after {
+    content: '';
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    border: 1.6px solid #1c1b1b;
+    border-top: 0;
+    border-left: 0;
+    border-right: 0;
+    border-radius: 0 0 12px 12px;
+  }
+
+  .wifi-icon::before {
+    top: 0;
+    width: 14px;
+    height: 4.7px;
+  }
+
+  .wifi-icon::after {
+    top: 3.8px;
+    width: 9px;
+    height: 3.6px;
+  }
+
+  .battery-icon {
+    position: relative;
+    width: 22.63px;
+    height: 11.33px;
+    border: 1px solid rgba(28, 27, 27, 0.35);
+    border-radius: 2.67px;
+  }
+
+  .battery-icon::before {
+    content: '';
+    position: absolute;
+    right: -2.5px;
+    top: 3.65px;
+    width: 1.24px;
+    height: 4px;
+    background: rgba(28, 27, 27, 0.4);
+  }
+
+  .battery-icon em {
+    position: absolute;
+    left: 2px;
+    top: 2px;
+    width: 16.74px;
+    height: 7.33px;
+    border-radius: 1.33px;
+    background: #1e293b;
+  }
 }

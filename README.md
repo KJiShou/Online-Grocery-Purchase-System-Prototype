@@ -1,16 +1,49 @@
-# React + Vite
+# Prototype
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+HCI course prototype built with React + Vite.
 
-Currently, two official plugins are available:
+## Teammate Setup (After Clone)
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+This repo is pinned to Yarn `4.12.0` via `packageManager` in `package.json`.
 
-## React Compiler
+1. Clone and enter the project:
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+```bash
+git clone <repo-url>
+cd Prototype
+```
 
-## Expanding the ESLint configuration
+2. Install dependencies (no admin needed):
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+```bash
+corepack yarn install
+```
+
+3. Start development server:
+
+```bash
+corepack yarn dev
+```
+
+## Optional: Enable Global `yarn` Command
+
+If you want to use plain `yarn ...` instead of `corepack yarn ...`, run this once:
+
+```bash
+corepack enable
+```
+
+Note: On Windows, this may require opening PowerShell as Administrator.
+If you see `EPERM: operation not permitted, open 'C:\Program Files\nodejs\yarn'`, use `corepack yarn ...` directly (steps above), or run `corepack enable` in an elevated terminal.
+
+## Alternative (Without Corepack At All)
+
+If you do not want to use Corepack, install Yarn globally first:
+
+```bash
+npm install -g yarn
+yarn install
+yarn dev
+```
+
+Note: Team-wide consistency is better with Corepack because it follows the Yarn version pinned in this repo.
