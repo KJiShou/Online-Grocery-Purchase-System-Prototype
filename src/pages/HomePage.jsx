@@ -2,6 +2,7 @@ import { Carousel } from '@arco-design/web-react'
 import { useState } from 'react'
 import { bannerItems, categories, products } from '../data/homeData'
 import { useNavigate } from 'react-router-dom'
+import BottomNav from '../components/navigation/BottomNav'
 
 function formatPrice(value) {
   return `RM${value.toFixed(2)}`
@@ -49,70 +50,6 @@ function StatusIcons() {
   )
 }
 
-function BottomIcon({ type, active = false }) {
-  if (type === 'home' && active) {
-    return (
-      <svg viewBox="0 0 24 24" className="h-6 w-6" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <path
-          d="M20.0402 6.82018L14.2802 2.79018C12.7102 1.69018 10.3002 1.75018 8.79023 2.92018L3.78023 6.83018C2.78023 7.61018 1.99023 9.21018 1.99023 10.4702V17.3702C1.99023 19.9202 4.06023 22.0002 6.61023 22.0002H17.3902C19.9402 22.0002 22.0102 19.9302 22.0102 17.3802V10.6002C22.0102 9.25018 21.1402 7.59018 20.0402 6.82018ZM12.7502 18.0002C12.7502 18.4102 12.4102 18.7502 12.0002 18.7502C11.5902 18.7502 11.2502 18.4102 11.2502 18.0002V15.0002C11.2502 14.5902 11.5902 14.2502 12.0002 14.2502C12.4102 14.2502 12.7502 14.5902 12.7502 15.0002V18.0002Z"
-          fill="#4CBF35"
-        />
-      </svg>
-    )
-  }
-
-  if (type === 'home') {
-    return (
-      <svg viewBox="0 0 24 24" className="h-6 w-6" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <path
-          d="M17.79 22.75H6.21C3.47 22.75 1.25 20.52 1.25 17.78V10.37C1.25 9.00997 2.09 7.29997 3.17 6.45997L8.56 2.25997C10.18 0.999974 12.77 0.939974 14.45 2.11997L20.63 6.44997C21.82 7.27997 22.75 9.05997 22.75 10.51V17.79C22.75 20.52 20.53 22.75 17.79 22.75ZM9.48 3.43997L4.09 7.63997C3.38 8.19997 2.75 9.46997 2.75 10.37V17.78C2.75 19.69 4.3 21.25 6.21 21.25H17.79C19.7 21.25 21.25 19.7 21.25 17.79V10.51C21.25 9.54997 20.56 8.21997 19.77 7.67997L13.59 3.34997C12.45 2.54997 10.57 2.58997 9.48 3.43997Z"
-          fill="#6F7384"
-        />
-        <path
-          d="M12 18.75C11.59 18.75 11.25 18.41 11.25 18V15C11.25 14.59 11.59 14.25 12 14.25C12.41 14.25 12.75 14.59 12.75 15V18C12.75 18.41 12.41 18.75 12 18.75Z"
-          fill="#6F7384"
-        />
-      </svg>
-    )
-  }
-
-  if (type === 'grid') {
-    return (
-      <svg viewBox="0 0 24 24" className="h-5 w-5" fill="none" stroke="currentColor" strokeWidth="2">
-        <rect x="3" y="3" width="7" height="7" rx="1.5"></rect>
-        <rect x="14" y="3" width="7" height="7" rx="1.5"></rect>
-        <rect x="3" y="14" width="7" height="7" rx="1.5"></rect>
-        <rect x="14" y="14" width="7" height="7" rx="1.5"></rect>
-      </svg>
-    )
-  }
-
-  if (type === 'cart') {
-    return (
-      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <path d="M18.19 17.75H7.53999C6.54999 17.75 5.59999 17.33 4.92999 16.6C4.25999 15.87 3.92 14.89 4 13.9L4.83 3.94C4.86 3.63 4.74999 3.33001 4.53999 3.10001C4.32999 2.87001 4.04 2.75 3.73 2.75H2C1.59 2.75 1.25 2.41 1.25 2C1.25 1.59 1.59 1.25 2 1.25H3.74001C4.47001 1.25 5.15999 1.56 5.64999 2.09C5.91999 2.39 6.12 2.74 6.23 3.13H18.72C19.73 3.13 20.66 3.53 21.34 4.25C22.01 4.98 22.35 5.93 22.27 6.94L21.73 14.44C21.62 16.27 20.02 17.75 18.19 17.75ZM6.28 4.62L5.5 14.02C5.45 14.6 5.64 15.15 6.03 15.58C6.42 16.01 6.95999 16.24 7.53999 16.24H18.19C19.23 16.24 20.17 15.36 20.25 14.32L20.79 6.82001C20.83 6.23001 20.64 5.67001 20.25 5.26001C19.86 4.84001 19.32 4.60999 18.73 4.60999H6.28V4.62Z" fill="#6F7384"/>
-      <path d="M16.25 22.75C15.15 22.75 14.25 21.85 14.25 20.75C14.25 19.65 15.15 18.75 16.25 18.75C17.35 18.75 18.25 19.65 18.25 20.75C18.25 21.85 17.35 22.75 16.25 22.75ZM16.25 20.25C15.97 20.25 15.75 20.47 15.75 20.75C15.75 21.03 15.97 21.25 16.25 21.25C16.53 21.25 16.75 21.03 16.75 20.75C16.75 20.47 16.53 20.25 16.25 20.25Z" fill="#6F7384"/>
-      <path d="M8.25 22.75C7.15 22.75 6.25 21.85 6.25 20.75C6.25 19.65 7.15 18.75 8.25 18.75C9.35 18.75 10.25 19.65 10.25 20.75C10.25 21.85 9.35 22.75 8.25 22.75ZM8.25 20.25C7.97 20.25 7.75 20.47 7.75 20.75C7.75 21.03 7.97 21.25 8.25 21.25C8.53 21.25 8.75 21.03 8.75 20.75C8.75 20.47 8.53 20.25 8.25 20.25Z" fill="#6F7384"/>
-      <path d="M21 8.75H9C8.59 8.75 8.25 8.41 8.25 8C8.25 7.59 8.59 7.25 9 7.25H21C21.41 7.25 21.75 7.59 21.75 8C21.75 8.41 21.41 8.75 21 8.75Z" fill="#6F7384"/>
-      </svg>
-    )
-  }
-
-  if (type === 'wishlist') {
-    return <HeartIcon />
-  }
-
-  if (type === 'profile') {
-    return (
-      <svg viewBox="0 0 24 24" className="h-5 w-5" fill="none" stroke="currentColor" strokeWidth="2">
-        <circle cx="12" cy="8" r="4"></circle>
-        <path d="M4 20c2.2-3.8 13.8-3.8 16 0"></path>
-      </svg>
-    )
-  }
-
-  return null
-}
 
 function CategoryIcon({ type }) {
   if (type === 'fresh') {
@@ -252,23 +189,6 @@ function HomePage() {
                 const isLiked = likedProducts.includes(product.id)
 
                 return (
-                  <div>
-                  <button
-                    key={item.id}
-                    onClick={() => {
-                      if (item.id === 'cart') navigate('/cart')
-                    }}
-                    className={`flex flex-col items-center gap-1 transition hover:-translate-y-0.5 ${active ? 'text-[#111827]' : 'text-[#6b7280] hover:text-[#111827]'}`}
-                  >
-                    <span className="grid h-6 w-6 place-items-center">
-                      <BottomIcon type={item.icon} active={active} />
-                    </span>
-                    <span
-                      className={`font-['Plus_Jakarta_Sans','Rubik',sans-serif] text-[15px] leading-[19px] tracking-[0.005em] ${active ? 'font-bold text-[#1C1B1B]' : 'font-semibold text-[#6F7384]'}`}
-                    >
-                      {item.label}
-                    </span>
-                  </button>
                   <article key={`${product.id}-${index}`} className="rounded-xl bg-[#c8e8c5] p-2.5">
                     <div className="relative mb-2 h-32 overflow-hidden rounded-xl bg-[#d7f0d4]">
                       <img src={product.image} alt={product.name} className="h-full w-full object-cover" />
@@ -297,13 +217,13 @@ function HomePage() {
                       </p>
                     ) : null}
                   </article>
-                  </div>
                 )
               })}
             </div>
           </section>
         </div>
       </div>
+      <BottomNav />
     </>
   )
 }

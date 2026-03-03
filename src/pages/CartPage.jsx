@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { products } from '../data/homeData'
 import { useNavigate } from 'react-router-dom'
+import BottomNav from '../components/navigation/BottomNav'
 
 function formatPrice(value) {
   return `RM${value.toFixed(2)}`
@@ -194,13 +195,6 @@ function CartPage() {
 
   const [currentTime, setCurrentTime] = useState(formatCurrentTime())
 
-  const navItems = [
-    { id: 'home', label: 'Home', icon: 'home' },
-    { id: 'categories', label: 'Categories', icon: 'grid' },
-    { id: 'cart', label: 'My Cart', icon: 'cart' },
-    { id: 'wishlist', label: 'Wishlist', icon: 'wishlist' },
-    { id: 'profile', label: 'Profile', icon: 'profile' },
-  ]
 
   const navigate = useNavigate()
 
@@ -342,35 +336,7 @@ function CartPage() {
           </div>
         </div>
 
-        <nav className="absolute bottom-0 left-0 z-20 w-full border-t border-[#e4e4e7] bg-[#f8fafc] pb-2 pt-3">
-          <div className="mx-auto w-full max-w-[360px] px-2">
-            <div className="mb-2 grid grid-cols-5">
-              {navItems.map((item, index) => {
-                const active = index === 2
-
-                return (
-                  <button
-                    key={item.id}
-                    onClick={() => {
-                      if (item.id === 'home') navigate('/')
-                    }}
-                    className={`flex flex-col items-center gap-1 transition hover:-translate-y-0.5 ${active ? 'text-[#111827]' : 'text-[#6b7280] hover:text-[#111827]'}`}
-                  >
-                    <span className="grid h-6 w-6 place-items-center">
-                      <BottomIcon type={item.icon} active={active} />
-                    </span>
-                    <span
-                      className={`font-['Plus_Jakarta_Sans','Rubik',sans-serif] text-[15px] leading-[19px] tracking-[0.005em] ${active ? 'font-bold text-[#1C1B1B]' : 'font-semibold text-[#6F7384]'}`}
-                    >
-                      {item.label}
-                    </span>
-                  </button>
-                )
-              })}
-            </div>
-            <div className="mx-auto h-1.5 w-28 rounded-full bg-[#111827]"></div>
-          </div>
-        </nav>
+        <BottomNav />
       </section>
     </div>
   )
