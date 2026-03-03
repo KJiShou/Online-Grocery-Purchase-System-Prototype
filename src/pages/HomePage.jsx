@@ -1,17 +1,10 @@
 import { Carousel } from '@arco-design/web-react'
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { bannerItems, categories, products } from '../data/homeData'
 import { useNavigate } from 'react-router-dom'
 
 function formatPrice(value) {
   return `RM${value.toFixed(2)}`
-}
-
-function formatCurrentTime() {
-  const now = new Date()
-  const hours = String(now.getHours()).padStart(2, '0')
-  const minutes = String(now.getMinutes()).padStart(2, '0')
-  return `${hours}:${minutes}`
 }
 
 function SearchIcon() {
@@ -166,166 +159,100 @@ function HomePage() {
   const navigate = useNavigate()
   const [likedProducts, setLikedProducts] = useState(['dutch-lady'])
   const [activeBannerIndex, setActiveBannerIndex] = useState(0)
-  const [currentTime, setCurrentTime] = useState(formatCurrentTime())
-
-  const navItems = [
-    { id: 'home', label: 'Home', icon: 'home' },
-    { id: 'categories', label: 'Categories', icon: 'grid' },
-    { id: 'cart', label: 'My Cart', icon: 'cart' },
-    { id: 'wishlist', label: 'Wishlist', icon: 'wishlist' },
-    { id: 'profile', label: 'Profile', icon: 'profile' },
-  ]
 
   const displayProducts = [...products, ...products]
 
-  useEffect(() => {
-    const timer = setInterval(() => {
-      setCurrentTime(formatCurrentTime())
-    }, 1000)
-
-    return () => clearInterval(timer)
-  }, [])
-
   return (
-    <div className="min-h-screen w-full overflow-x-hidden bg-[#f4f4f5]">
-      <section
-        className="relative h-screen w-full overflow-hidden bg-[#f4f4f5] max-[420px]:mx-auto max-[420px]:h-[min(800px,100dvh)] max-[420px]:w-[min(360px,100vw)] max-[420px]:rounded-[24px] max-[420px]:border max-[420px]:border-[#d4d4d8] max-[420px]:shadow-[0_12px_36px_rgba(0,0,0,0.12)]"
-      >
-        <div className="absolute inset-x-0 top-0 z-20 bg-[#f4f4f5] pb-3 pt-4">
-          <div className="mx-auto w-full max-w-[360px] px-5">
-            <div className="mb-2 flex items-center justify-between text-[15px] font-normal tracking-[-0.24px] text-[#1C1B1B]">
-              <span className="leading-5">{currentTime}</span>
-              <StatusIcons />
-            </div>
-
-            <header className="flex items-center justify-between">
-              <h1 className="font-['Plus_Jakarta_Sans','Rubik',sans-serif] text-[25px] font-bold leading-[1.2] text-black">
-                Home Page
-              </h1>
-              <button className="text-[#1f2937] transition hover:scale-110 hover:text-[#42c236]">
-                <SearchIcon />
-              </button>
-            </header>
-          </div>
+    <>
+      <div className="absolute inset-x-0 top-[44px] z-20 bg-[#f4f4f5] pb-3">
+        <div className="mx-auto w-full max-w-[360px] px-5">
+          <header className="flex items-center justify-between">
+            <h1 className="font-['Plus_Jakarta_Sans','Rubik',sans-serif] text-[25px] font-bold leading-[1.2] text-black">
+              Home Page
+            </h1>
+            <button className="text-[#1f2937] transition hover:scale-110 hover:text-[#42c236]">
+              <SearchIcon />
+            </button>
+          </header>
         </div>
+      </div>
 
-        <div className="hide-scrollbar absolute inset-x-0 bottom-[86px] top-[94px] overflow-y-auto pb-6">
-          <div className="mx-auto w-full max-w-[360px] px-5">
-            <section className="home-carousel relative mb-6 h-[155px] overflow-hidden rounded-[26px]">
-              <Carousel
-                autoPlay
-                animation="slide"
-                indicatorType="never"
-                showArrow="hover"
-                trigger="click"
-                onChange={setActiveBannerIndex}
-              >
-                {bannerItems.map((item) => (
-                  <div key={item.id} className="relative h-[155px] w-full">
-                    <img src={item.image} alt={item.title} className="h-full w-full object-cover" />
-                    <div className="absolute inset-0 bg-gradient-to-r from-black/55 via-black/20 to-transparent"></div>
-                    <div className="absolute left-4 top-4 rounded-lg bg-black/70 px-[6px] py-[6px] text-[10px] font-semibold leading-[13px] tracking-[0.015em] text-white">
-                      {item.discount}
-                    </div>
-                    <div className="absolute bottom-4 left-4 text-white">
-                      <p className="font-['Plus_Jakarta_Sans','Rubik',sans-serif] text-[14px] font-normal leading-[18px] tracking-[0.005em]">
-                        {item.title}
-                      </p>
-                      <p className="font-['Plus_Jakarta_Sans','Rubik',sans-serif] text-[15px] font-bold leading-[18px]">
-                        {item.subtitle}
-                      </p>
-                    </div>
+      <div className="hide-scrollbar absolute inset-x-0 bottom-[86px] top-[100px] overflow-y-auto pb-6">
+        <div className="mx-auto w-full max-w-[360px] px-5">
+          <section className="home-carousel relative mb-6 h-[155px] overflow-hidden rounded-[26px]">
+            <Carousel
+              autoPlay
+              animation="slide"
+              indicatorType="never"
+              showArrow="hover"
+              trigger="click"
+              onChange={setActiveBannerIndex}
+            >
+              {bannerItems.map((item) => (
+                <div key={item.id} className="relative h-[155px] w-full">
+                  <img src={item.image} alt={item.title} className="h-full w-full object-cover" />
+                  <div className="absolute inset-0 bg-gradient-to-r from-black/55 via-black/20 to-transparent"></div>
+                  <div className="absolute left-4 top-4 rounded-lg bg-black/70 px-[6px] py-[6px] text-[10px] font-semibold leading-[13px] tracking-[0.015em] text-white">
+                    {item.discount}
                   </div>
-                ))}
-              </Carousel>
-              <div className="absolute bottom-4 right-4 z-10 flex items-center gap-1 rounded-full bg-white px-2 py-1">
-                {bannerItems.map((item, index) => (
-                  <span
-                    key={item.id}
-                    className={`h-2.5 w-2.5 rounded-full ${activeBannerIndex === index ? 'bg-[#42c236]' : 'bg-[#d4d4d8]'}`}
-                  ></span>
-                ))}
-              </div>
-            </section>
+                  <div className="absolute bottom-4 left-4 text-white">
+                    <p className="font-['Plus_Jakarta_Sans','Rubik',sans-serif] text-[14px] font-normal leading-[18px] tracking-[0.005em]">
+                      {item.title}
+                    </p>
+                    <p className="font-['Plus_Jakarta_Sans','Rubik',sans-serif] text-[15px] font-bold leading-[18px]">
+                      {item.subtitle}
+                    </p>
+                  </div>
+                </div>
+              ))}
+            </Carousel>
+            <div className="absolute bottom-4 right-4 z-10 flex items-center gap-1 rounded-full bg-white px-2 py-1">
+              {bannerItems.map((item, index) => (
+                <span
+                  key={item.id}
+                  className={`h-2.5 w-2.5 rounded-full ${activeBannerIndex === index ? 'bg-[#42c236]' : 'bg-[#d4d4d8]'}`}
+                ></span>
+              ))}
+            </div>
+          </section>
 
-            <section className="mb-4">
-              <div className="mb-3 flex items-center justify-between">
-                <h2 className="text-[18px] font-bold text-[#1f2937]">Categories</h2>
-                <button className="font-['Plus_Jakarta_Sans','Rubik',sans-serif] text-[15px] font-semibold leading-[19px] tracking-[0.005em] text-[#42c236] transition hover:scale-105 hover:text-[#2f9e44]">
-                  SEE ALL
+          <section className="mb-4">
+            <div className="mb-3 flex items-center justify-between">
+              <h2 className="text-[18px] font-bold text-[#1f2937]">Categories</h2>
+              <button className="font-['Plus_Jakarta_Sans','Rubik',sans-serif] text-[15px] font-semibold leading-[19px] tracking-[0.005em] text-[#42c236] transition hover:scale-105 hover:text-[#2f9e44]">
+                SEE ALL
+              </button>
+            </div>
+            <div className="grid grid-cols-4 gap-2.5">
+              {categories.map((category) => (
+                <button
+                  key={category.id}
+                  className="h-[86px] rounded-2xl border border-[#e4e4e7] bg-[#f3f4f6] px-2 py-2 text-center transition duration-200 hover:-translate-y-0.5 hover:bg-white hover:shadow-md"
+                >
+                  <span className="mb-1 grid place-items-center">
+                    <CategoryIcon type={category.id} />
+                  </span>
+                  <span className="font-['Plus_Jakarta_Sans','Rubik',sans-serif] block text-[10px] font-semibold leading-[13px] tracking-[0.015em] text-[#1C1B1B]">
+                    {category.label}
+                  </span>
                 </button>
-              </div>
-              <div className="grid grid-cols-4 gap-2.5">
-                {categories.map((category) => (
-                  <button
-                    key={category.id}
-                    className="h-[86px] rounded-2xl border border-[#e4e4e7] bg-[#f3f4f6] px-2 py-2 text-center transition duration-200 hover:-translate-y-0.5 hover:bg-white hover:shadow-md"
-                  >
-                    <span className="mb-1 grid place-items-center">
-                      <CategoryIcon type={category.id} />
-                    </span>
-                    <span className="font-['Plus_Jakarta_Sans','Rubik',sans-serif] block text-[10px] font-semibold leading-[13px] tracking-[0.015em] text-[#1C1B1B]">
-                      {category.label}
-                    </span>
-                  </button>
-                ))}
-              </div>
-            </section>
+              ))}
+            </div>
+          </section>
 
-            <section>
-              <div className="mb-3 flex items-center justify-between">
-                <h2 className="text-[18px] font-bold text-[#1f2937]">Popular Products</h2>
-                <button className="font-['Plus_Jakarta_Sans','Rubik',sans-serif] text-[15px] font-semibold leading-[19px] tracking-[0.005em] text-[#42c236] transition hover:scale-105 hover:text-[#2f9e44]">
-                  SEE ALL
-                </button>
-              </div>
-              <div className="grid grid-cols-2 gap-3">
-                {displayProducts.map((product, index) => {
-                  const isLiked = likedProducts.includes(product.id)
-
-                  return (
-                    <article key={`${product.id}-${index}`} className="rounded-xl bg-[#c8e8c5] p-2.5">
-                      <div className="relative mb-2 h-32 overflow-hidden rounded-xl bg-[#d7f0d4]">
-                        <img src={product.image} alt={product.name} className="h-full w-full object-cover" />
-                        <button
-                          onClick={() =>
-                            setLikedProducts((current) =>
-                              current.includes(product.id)
-                                ? current.filter((id) => id !== product.id)
-                                : [...current, product.id],
-                            )
-                          }
-                          className="absolute right-2 top-2 grid h-7 w-7 place-items-center rounded-full bg-[#18181b] text-white transition hover:scale-110 hover:bg-[#42c236]"
-                        >
-                          <HeartIcon filled={isLiked} />
-                        </button>
-                      </div>
-                      <p className="mb-1 font-['Plus_Jakarta_Sans','Rubik',sans-serif] text-[14px] font-medium leading-[150%] tracking-[0.005em] text-[#1C1B1B]">
-                        {product.name}
-                      </p>
-                      <p className="font-['Plus_Jakarta_Sans','Rubik',sans-serif] text-[15px] font-semibold leading-[19px] tracking-[0.005em] text-[#1C1B1B]">
-                        {formatPrice(product.price)}
-                      </p>
-                      {product.oldPrice ? (
-                        <p className="font-['Plus_Jakarta_Sans','Rubik',sans-serif] text-[10px] leading-[13px] tracking-[0.015em] text-[#C0C0C0] line-through">
-                          {formatPrice(product.oldPrice)}
-                        </p>
-                      ) : null}
-                    </article>
-                  )
-                })}
-              </div>
-            </section>
-          </div>
-        </div>
-
-        <nav className="absolute bottom-0 left-0 z-20 w-full border-t border-[#e4e4e7] bg-[#f8fafc] pb-2 pt-3">
-          <div className="mx-auto w-full max-w-[360px] px-2">
-            <div className="mb-2 grid grid-cols-5">
-              {navItems.map((item, index) => {
-                const active = index === 0
+          <section>
+            <div className="mb-3 flex items-center justify-between">
+              <h2 className="text-[18px] font-bold text-[#1f2937]">Popular Products</h2>
+              <button className="font-['Plus_Jakarta_Sans','Rubik',sans-serif] text-[15px] font-semibold leading-[19px] tracking-[0.005em] text-[#42c236] transition hover:scale-105 hover:text-[#2f9e44]">
+                SEE ALL
+              </button>
+            </div>
+            <div className="grid grid-cols-2 gap-3">
+              {displayProducts.map((product, index) => {
+                const isLiked = likedProducts.includes(product.id)
 
                 return (
+                  <div>
                   <button
                     key={item.id}
                     onClick={() => {
@@ -342,14 +269,42 @@ function HomePage() {
                       {item.label}
                     </span>
                   </button>
+                  <article key={`${product.id}-${index}`} className="rounded-xl bg-[#c8e8c5] p-2.5">
+                    <div className="relative mb-2 h-32 overflow-hidden rounded-xl bg-[#d7f0d4]">
+                      <img src={product.image} alt={product.name} className="h-full w-full object-cover" />
+                      <button
+                        onClick={() =>
+                          setLikedProducts((current) =>
+                            current.includes(product.id)
+                              ? current.filter((id) => id !== product.id)
+                              : [...current, product.id],
+                          )
+                        }
+                        className="absolute right-2 top-2 grid h-7 w-7 place-items-center rounded-full bg-[#18181b] text-white transition hover:scale-110 hover:bg-[#42c236]"
+                      >
+                        <HeartIcon filled={isLiked} />
+                      </button>
+                    </div>
+                    <p className="mb-1 font-['Plus_Jakarta_Sans','Rubik',sans-serif] text-[14px] font-medium leading-[150%] tracking-[0.005em] text-[#1C1B1B]">
+                      {product.name}
+                    </p>
+                    <p className="font-['Plus_Jakarta_Sans','Rubik',sans-serif] text-[15px] font-semibold leading-[19px] tracking-[0.005em] text-[#1C1B1B]">
+                      {formatPrice(product.price)}
+                    </p>
+                    {product.oldPrice ? (
+                      <p className="font-['Plus_Jakarta_Sans','Rubik',sans-serif] text-[10px] leading-[13px] tracking-[0.015em] text-[#C0C0C0] line-through">
+                        {formatPrice(product.oldPrice)}
+                      </p>
+                    ) : null}
+                  </article>
+                  </div>
                 )
               })}
             </div>
-            <div className="mx-auto h-1.5 w-28 rounded-full bg-[#111827]"></div>
-          </div>
-        </nav>
-      </section>
-    </div>
+          </section>
+        </div>
+      </div>
+    </>
   )
 }
 
