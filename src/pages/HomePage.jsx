@@ -1,8 +1,6 @@
 import { Carousel } from '@arco-design/web-react'
-import { useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { bannerItems, categories, products } from '../data/homeData'
-import { useNavigate } from 'react-router-dom'
-import BottomNav from '../components/navigation/BottomNav'
 
 function formatPrice(value) {
   return `RM${value.toFixed(2)}`
@@ -13,6 +11,46 @@ function SearchIcon() {
     <svg viewBox="0 0 24 24" className="h-8 w-8 text-[#1f2937]" fill="none" stroke="currentColor" strokeWidth="2">
       <circle cx="11" cy="11" r="8"></circle>
       <path d="m21 21-4.3-4.3"></path>
+    </svg>
+  )
+}
+
+function CloseIcon() {
+  return (
+    <svg viewBox="0 0 24 24" className="h-8 w-8" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+      <path d="M6 6 18 18"></path>
+      <path d="M18 6 6 18"></path>
+    </svg>
+  )
+}
+
+function SearchFieldIcon() {
+  return (
+    <svg viewBox="0 0 24 24" className="h-6 w-6 text-[#6f7384]" fill="none" stroke="currentColor" strokeWidth="2">
+      <circle cx="11" cy="11" r="8"></circle>
+      <path d="m21 21-4.3-4.3"></path>
+    </svg>
+  )
+}
+
+function FilterIcon() {
+  return (
+    <svg viewBox="0 0 24 24" className="h-6 w-6 text-[#6f7384]" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round">
+      <path d="M3 6h18"></path>
+      <path d="M3 12h18"></path>
+      <path d="M3 18h18"></path>
+      <circle cx="9" cy="6" r="2.2" fill="#f4f4f5"></circle>
+      <circle cx="15" cy="12" r="2.2" fill="#f4f4f5"></circle>
+      <circle cx="11" cy="18" r="2.2" fill="#f4f4f5"></circle>
+    </svg>
+  )
+}
+
+function RecentArrowIcon() {
+  return (
+    <svg viewBox="0 0 24 24" className="h-6 w-6 text-[#c0c0c0]" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+      <path d="m6 6 12 12"></path>
+      <path d="M9.5 18H18V9.5"></path>
     </svg>
   )
 }
@@ -93,21 +131,49 @@ function CategoryIcon({ type }) {
 }
 
 function HomePage() {
-  const navigate = useNavigate()
   const [likedProducts, setLikedProducts] = useState(['dutch-lady'])
   const [activeBannerIndex, setActiveBannerIndex] = useState(0)
+  const [searchOpen, setSearchOpen] = useState(false)
+  const [searchText, setSearchText] = useState('')
+  const [filterMenuOpen, setFilterMenuOpen] = useState(false)
+  const [recentSearches, setRecentSearches] = useState(['Milk', 'Oil', 'Broccoli', 'Orange', 'Apple', 'Sugar'])
+  const searchInputRef = useRef(null)
 
   const displayProducts = [...products, ...products]
 
+  useEffect(() => {
+    if (searchOpen) {
+      searchInputRef.current?.focus()
+    }
+  }, [searchOpen])
+
+  useEffect(() => {
+    if (!searchOpen) {
+      setFilterMenuOpen(false)
+    }
+  }, [searchOpen])
+
+  const runSearch = () => {
+    const term = searchText.trim()
+    if (!term) return
+
+    setRecentSearches((current) => [term, ...current.filter((item) => item.toLowerCase() !== term.toLowerCase())].slice(0, 8))
+    setFilterMenuOpen(false)
+  }
+
   return (
     <>
-      <div className="absolute inset-x-0 top-[44px] z-20 bg-[#f4f4f5] pb-3">
+      <div className="absolute inset-x-0 top-[44px] z-20 bg-white pb-3">
         <div className="mx-auto w-full max-w-[360px] px-5">
           <header className="flex items-center justify-between">
             <h1 className="font-['Plus_Jakarta_Sans','Rubik',sans-serif] text-[25px] font-bold leading-[1.2] text-black">
               Home Page
             </h1>
-            <button className="text-[#1f2937] transition hover:scale-110 hover:text-[#42c236]">
+            <button
+              onClick={() => setSearchOpen(true)}
+              className="text-[#1f2937] transition hover:scale-110 hover:text-[#42c236]"
+              aria-label="Open search"
+            >
               <SearchIcon />
             </button>
           </header>
@@ -223,7 +289,108 @@ function HomePage() {
           </section>
         </div>
       </div>
-      <BottomNav />
+
+      {searchOpen ? (
+        <div className="absolute inset-x-0 bottom-0 top-[44px] z-30 bg-white">
+          <div className="mx-auto h-full w-full max-w-[360px]">
+            <header className="flex h-8 items-center justify-between px-4">
+              <h2 className="font-['Plus_Jakarta_Sans','Rubik',sans-serif] text-[25px] font-bold leading-[120%] text-black">
+                Search
+              </h2>
+              <button
+                onClick={() => setSearchOpen(false)}
+                className="grid h-8 w-8 place-items-center text-[#1C1B1B]"
+                aria-label="Close search"
+              >
+                <CloseIcon />
+              </button>
+            </header>
+
+            <div className="mt-4 flex flex-col items-center gap-4">
+              <div className="relative flex h-[56px] w-[328px] items-center justify-between rounded-xl border border-[#F4F5FD] px-3 py-4">
+                <div className="flex min-w-0 flex-1 items-center gap-1">
+                  <button
+                    onClick={runSearch}
+                    className="grid h-8 w-8 place-items-center rounded-md hover:bg-[#f7f8fc]"
+                    aria-label="Search"
+                  >
+                    <SearchFieldIcon />
+                  </button>
+                  <input
+                    ref={searchInputRef}
+                    type="text"
+                    value={searchText}
+                    onChange={(event) => setSearchText(event.target.value)}
+                    onKeyDown={(event) => {
+                      if (event.key === 'Enter') {
+                        runSearch()
+                      }
+                    }}
+                    placeholder="Search"
+                    className="h-[18px] w-full border-none bg-transparent font-['Plus_Jakarta_Sans','Rubik',sans-serif] text-[14px] font-normal leading-[18px] tracking-[0.005em] text-[#1C1B1B] outline-none placeholder:text-[#6F7384]"
+                  />
+                </div>
+                <button
+                  onClick={() => setFilterMenuOpen((current) => !current)}
+                  className="ml-2 grid h-10 w-10 place-items-center rounded-lg hover:bg-[#f7f8fc]"
+                  aria-label="Search filters"
+                >
+                  <FilterIcon />
+                </button>
+
+                {filterMenuOpen ? (
+                  <div className="absolute right-0 top-[62px] z-10 w-[168px] rounded-xl border border-[#e7eaf2] bg-white p-1.5 shadow-[0_8px_24px_rgba(28,27,27,0.12)]">
+                    <button
+                      onClick={() => setFilterMenuOpen(false)}
+                      className="block w-full rounded-md px-2 py-2 text-left text-[13px] text-[#1C1B1B] hover:bg-[#f7f8fc]"
+                    >
+                      Sort by relevance
+                    </button>
+                    <button
+                      onClick={() => setFilterMenuOpen(false)}
+                      className="block w-full rounded-md px-2 py-2 text-left text-[13px] text-[#1C1B1B] hover:bg-[#f7f8fc]"
+                    >
+                      Sort by latest
+                    </button>
+                    <button
+                      onClick={() => {
+                        setSearchText('')
+                        setFilterMenuOpen(false)
+                      }}
+                      className="block w-full rounded-md px-2 py-2 text-left text-[13px] text-[#1C1B1B] hover:bg-[#f7f8fc]"
+                    >
+                      Clear input
+                    </button>
+                  </div>
+                ) : null}
+              </div>
+
+              <div className="w-full">
+                <div className="px-4">
+                  <h3 className="font-['Plus_Jakarta_Sans','Rubik',sans-serif] text-[18px] font-bold leading-[23px] tracking-[0.0025em] text-[#1C1B1B]">
+                    RECENT SEARCH
+                  </h3>
+                </div>
+
+                <div className="mt-1 flex flex-col">
+                  {recentSearches.map((item) => (
+                    <button
+                      key={item}
+                      onClick={() => setSearchText(item)}
+                      className="flex h-12 w-full items-end justify-between border-b border-[#F4F5FD] bg-white px-4 pb-1 text-left"
+                    >
+                      <span className="font-['Plus_Jakarta_Sans','Rubik',sans-serif] text-[14px] font-medium leading-[150%] tracking-[0.005em] text-[#1C1B1B]">
+                        {item}
+                      </span>
+                      <RecentArrowIcon />
+                    </button>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      ) : null}
     </>
   )
 }
