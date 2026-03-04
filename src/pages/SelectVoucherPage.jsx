@@ -1,0 +1,215 @@
+import { useEffect, useState } from 'react'
+import { useLocation, useNavigate } from 'react-router-dom'
+import StatusIcons from '../components/layout/StatusBar'
+
+// --- 图标组件区 ---
+function BackIcon() {
+  return (
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#1C1B1B" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M19 12H5M12 19l-7-7 7-7" />
+    </svg>
+  )
+}
+
+function TruckIcon() {
+  return (
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#1C1B1B" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+      <rect x="1" y="3" width="15" height="13"></rect>
+      <polygon points="16 8 20 8 23 11 23 16 16 16 16 8"></polygon>
+      <circle cx="5.5" cy="18.5" r="2.5"></circle>
+      <circle cx="18.5" cy="18.5" r="2.5"></circle>
+      <path d="M1 8h3"></path>
+      <path d="M1 12h3"></path>
+    </svg>
+  )
+}
+
+// 格式化价格
+function formatPrice(value) {
+  return `RM ${Number(value).toFixed(2)}`
+}
+
+function formatCurrentTime() {
+  const now = new Date()
+  const hours = String(now.getHours()).padStart(2, '0')
+  const minutes = String(now.getMinutes()).padStart(2, '0')
+  return `${hours}:${minutes}`
+}
+
+// 模拟的优惠券数据
+const itemVouchers = [
+  { id: 'v20', label: '20% OFF\nVoucher', title: '20% OFF CAPPED AT RM20', minSpend: 'Min. Spend RM15', rate: 0.2 },
+  { id: 'v15a', label: '15% OFF\nVoucher', title: '15% OFF CAPPED AT RM10', minSpend: 'Min. Spend RM5', rate: 0.15 },
+  { id: 'v15b', label: '15% OFF\nVoucher', title: '15% OFF CAPPED AT RM10', minSpend: 'Min. Spend RM5', rate: 0.15 },
+  { id: 'v10', label: '10% OFF\nVoucher', title: '10% OFF CAPPED AT RM5', minSpend: 'Min. Spend RM0', rate: 0.1 },
+]
+
+export default function SelectVoucherPage() {
+  const navigate = useNavigate()
+  const location = useLocation()
+  
+  // 提取之前页面传过来的数据 (确保不丢失)
+  const data = location.state?.checkoutData || location.state || {}
+  const { subtotal = 0, appliedVoucher = null, shippingDiscount = 0 } = data // 默认给个 15.25 方便你直接测试页面
+
+  const [currentTime, setCurrentTime] = useState(formatCurrentTime())
+  
+  // 状态管理：记录选中的免邮券和商品优惠券
+  const [selectedShipping, setSelectedShipping] = useState(shippingDiscount === 0 ? false : true) // 默认选中免邮
+  const [selectedItemVoucher, setSelectedItemVoucher] = useState(appliedVoucher?.id ? appliedVoucher.id : null) // 默认选中20%
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setCurrentTime(formatCurrentTime())
+    }, 1000)
+    return () => clearInterval(timer)
+  }, [])
+
+  // 动态计算折扣和总价
+  const currentVoucherObj = itemVouchers.find(v => v.id === selectedItemVoucher)
+  const discountRate = currentVoucherObj ? currentVoucherObj.rate : 0
+  const discountAmount = subtotal * discountRate
+  const grandTotal = subtotal - discountAmount + (selectedShipping ? 0 : 5) // 如果免邮券被选中，运费为0，否则加上RM5
+
+  // 计算选中了多少个券
+  const selectedCount = (selectedShipping ? 1 : 0) + (selectedItemVoucher ? 1 : 0)
+
+  // 确认按钮逻辑：带着计算好的数据返回 Checkout
+  const handleConfirm = () => {
+    navigate('/payment', { 
+      state: { 
+        ...data, // 展开原有数据（包含商品列表等）
+        appliedVoucher: currentVoucherObj, // 将选中的优惠券对象传过去
+        discountAmount: discountAmount,    // 传算好的折扣金额
+        shippingDiscount: selectedShipping ? 5 : 0, // 传算好的运费折扣
+        grandTotal: grandTotal             // 传算好的总价
+      },
+      replace: true 
+    })
+  }
+
+  return (
+    <div className="min-h-screen w-full overflow-x-hidden bg-[#f4f4f5]">
+      <section className="relative h-screen w-full overflow-hidden bg-[#f8fafc] max-[420px]:mx-auto max-[420px]:h-[min(800px,100dvh)] max-[420px]:w-[min(360px,100vw)] max-[420px]:rounded-[24px] max-[420px]:border max-[420px]:border-[#d4d4d8] max-[420px]:shadow-[0_12px_36px_rgba(0,0,0,0.12)]">
+        
+        {/* === 顶部 Header === */}
+        <div className="absolute inset-x-0 top-0 z-20 bg-[#f4f4f5] pb-3 pt-4">
+          <div className="mx-auto w-full max-w-[360px] px-4">
+            <div className="mb-2 flex items-center justify-between text-[15px] font-normal tracking-[-0.24px] text-[#1C1B1B]">
+              <span className="leading-5">{currentTime}</span>
+              <StatusIcons />
+            </div>
+
+            <header className="flex items-center gap-3">
+              <button onClick={() => navigate(-1)} className="text-[#1f2937] transition hover:scale-110">
+                <BackIcon />
+              </button>
+              <h1 className="font-['Plus_Jakarta_Sans',sans-serif] text-[20px] font-bold leading-[1.2] text-black">
+                Select Voucher / Discount
+              </h1>
+            </header>
+          </div>
+        </div>
+
+        {/* === 中间滚动内容区 === */}
+        <div className="hide-scrollbar absolute inset-x-0 bottom-[200px] top-[94px] overflow-y-auto">
+          <div className="mx-auto w-full max-w-[360px] px-5 pb-8 pt-2">
+            
+            {/* 1. Shipping Vouchers 区块 */}
+            <p className="mb-3 text-[14px] font-medium text-[#4b5563]">Shipping Vouchers</p>
+            
+            <div 
+              onClick={() => setSelectedShipping(!selectedShipping)}
+              className="mb-6 flex h-[72px] w-full cursor-pointer overflow-hidden rounded-xl bg-white shadow-sm transition hover:shadow-md"
+            >
+              {/* 左侧渐变区 */}
+              <div className="flex w-[110px] flex-col items-center justify-center border-r border-dashed border-[#d4d4d8] bg-gradient-to-br from-[#c1dfe3] to-[#e8cbb9]">
+                <TruckIcon />
+                <span className="mt-1 text-[13px] font-bold text-[#1C1B1B]">FREE</span>
+              </div>
+              {/* 右侧信息区 */}
+              <div className="flex flex-1 items-center justify-between px-4">
+                <div className="flex flex-col">
+                  <span className="text-[13px] font-bold text-[#1C1B1B]">FREE SHIPPING DISCOUNT</span>
+                  <span className="text-[12px] text-[#9ca3af]">Min. Spend RM5</span>
+                </div>
+                {/* 绿圈 Radio Button */}
+                <div className={`flex h-5 w-5 items-center justify-center rounded-full border-2 transition-colors ${selectedShipping ? 'border-[#42c236]' : 'border-[#d4d4d8]'}`}>
+                  {selectedShipping && <div className="h-2.5 w-2.5 rounded-full bg-[#42c236]"></div>}
+                </div>
+              </div>
+            </div>
+
+            {/* 2. Item Vouchers 区块 */}
+            <p className="mb-3 text-[14px] font-medium text-[#4b5563]">Item Vouchers</p>
+            
+            <div className="flex flex-col gap-3">
+              {itemVouchers.map((voucher) => (
+                <div 
+                  key={voucher.id}
+                  onClick={() => setSelectedItemVoucher(selectedItemVoucher === voucher.id ? null : voucher.id)}
+                  className="flex h-[72px] w-full cursor-pointer overflow-hidden rounded-xl bg-white shadow-sm transition hover:shadow-md"
+                >
+                  {/* 左侧渐变区 */}
+                  <div className="flex w-[110px] flex-col items-center justify-center border-r border-dashed border-[#d4d4d8] bg-gradient-to-br from-[#c1dfe3] to-[#f4cfbc] p-2 text-center leading-tight">
+                    <span className="whitespace-pre-line text-[13px] font-bold text-[#1C1B1B]">{voucher.label}</span>
+                  </div>
+                  {/* 右侧信息区 */}
+                  <div className="flex flex-1 items-center justify-between px-4">
+                    <div className="flex flex-col">
+                      <span className="text-[13px] font-bold text-[#1C1B1B]">{voucher.title}</span>
+                      <span className="text-[12px] text-[#9ca3af]">{voucher.minSpend}</span>
+                    </div>
+                    {/* 绿圈 Radio Button */}
+                    <div className={`flex h-5 w-5 flex-shrink-0 items-center justify-center rounded-full border-2 transition-colors ${selectedItemVoucher === voucher.id ? 'border-[#42c236]' : 'border-[#d4d4d8]'}`}>
+                      {selectedItemVoucher === voucher.id && <div className="h-2.5 w-2.5 rounded-full bg-[#42c236]"></div>}
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+
+          </div>
+        </div>
+
+        {/* === 底部结算信息与操作栏 === */}
+        <div className="absolute bottom-0 left-0 z-20 w-full bg-white pb-6 pt-4 shadow-[0_-4px_12px_rgba(0,0,0,0.05)]">
+          <div className="mx-auto flex w-full max-w-[360px] flex-col px-5">
+            
+            {/* 优惠摘要 */}
+            <div className="mb-4 flex flex-col gap-1 text-[13px]">
+              <p className="font-semibold text-[#1C1B1B]">{selectedCount} Vouchers / Discount Selected</p>
+              {currentVoucherObj && (
+                <div className="flex items-center">
+                  <span className="text-[#4b5563]">Item Discount {currentVoucherObj.rate * 100}% : </span>
+                  <span className="ml-1 font-medium text-[#ee4d4d]">- {formatPrice(discountAmount)}</span>
+                </div>
+              )}
+              <div className="flex items-center">
+                  <span className="text-[#4b5563]">Shipping Cost : </span>
+                  {selectedShipping && (
+                    <span className="ml-1 font-semibold  text-[#4b5563]">RM 0.00</span>
+                    )}
+                  <span className={`ml-1 font-semibold ${selectedShipping ? 'line-through text-[#9CA3AF]' : ''}`}>RM 5.00</span>
+            </div>
+              
+              <div className="mt-1 flex items-center text-[14px]">
+                <span className="text-[#4b5563]">Grand Total : </span>
+                <span className="ml-1 font-bold text-[#1C1B1B]">{formatPrice(grandTotal)}</span>
+              </div>
+            </div>
+
+            {/* Confirm 按钮 */}
+            <button 
+              onClick={handleConfirm}
+              className="w-full rounded-2xl bg-[#1C1B1B] py-4 text-[16px] font-bold text-white transition hover:bg-[#2f3f58] active:scale-95"
+            >
+              Confirm
+            </button>
+          </div>
+        </div>
+        
+      </section>
+    </div>
+  )
+}
