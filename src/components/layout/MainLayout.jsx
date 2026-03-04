@@ -5,6 +5,7 @@ import StatusBar from './StatusBar'
 function MainLayout() {
   const location = useLocation()
   const isHomePage = location.pathname === '/home' || location.pathname === '/'
+  const isPaymentPage = location.pathname === '/payment'
   const pageBgClass = isHomePage ? 'bg-white' : 'bg-[#f4f4f5]'
 
   return (
@@ -12,7 +13,7 @@ function MainLayout() {
       <section className={`relative h-screen w-full overflow-hidden ${pageBgClass} max-[420px]:mx-auto max-[420px]:h-[min(800px,100dvh)] max-[420px]:w-[min(360px,100vw)] max-[420px]:rounded-[24px] max-[420px]:border max-[420px]:border-[#d4d4d8] max-[420px]:shadow-[0_12px_36px_rgba(0,0,0,0.12)]`}>
         <StatusBar />
         <Outlet />
-        <BottomNav />
+        {!isPaymentPage && <BottomNav />}
       </section>
     </div>
   )

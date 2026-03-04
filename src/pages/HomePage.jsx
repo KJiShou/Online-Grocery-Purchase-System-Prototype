@@ -147,17 +147,16 @@ function HomePage() {
     }
   }, [searchOpen])
 
-  useEffect(() => {
-    if (!searchOpen) {
-      setFilterMenuOpen(false)
-    }
-  }, [searchOpen])
-
   const runSearch = () => {
     const term = searchText.trim()
     if (!term) return
 
     setRecentSearches((current) => [term, ...current.filter((item) => item.toLowerCase() !== term.toLowerCase())].slice(0, 8))
+    setFilterMenuOpen(false)
+  }
+
+  const closeSearch = () => {
+    setSearchOpen(false)
     setFilterMenuOpen(false)
   }
 
@@ -298,7 +297,7 @@ function HomePage() {
                 Search
               </h2>
               <button
-                onClick={() => setSearchOpen(false)}
+                onClick={closeSearch}
                 className="grid h-8 w-8 place-items-center text-[#1C1B1B]"
                 aria-label="Close search"
               >
