@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { products } from '../data/homeData'
-import { useNavigate } from 'react-router-dom'
 import BottomNav from '../components/navigation/BottomNav'
+import { useNavigate } from 'react-router-dom'
 
 function formatPrice(value) {
   return `RM${value.toFixed(2)}`
@@ -155,7 +155,8 @@ function BottomIcon({ type, active = false }) {
 
 function CartPage() {
   const [cartItems, setCartItems] = useState([
-    { ...products[2], quantity: 1, selected: true },
+    { ...products[1], quantity: 1, selected: false },
+    { ...products[2], quantity: 10, selected: false },
   ])
 
   const toggleSelected = (id) => {
@@ -188,13 +189,20 @@ function CartPage() {
     setCartItems((items) => items.filter((item) => item.id !== id))
   }
 
-  const subtotal = cartItems.reduce(
+  // 1. 先过滤出所有被打勾 (selected: true) 的商品
+  const selectedItems = cartItems.filter((item) => item.selected)
+
+  // 2. 计算打勾商品的总价 (Subtotal)
+  const subtotal = selectedItems.reduce(
     (sum, item) => sum + item.price * item.quantity,
     0,
   )
 
-  const [currentTime, setCurrentTime] = useState(formatCurrentTime())
+  // 3. 计算打勾商品的总数量 (用于 Checkout 按钮)
+  // 注意：真实购物车通常显示商品件数相加，而不是种类数 (length)
+  const totalSelectedQuantity = selectedItems.length > 0 ? selectedItems.length : 0
 
+  const [currentTime, setCurrentTime] = useState(formatCurrentTime())
 
   const navigate = useNavigate()
 
@@ -219,7 +227,7 @@ function CartPage() {
             </div>
 
             <header className="flex items-center gap-2">
-              <button className="text-[#1f2937] transition hover:scale-110 hover:text-[#42c236]">
+              <button onClick={() => navigate(-1)} className="text-[#1f2937] transition hover:scale-110 hover:text-[#42c236]">
                 <BackIcon />
               </button>
               <h1 className="font-['Plus_Jakarta_Sans','Rubik',sans-serif] text-[25px] font-bold leading-[1.2] text-black">
@@ -325,17 +333,35 @@ function CartPage() {
         <div className="absolute bottom-[72px] left-0 z-20 w-full border-t border-[#e4e4e7] bg-[#f8fafc] pb-2 pt-3">
           <div className="mx-auto w-full max-w-[360px] px-5">
             <div className="mb-3 flex items-center justify-center gap-4">
-              <span className="text-[16px] font-medium">Subtotal</span>
-              <span className="text-[16px] font-semibold">
+              <span className="text-[16px] font-medium text-[#1f2937]">Subtotal</span>
+              {/* 总价会自动根据打勾状态更新 */}
+              <span className="text-[18px] font-bold text-[#42c236]">
                 {formatPrice(subtotal)}
               </span>
             </div>
-            <button className="mb-2 w-full rounded-xl bg-[#111827] py-3 text-[15px] font-semibold text-white transition hover:bg-[#1f2937]">
-              Checkout ({cartItems.length})
+            
+            {/* 按钮状态：如果没选商品，按钮应该变灰且不可点击 */}
+            <button 
+              disabled={totalSelectedQuantity === 0}
+              onClick={() => {
+                const checkoutData = {
+                  items: selectedItems, // 选中的商品数组
+                  subtotal: subtotal,   // 计算好的总价
+                  totalQuantity: totalSelectedQuantity // 总件数
+                };
+                console.log("发送到支付页面的数据：", checkoutData);
+                navigate('/payment', { state: checkoutData });
+              }}
+              className={`mb-2 w-full rounded-xl py-3 text-[15px] font-semibold text-white transition 
+                ${totalSelectedQuantity === 0 
+                  ? 'bg-gray-300 cursor-not-allowed' // 未选中任何商品时的灰色状态
+                  : 'bg-[#111827] hover:bg-[#1f2937] shadow-lg hover:-translate-y-0.5' // 有选中商品时的黑色状态
+                }`}
+            >
+              Checkout ({totalSelectedQuantity})
             </button>
           </div>
         </div>
-
         <BottomNav />
       </section>
     </div>
