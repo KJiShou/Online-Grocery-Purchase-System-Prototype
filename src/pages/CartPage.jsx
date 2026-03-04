@@ -227,7 +227,7 @@ function CartPage() {
             </div>
 
             <header className="flex items-center gap-2">
-              <button onClick={() => navigate(-1)} className="text-[#1f2937] transition hover:scale-110 hover:text-[#42c236]">
+              <button onClick={() => navigate('/')} className="text-[#1f2937] transition hover:scale-110 hover:text-[#42c236]">
                 <BackIcon />
               </button>
               <h1 className="font-['Plus_Jakarta_Sans','Rubik',sans-serif] text-[25px] font-bold leading-[1.2] text-black">
