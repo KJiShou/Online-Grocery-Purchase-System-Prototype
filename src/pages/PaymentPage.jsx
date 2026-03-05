@@ -180,19 +180,12 @@ export default function CheckoutPage() {
   }, [])
 
   return (
-    <div className="min-h-screen w-full overflow-x-hidden bg-[#f4f4f5]">
-      <section className="relative h-screen w-full overflow-hidden bg-white max-[420px]:mx-auto max-[420px]:h-[min(800px,100dvh)] max-[420px]:w-[min(360px,100vw)] max-[420px]:rounded-[24px] max-[420px]:border max-[420px]:border-[#d4d4d8] max-[420px]:shadow-[0_12px_36px_rgba(0,0,0,0.12)]">
-        
+    <>  
         {/* === 顶部 Header === */}
-        <div className="absolute inset-x-0 top-0 z-20 bg-white pb-5 pt-4 border-[#e5e7eb] border-b mt-3">
+        <div className="absolute inset-x-0 top-[44px] z-20 bg-white pb-3 min-h-[44px]">
           <div className="mx-auto w-full max-w-[360px] px-5">
-            <div className="mb-2 flex items-center justify-between text-[15px] font-normal tracking-[-0.24px] text-[#1C1B1B]">
-              <span className="leading-5">{currentTime}</span>
-              <StatusIcons />
-            </div>
-
             <header className="flex items-center gap-2">
-              <button onClick={() => navigate('/cart')} className="text-[#1f2937] transition hover:scale-110 hover:text-[#42c236]">
+              <button onClick={() => navigate('/cart', { state: { from: location.pathname } })} className="text-[#1f2937] transition hover:scale-110 hover:text-[#42c236]">
                 <BackIcon />
               </button>
               <h1 className="font-['Plus_Jakarta_Sans','Rubik',sans-serif] text-[25px] font-bold leading-[1.2] text-black">
@@ -270,7 +263,7 @@ export default function CheckoutPage() {
 
             {/* 3. 优惠券 */}
             <div
-            onClick={() => navigate('/select-voucher', { state: data })} 
+            onClick={() => navigate('/select-voucher', { state: data, from: location.pathname })} 
             className="border-b border-[#f3f4f6] py-5">
               <div className="flex items-center justify-between mb-3 cursor-pointer">
                 <span className="text-[15px] font-bold text-[#1C1B1B]">Voucher</span>
@@ -293,7 +286,7 @@ export default function CheckoutPage() {
 
             {/* 4. 支付方式 */}
             <div
-            onClick={() => navigate('/select-payment', { state: data })}
+            onClick={() => navigate('/select-payment', { state: data, from: location.pathname })}
             className="border-b border-[#f3f4f6] py-5">
               <div className="flex items-center justify-between mb-3 cursor-pointer">
                 <span className="text-[15px] font-bold text-[#1C1B1B]">Payment Method</span>
@@ -349,7 +342,7 @@ export default function CheckoutPage() {
         <div className="absolute bottom-[0px] left-0 z-20 w-full border-t border-[#e4e4e7] bg-[#f8fafc] pb-2 pt-3">
           <div className="mx-auto flex w-full max-w-[360px] gap-3 px-5">
             <button 
-              onClick={() => navigate('/cart')}
+              onClick={() => navigate('/cart', { state: { from: location.pathname } })}
               className="flex-1 rounded-xl border-2 border-[#ee4d4d] bg-white py-3.5 text-[16px] font-bold text-[#ee4d4d] transition hover:bg-[#fff5f5] active:scale-95"
             >
               Cancel
@@ -376,8 +369,6 @@ export default function CheckoutPage() {
             </button>
           </div>
         </div>
-        
-      </section>
-    </div>
+     </>
   )
 }

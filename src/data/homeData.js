@@ -40,6 +40,7 @@ export const products = [
     oldPrice: null,
     image:
       'https://images.unsplash.com/photo-1459411621453-7b03977f4bfc?auto=format&fit=crop&w=600&q=80',
+      description: 'Broccoli is a nutrient-rich vegetable that belongs to the cruciferous family. It is known for its high content of vitamins, minerals, and antioxidants. Broccoli can be enjoyed steamed, roasted, or raw in salads, making it a versatile and healthy addition to any meal.',
   },
   {
     id: 'dutch-lady',
@@ -48,6 +49,7 @@ export const products = [
     oldPrice: 8.0,
     image:
       'https://images.unsplash.com/photo-1563636619-e9143da7973b?auto=format&fit=crop&w=600&q=80',
+      description: 'Dutch Lady is a well-known dairy brand offering a range of milk products, including fresh milk, flavored milk, and yogurt. Their products are made from high-quality ingredients and are popular for their creamy taste and nutritional value.',
   },
   {
     id: 'cooking-oil',
@@ -56,6 +58,7 @@ export const products = [
     oldPrice: 16.0,
     image:
       'https://images.unsplash.com/photo-1474979266404-7eaacbcd87c5?auto=format&fit=crop&w=600&q=80',
+      description: 'Cooking oil is a staple in every kitchen, used for frying, sautéing, and baking. It comes in various types such as vegetable oil, olive oil, and canola oil, each with its own unique flavor and cooking properties. Choosing the right cooking oil can enhance the taste of your dishes while providing essential nutrients.',
   },
   {
     id: 'raw-sugar',
@@ -64,5 +67,6 @@ export const products = [
     oldPrice: 7.2,
     image:
       'https://images.unsplash.com/photo-1581022295087-35e593704911?auto=format&fit=crop&w=600&q=80',
+      description: 'Raw sugar is a type of unrefined sugar that retains some of the natural molasses, giving it a rich flavor and darker color compared to white sugar. It is commonly used in baking and cooking to add depth of flavor to desserts, beverages, and sauces.',
   },
 ]
