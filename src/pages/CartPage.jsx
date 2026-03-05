@@ -168,7 +168,7 @@ function CartPage() {
 
   // 3. 计算打勾商品的总数量 (用于 Checkout 按钮)
   // 注意：真实购物车通常显示商品件数相加，而不是种类数 (length)
-  const totalSelectedQuantity = selectedItems.length > 0 ? selectedItems.length : 0
+  const totalSelectedQuantity = selectedItems.reduce((sum, item) => sum + item.quantity, 0)
 
   const [currentTime, setCurrentTime] = useState(formatCurrentTime())
 

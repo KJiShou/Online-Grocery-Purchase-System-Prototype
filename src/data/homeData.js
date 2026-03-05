@@ -1,24 +1,25 @@
+import broccoliImage from '../assets/home/broccoli.jpg'
+import cookingOilImage from '../assets/home/cooking-oil.jpg'
+import dutchLadyImage from '../assets/home/dutch-lady.jpg'
+
 export const bannerItems = [
   {
     id: 'fresh-fruit-1',
-    image:
-      'https://images.unsplash.com/photo-1570913149827-d2ac84ab3f9a?auto=format&fit=crop&w=900&q=80',
+    image: dutchLadyImage,
     title: 'Fresh Fruits',
     subtitle: 'Weekly Specials',
     discount: '30% OFF',
   },
   {
     id: 'fresh-fruit-2',
-    image:
-      'https://images.unsplash.com/photo-1619566636858-adf3ef46400b?auto=format&fit=crop&w=900&q=80',
+    image: broccoliImage,
     title: 'Organic Picks',
     subtitle: 'Save More Today',
     discount: '15% OFF',
   },
   {
     id: 'fresh-fruit-3',
-    image:
-      'https://images.unsplash.com/photo-1610832958506-aa56368176cf?auto=format&fit=crop&w=900&q=80',
+    image: cookingOilImage,
     title: 'Daily Groceries',
     subtitle: 'New Arrivals',
     discount: 'NEW',

@@ -268,20 +268,20 @@ function GroceryListPage() {
                 </p>
               </div>
             ) : (
-              <div className="grid grid-cols-2 gap-3">
+              <div className="grid grid-cols-2 gap-4">
               {filteredAndSortedProducts.map((product, index) => {
                 const isLiked = likedProducts.includes(product.id)
 
                 return (
                   <article
                     key={`${product.id}-${index}`}
-                    className="rounded-xl bg-[#c8e8c5] p-2.5"
+                    className="group transform rounded-xl bg-white p-2.5 shadow-sm transition duration-300 ease-in-out hover:-translate-y-1 hover:shadow-md"
                   >
-                    <div className="relative mb-2 h-32 overflow-hidden rounded-xl bg-[#d7f0d4]">
+                    <div className="relative mb-2 h-32 overflow-hidden rounded-xl bg-gray-100">
                       <img
                         src={product.image}
                         alt={product.name}
-                        className="h-full w-full object-cover"
+                        className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
                       />
                       <button
                         onClick={() =>
@@ -291,12 +291,12 @@ function GroceryListPage() {
                               : [...current, product.id],
                           )
                         }
-                        className="absolute right-2 top-2 grid h-7 w-7 place-items-center rounded-full bg-[#18181b] text-white transition hover:scale-110 hover:bg-[#42c236]"
+                        className="absolute right-2 top-2 grid h-7 w-7 place-items-center rounded-full bg-black/50 text-white transition hover:scale-110 hover:bg-[#42c236]"
                       >
                         <HeartIcon filled={isLiked} />
                       </button>
                     </div>
-                    <p className="mb-1 line-clamp-2 font-['Plus_Jakarta_Sans','Rubik',sans-serif] text-[14px] font-medium leading-[150%] tracking-[0.005em] text-[#1C1B1B]">
+                    <p className="mb-1 font-['Plus_Jakarta_Sans','Rubik',sans-serif] text-[14px] font-medium leading-[150%] tracking-[0.005em] text-[#1C1B1B]">
                       {product.name}
                     </p>
                     {product.price !== null ? (
