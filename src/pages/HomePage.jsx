@@ -8,9 +8,9 @@ import {
   SearchFieldIcon,
   SearchIcon,
 } from '../components/Icons'
-import { useNavigate } from 'react-router-dom'
 import { bannerItems, categories, products } from '../data/homeData'
 import { loadWishlistIds, saveWishlistIds, toggleWishlistId } from '../utils/wishlist'
+import { Navigate, useNavigate } from 'react-router-dom'
 
 function formatPrice(value) {
   return `RM${value.toFixed(2)}`
@@ -199,19 +199,18 @@ function HomePage() {
                 const isLiked = likedProducts.includes(product.id)
 
                 return (
-                  <article
-                    key={`${product.id}-${index}`}
-                    className="group transform rounded-xl bg-white p-2.5 shadow-sm transition duration-300 ease-in-out hover:-translate-y-1 hover:shadow-md"
-                  >
-                    <div className="relative mb-2 h-32 overflow-hidden rounded-xl bg-gray-100">
-                      <img
-                        src={product.image}
-                        alt={product.name}
-                        className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
-                      />
+                  <article 
+                  onClick={() => navigate(`/product/${product.id}`)}
+                  key={`${product.id}-${index}`} 
+                  className="rounded-xl bg-[#c8e8c5] p-2.5">
+                    <div className="relative mb-2 h-32 overflow-hidden rounded-xl bg-[#d7f0d4]">
+                      <img src={product.image} alt={product.name} className="h-full w-full object-cover" />
                       <button
-                        onClick={() => setLikedProducts(toggleWishlistId(product.id))}
-                        className="absolute right-2 top-2 grid h-7 w-7 place-items-center rounded-full bg-black/50 text-white transition hover:scale-110 hover:bg-[#42c236]"
+                        onClick={(e) => {
+                          e.stopPropagation(); // 严厉警告：必须加上这一行，否则点击爱心会触发外层跳转！
+                          setLikedProducts(toggleWishlistId(product.id));
+                        }}
+                        className="absolute right-2 top-2 grid h-7 w-7 place-items-center rounded-full bg-[#18181b] text-white transition hover:scale-110 hover:bg-[#42c236]"
                       >
                         <HeartIcon filled={isLiked} />
                       </button>

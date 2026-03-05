@@ -1,8 +1,7 @@
 import { useEffect, useState } from 'react'
-import { products } from '../data/homeData'
 import BottomNav from '../components/navigation/BottomNav'
-import { useNavigate } from 'react-router-dom'
-import { loadCartItems, saveCartItems } from '../utils/cart'
+import { useNavigate, useLocation } from 'react-router-dom'
+import { useCart } from '../contexts/CartContext'
 
 function formatPrice(value) {
   return `RM${value.toFixed(2)}`
@@ -155,51 +154,8 @@ function BottomIcon({ type, active = false }) {
 }
 
 function CartPage() {
-  const [cartItems, setCartItems] = useState(() => {
-    const storedItems = loadCartItems()
-    if (storedItems.length > 0) return storedItems
 
-    const defaultItems = [
-      { ...products[1], quantity: 1, selected: false },
-      { ...products[2], quantity: 10, selected: false },
-    ]
-    saveCartItems(defaultItems)
-    return defaultItems
-  })
-
-  useEffect(() => {
-    saveCartItems(cartItems)
-  }, [cartItems])
-
-  const toggleSelected = (id) => {
-    setCartItems((items) =>
-      items.map((item) =>
-        item.id === id ? { ...item, selected: !item.selected } : item,
-      ),
-    )
-  }
-
-  const increment = (id) => {
-    setCartItems((items) =>
-      items.map((item) =>
-        item.id === id ? { ...item, quantity: item.quantity + 1 } : item,
-      ),
-    )
-  }
-
-  const decrement = (id) => {
-    setCartItems((items) =>
-      items.map((item) =>
-        item.id === id && item.quantity > 1
-          ? { ...item, quantity: item.quantity - 1 }
-          : item,
-      ),
-    )
-  }
-
-  const remove = (id) => {
-    setCartItems((items) => items.filter((item) => item.id !== id))
-  }
+  const { cartItems, toggleSelected, increment, decrement, remove } = useCart()
 
   // 1. 先过滤出所有被打勾 (selected: true) 的商品
   const selectedItems = cartItems.filter((item) => item.selected)
@@ -217,6 +173,10 @@ function CartPage() {
   const [currentTime, setCurrentTime] = useState(formatCurrentTime())
 
   const navigate = useNavigate()
+  const location = useLocation()
+
+  // 安全提取数据
+  const { from } = location.state || {}
 
   useEffect(() => {
       const timer = setInterval(() => {
@@ -227,29 +187,27 @@ function CartPage() {
     }, [])
 
   return (
-    <div className="min-h-screen w-full overflow-x-hidden bg-[#f4f4f5]">
-      <section
-        className="relative h-screen w-full overflow-hidden bg-[#f4f4f5] max-[420px]:mx-auto max-[420px]:h-[min(800px,100dvh)] max-[420px]:w-[min(360px,100vw)] max-[420px]:rounded-[24px] max-[420px]:border max-[420px]:border-[#d4d4d8] max-[420px]:shadow-[0_12px_36px_rgba(0,0,0,0.12)]"
-      >
-        <div className="absolute inset-x-0 top-0 z-20 bg-white pb-5 pt-4">
+    <>
+        <div className="absolute inset-x-0 top-[44px] z-20 bg-white pb-3">
           <div className="mx-auto w-full max-w-[360px] px-5">
-            <div className="mb-2 flex items-center justify-between text-[15px] font-normal tracking-[-0.24px] text-[#1C1B1B]">
-              <span className="leading-5">{currentTime}</span>
-              <StatusIcons />
-            </div>
-
             <header className="flex items-center gap-2">
-              <button onClick={() => navigate('/')} className="text-[#1f2937] transition hover:scale-110 hover:text-[#42c236]">
+              <button onClick={() => {
+                if(from === '/payment') {
+                  navigate('/')
+                } else {
+                navigate(-1)}
+              }
+                } className="text-[#1f2937] transition hover:scale-110 hover:text-[#42c236]">
                 <BackIcon />
               </button>
               <h1 className="font-['Plus_Jakarta_Sans','Rubik',sans-serif] text-[25px] font-bold leading-[1.2] text-black">
-                Cart
-              </h1>
+              My Cart
+            </h1>
             </header>
           </div>
         </div>
 
-        <div className="hide-scrollbar absolute inset-x-0 bottom-[86px] top-[108px] overflow-y-auto pb-6">
+        <div className="hide-scrollbar absolute inset-x-0 bottom-[170px] top-[108px] overflow-y-auto pb-6">
             <div className="mx-auto w-full max-w-[360px] px-5">
                 {cartItems.map((item) => (
                 <div
@@ -375,8 +333,7 @@ function CartPage() {
           </div>
         </div>
         <BottomNav />
-      </section>
-    </div>
+      </>
   )
 }
 
