@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { products } from '../data/homeData'
 import BottomNav from '../components/navigation/BottomNav'
 import { useNavigate } from 'react-router-dom'
+import { loadCartItems, saveCartItems } from '../utils/cart'
 
 function formatPrice(value) {
   return `RM${value.toFixed(2)}`
@@ -154,10 +155,21 @@ function BottomIcon({ type, active = false }) {
 }
 
 function CartPage() {
-  const [cartItems, setCartItems] = useState([
-    { ...products[1], quantity: 1, selected: false },
-    { ...products[2], quantity: 10, selected: false },
-  ])
+  const [cartItems, setCartItems] = useState(() => {
+    const storedItems = loadCartItems()
+    if (storedItems.length > 0) return storedItems
+
+    const defaultItems = [
+      { ...products[1], quantity: 1, selected: false },
+      { ...products[2], quantity: 10, selected: false },
+    ]
+    saveCartItems(defaultItems)
+    return defaultItems
+  })
+
+  useEffect(() => {
+    saveCartItems(cartItems)
+  }, [cartItems])
 
   const toggleSelected = (id) => {
     setCartItems((items) =>
@@ -200,7 +212,7 @@ function CartPage() {
 
   // 3. 计算打勾商品的总数量 (用于 Checkout 按钮)
   // 注意：真实购物车通常显示商品件数相加，而不是种类数 (length)
-  const totalSelectedQuantity = selectedItems.length > 0 ? selectedItems.length : 0
+  const totalSelectedQuantity = selectedItems.reduce((sum, item) => sum + item.quantity, 0)
 
   const [currentTime, setCurrentTime] = useState(formatCurrentTime())
 

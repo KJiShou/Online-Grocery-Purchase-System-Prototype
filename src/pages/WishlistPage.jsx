@@ -2,6 +2,8 @@ import { useMemo, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { products } from '../data/homeData'
 import { loadWishlistIds, toggleWishlistId } from '../utils/wishlist'
+import { addItemToCart } from '../utils/cart'
+import { Message } from '@arco-design/web-react'
 
 function BackIcon() {
   return (
@@ -12,13 +14,26 @@ function BackIcon() {
   )
 }
 
-function CartActionIcon() {
+function CartActionIcon({ color = '#4CBF35' }) {
   return (
     <svg width="21" height="21" viewBox="0 0 21 21" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <path d="M14.2 18.9C15.0385 18.9 15.7188 18.2197 15.7188 17.3812C15.7188 16.5428 15.0385 15.8625 14.2 15.8625C13.3616 15.8625 12.6813 16.5428 12.6813 17.3812C12.6813 18.2197 13.3616 18.9 14.2 18.9Z" stroke="#4CBF35" strokeWidth="1.4"/>
-      <path d="M7.2625 18.9C8.10096 18.9 8.78125 18.2197 8.78125 17.3812C8.78125 16.5428 8.10096 15.8625 7.2625 15.8625C6.42404 15.8625 5.74375 16.5428 5.74375 17.3812C5.74375 18.2197 6.42404 18.9 7.2625 18.9Z" stroke="#4CBF35" strokeWidth="1.4"/>
-      <path d="M3.93 3.90126L3.75625 6.03C3.7215 6.43875 4.04338 6.7775 4.45213 6.7775H17.7569C18.1228 6.7775 18.4272 6.49938 18.4534 6.1335C18.566 4.59725 17.3938 3.34625 15.8575 3.34625H5.1745C5.08762 2.96363 4.91425 2.59888 4.6445 2.2945C4.20963 1.83356 3.60088 1.5625 2.97538 1.5625H1.46875" stroke="#4CBF35" strokeWidth="1.4" strokeLinecap="round"/>
-      <path d="M17.5483 8.08H4.20838C3.8425 8.08 3.54638 8.35813 3.51163 8.71531L3.19813 12.4994C3.07688 13.9831 4.24038 15.25 5.72413 15.25H15.3975C16.7035 15.25 17.8496 14.1809 17.9453 12.8748L18.2321 8.81963C18.2668 8.41956 17.9533 8.08 17.5483 8.08Z" stroke="#4CBF35" strokeWidth="1.4"/>
+      <path d="M14.2 18.9C15.0385 18.9 15.7188 18.2197 15.7188 17.3812C15.7188 16.5428 15.0385 15.8625 14.2 15.8625C13.3616 15.8625 12.6813 16.5428 12.6813 17.3812C12.6813 18.2197 13.3616 18.9 14.2 18.9Z" stroke={color} strokeWidth="1.4"/>
+      <path d="M7.2625 18.9C8.10096 18.9 8.78125 18.2197 8.78125 17.3812C8.78125 16.5428 8.10096 15.8625 7.2625 15.8625C6.42404 15.8625 5.74375 16.5428 5.74375 17.3812C5.74375 18.2197 6.42404 18.9 7.2625 18.9Z" stroke={color} strokeWidth="1.4"/>
+      <path d="M3.93 3.90126L3.75625 6.03C3.7215 6.43875 4.04338 6.7775 4.45213 6.7775H17.7569C18.1228 6.7775 18.4272 6.49938 18.4534 6.1335C18.566 4.59725 17.3938 3.34625 15.8575 3.34625H5.1745C5.08762 2.96363 4.91425 2.59888 4.6445 2.2945C4.20963 1.83356 3.60088 1.5625 2.97538 1.5625H1.46875" stroke={color} strokeWidth="1.4" strokeLinecap="round"/>
+      <path d="M17.5483 8.08H4.20838C3.8425 8.08 3.54638 8.35813 3.51163 8.71531L3.19813 12.4994C3.07688 13.9831 4.24038 15.25 5.72413 15.25H15.3975C16.7035 15.25 17.8496 14.1809 17.9453 12.8748L18.2321 8.81963C18.2668 8.41956 17.9533 8.08 17.5483 8.08Z" stroke={color} strokeWidth="1.4"/>
+    </svg>
+  )
+}
+
+function ToastSuccessIcon() {
+  return (
+    <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+      <path
+        d="M10 18.3333C5.4 18.3333 1.66667 14.6 1.66667 10C1.66667 5.4 5.4 1.66667 10 1.66667C14.6 1.66667 18.3333 5.4 18.3333 10C18.3333 14.6 14.6 18.3333 10 18.3333Z"
+        stroke="white"
+        strokeWidth="1.7"
+      />
+      <path d="M6.45801 10L8.81634 12.3583L13.5413 7.6333" stroke="white" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" />
     </svg>
   )
 }
@@ -42,17 +57,81 @@ function formatPrice(value) {
 
 export default function WishlistPage() {
   const navigate = useNavigate()
+  const [messageApi, messageContextHolder] = Message.useMessage()
   const [wishlistIds, setWishlistIds] = useState(() => loadWishlistIds())
+  const [selectedItem, setSelectedItem] = useState(null)
+  const [modalQuantity, setModalQuantity] = useState(1)
+  const [isAdding, setIsAdding] = useState(false)
   const wishlistItems = useMemo(
     () => products.filter((item) => wishlistIds.includes(item.id)),
     [wishlistIds],
   )
 
+  const openQuantityModal = (item) => {
+    setSelectedItem(item)
+    setModalQuantity(1)
+  }
+
+  const closeQuantityModal = () => {
+    setSelectedItem(null)
+  }
+
+  const updateModalQuantity = (nextQuantity) => {
+    const safeQuantity = Math.min(99, Math.max(1, nextQuantity))
+    setModalQuantity(safeQuantity)
+  }
+
+  const handleAddToCart = () => {
+    if (!selectedItem || isAdding) return
+    setIsAdding(true)
+    addItemToCart(selectedItem, modalQuantity)
+    closeQuantityModal()
+    setWishlistIds(toggleWishlistId(selectedItem.id))
+    messageApi.success({
+      id: 'wishlist-add-to-cart',
+      duration: 2500,
+      showIcon: false,
+      closable: false,
+      style: {
+        width: 328,
+        border: '1px solid #C0C0C0',
+        borderRadius: 12,
+        background: '#FFFFFF',
+        padding: '10px 12px',
+      },
+      content: (
+        <div className="flex w-full items-center justify-between">
+          <div className="flex items-center gap-4">
+            <div className="grid h-10 w-10 place-items-center rounded-[8px] bg-[#4CBF35]">
+              <ToastSuccessIcon />
+            </div>
+            <p className="font-['Plus_Jakarta_Sans','Rubik',sans-serif] text-[13px] font-semibold leading-4 tracking-[0.005em] text-[#1C1B1B]">
+              The product has been added to
+              <br />
+              your cart !
+            </p>
+          </div>
+          <button
+            onClick={() => navigate('/cart')}
+            className="flex cursor-pointer flex-col items-center justify-center text-[#4CBF35] transition hover:opacity-80"
+          >
+            <CartActionIcon color="#4CBF35" />
+            <span className="font-['Plus_Jakarta_Sans','Rubik',sans-serif] text-[13px] font-semibold leading-4 tracking-[0.005em]">
+              View Cart
+            </span>
+          </button>
+        </div>
+      ),
+    })
+    setIsAdding(false)
+  }
+
   return (
     <>
+      {messageContextHolder}
       <div className="absolute inset-x-0 top-[44px] z-20 border-b border-[#F4F5FD] bg-white">
         <div className="mx-auto flex h-14 w-full max-w-[360px] items-center px-4">
-          <button onClick={() => navigate(-1)} aria-label="Back" className="mr-1 shrink-0 text-[#1C1B1B] transition hover:scale-105">
+          <button onClick={() => navigate('/home')} aria-label="Back" className="mr-1 shrink-0 text-[#1C1B1B] transition hover:scale-105">
             <BackIcon />
           </button>
           <h1 className="w-full pr-[33px] text-center font-['Plus_Jakarta_Sans','Rubik',sans-serif] text-[20px] font-bold leading-6 text-[#1C1B1B]">
@@ -69,8 +148,8 @@ export default function WishlistPage() {
                 No items in wishlist yet.
               </div>
             ) : null}
-            {wishlistItems.map((item) => (
-              <article key={item.id} className="flex items-start gap-3 rounded-xl bg-white p-3 shadow-sm">
+            {wishlistItems.map((item, index) => (
+              <article key={`${item.id}-${index}`} className="flex items-start gap-3 rounded-xl bg-white p-3 shadow-sm">
                 <div className="h-[120px] w-[120px] shrink-0 overflow-hidden rounded-xl bg-white p-1">
                   <img src={item.image} alt={item.name} className="h-full w-full object-contain" />
                 </div>
@@ -83,13 +162,17 @@ export default function WishlistPage() {
                     {formatPrice(item.price)}
                   </p>
                   {typeof item.oldPrice === 'number' ? (
-                    <p className="mt-1 font-['Plus_Jakarta_Sans','Rubik',sans-serif] text-[13px] text-[#6F7384] line-through">
+                    <p className="mt-1 font-['Plus_Jakarta_Sans','Rubik',sans-serif] text-[13px] text-[#EE4D4D] line-through">
                       {formatPrice(item.oldPrice)}
                     </p>
                   ) : null}
 
-                  <div className="mt-5 flex items-center justify-between">
-                    <button className="flex items-center gap-2 text-[#4CBF35] transition hover:opacity-80">
+                  <div className="mt-4 flex items-center justify-between gap-2">
+                    <button
+                      onClick={() => openQuantityModal(item)}
+                      className="flex items-center gap-2 text-[#4CBF35] transition hover:opacity-80"
+                      aria-label={`Add ${item.name} to cart`}
+                    >
                       <CartActionIcon />
                       <span className="font-['Plus_Jakarta_Sans','Rubik',sans-serif] text-[10px] font-semibold leading-[13px] tracking-[0.015em]">
                         Add To Cart
@@ -98,7 +181,7 @@ export default function WishlistPage() {
                     <button
                       aria-label="Remove from wishlist"
                       onClick={() => setWishlistIds(toggleWishlistId(item.id))}
-                      className="text-[#EE4D4D] transition hover:scale-105"
+                      className="grid h-11 w-11 place-items-center rounded-xl text-[#EE4D4D] transition hover:bg-[#fff2f2] hover:scale-105"
                     >
                       <TrashIcon />
                     </button>
@@ -109,6 +192,55 @@ export default function WishlistPage() {
           </div>
         </div>
       </div>
+
+      {selectedItem ? (
+        <div className="absolute inset-0 z-50 bg-black/45 px-4">
+          <div className="mx-auto mt-[210px] w-full max-w-[328px] rounded-2xl bg-white p-4 shadow-[0_20px_40px_rgba(0,0,0,0.18)]">
+            <h2 className="font-['Plus_Jakarta_Sans','Rubik',sans-serif] text-[16px] font-bold text-[#1C1B1B]">
+              Choose Quantity
+            </h2>
+            <p className="mt-1 font-['Plus_Jakarta_Sans','Rubik',sans-serif] text-[13px] text-[#6F7384]">
+              {selectedItem.name}
+            </p>
+
+            <div className="mt-4 flex h-[52px] items-center justify-center gap-3 rounded-xl border border-[#E4E4E7] bg-[#F8FAFC]">
+              <button
+                onClick={() => updateModalQuantity(modalQuantity - 1)}
+                aria-label="Decrease quantity"
+                className="grid h-11 w-11 place-items-center rounded-lg text-[22px] font-semibold text-[#1C1B1B] transition hover:bg-[#eef2f7] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#4CBF35]"
+              >
+                -
+              </button>
+              <span className="w-10 text-center font-['Plus_Jakarta_Sans','Rubik',sans-serif] text-[16px] font-semibold text-[#1C1B1B]">
+                {modalQuantity}
+              </span>
+              <button
+                onClick={() => updateModalQuantity(modalQuantity + 1)}
+                aria-label="Increase quantity"
+                className="grid h-11 w-11 place-items-center rounded-lg text-[22px] font-semibold text-[#1C1B1B] transition hover:bg-[#eef2f7] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#4CBF35]"
+              >
+                +
+              </button>
+            </div>
+
+            <div className="mt-4 grid grid-cols-2 gap-2">
+              <button
+                onClick={closeQuantityModal}
+                className="h-11 rounded-xl border border-[#D4D4D8] font-['Plus_Jakarta_Sans','Rubik',sans-serif] text-[13px] font-semibold text-[#1C1B1B] transition hover:bg-[#f4f4f5]"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleAddToCart}
+                disabled={isAdding}
+                className="h-11 rounded-xl bg-[#4CBF35] font-['Plus_Jakarta_Sans','Rubik',sans-serif] text-[13px] font-semibold text-white transition hover:bg-[#37a423]"
+              >
+                Add To Cart
+              </button>
+            </div>
+          </div>
+        </div>
+      ) : null}
     </>
   )
 }

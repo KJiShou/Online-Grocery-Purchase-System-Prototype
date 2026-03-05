@@ -1,4 +1,3 @@
-import { Carousel } from '@arco-design/web-react'
 import { useEffect, useRef, useState } from 'react'
 import {
   CategoryIcon,
@@ -15,6 +14,25 @@ import { loadWishlistIds, saveWishlistIds, toggleWishlistId } from '../utils/wis
 
 function formatPrice(value) {
   return `RM${value.toFixed(2)}`
+}
+
+function CarouselArrowIcon({ className = '' }) {
+  return (
+    <svg
+      width="24"
+      height="24"
+      viewBox="0 0 24 24"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+      className={className}
+      aria-hidden="true"
+    >
+      <path
+        d="M12.4982 12.0007L8.27071 7.54013C8.09728 7.37041 8 7.14121 8 6.90236C8 6.66351 8.09728 6.43431 8.27071 6.26458C8.35587 6.18079 8.45738 6.11424 8.56933 6.06882C8.68128 6.02339 8.80143 6 8.9228 6C9.04417 6 9.16432 6.02339 9.27627 6.06882C9.38822 6.11424 9.48973 6.18079 9.57489 6.26458L14.7297 11.3616C14.9029 11.5317 15 11.761 15 12C15 12.239 14.9029 12.4683 14.7297 12.6384L9.57489 17.7354C9.48973 17.8192 9.38822 17.8858 9.27627 17.9312C9.16432 17.9766 9.04417 18 8.9228 18C8.80143 18 8.68128 17.9766 8.56933 17.9312C8.45738 17.8858 8.35587 17.8192 8.27071 17.7354C8.09728 17.5657 8 17.3365 8 17.0976C8 16.8588 8.09728 16.6296 8.27071 16.4599L12.4982 12.0007Z"
+        fill="#1C1B1B"
+      />
+    </svg>
+  )
 }
 
 function HomePage() {
@@ -40,6 +58,14 @@ function HomePage() {
       searchInputRef.current?.focus()
     }
   }, [searchOpen])
+
+  useEffect(() => {
+    const timer = window.setInterval(() => {
+      setActiveBannerIndex((current) => (current + 1) % bannerItems.length)
+    }, 3200)
+
+    return () => window.clearInterval(timer)
+  }, [])
 
   const runSearch = (inputText = searchText) => {
     const term = inputText.trim()
@@ -83,32 +109,44 @@ function HomePage() {
       <div className="hide-scrollbar absolute inset-x-0 bottom-[86px] top-[100px] overflow-y-auto pb-6">
         <div className="mx-auto w-full max-w-[360px] px-5">
           <section className="home-carousel relative mb-6 h-[155px] overflow-hidden rounded-[26px]">
-            <Carousel
-              autoPlay
-              animation="slide"
-              indicatorType="never"
-              showArrow="hover"
-              trigger="click"
-              onChange={setActiveBannerIndex}
-            >
-              {bannerItems.map((item) => (
-                <div key={item.id} className="relative h-[155px] w-full">
-                  <img src={item.image} alt={item.title} className="h-full w-full object-cover" />
-                  <div className="absolute inset-0 bg-gradient-to-r from-black/55 via-black/20 to-transparent"></div>
-                  <div className="absolute left-4 top-4 rounded-lg bg-black/70 px-[6px] py-[6px] text-[10px] font-semibold leading-[13px] tracking-[0.015em] text-white">
-                    {item.discount}
-                  </div>
-                  <div className="absolute bottom-4 left-4 text-white">
-                    <p className="font-['Plus_Jakarta_Sans','Rubik',sans-serif] text-[14px] font-normal leading-[18px] tracking-[0.005em]">
-                      {item.title}
-                    </p>
-                    <p className="font-['Plus_Jakarta_Sans','Rubik',sans-serif] text-[15px] font-bold leading-[18px]">
-                      {item.subtitle}
-                    </p>
-                  </div>
+            {bannerItems.map((item, index) => (
+              <div
+                key={item.id}
+                className={`absolute inset-0 transition-opacity duration-500 ${
+                  activeBannerIndex === index ? 'opacity-100' : 'pointer-events-none opacity-0'
+                }`}
+              >
+                <img src={item.image} alt={item.title} className="h-full w-full object-cover" />
+                <div className="absolute inset-0 bg-gradient-to-r from-black/55 via-black/20 to-transparent"></div>
+                <div className="absolute left-4 top-4 rounded-lg bg-black/70 px-[6px] py-[6px] text-[10px] font-semibold leading-[13px] tracking-[0.015em] text-white">
+                  {item.discount}
                 </div>
-              ))}
-            </Carousel>
+                <div className="absolute bottom-4 left-4 text-white">
+                  <p className="font-['Plus_Jakarta_Sans','Rubik',sans-serif] text-[14px] font-normal leading-[18px] tracking-[0.005em]">
+                    {item.title}
+                  </p>
+                  <p className="font-['Plus_Jakarta_Sans','Rubik',sans-serif] text-[15px] font-bold leading-[18px]">
+                    {item.subtitle}
+                  </p>
+                </div>
+              </div>
+            ))}
+            <button
+              onClick={() =>
+                setActiveBannerIndex((current) => (current - 1 + bannerItems.length) % bannerItems.length)
+              }
+              aria-label="Previous banner"
+              className="absolute left-2 top-1/2 z-10 grid h-8 w-8 -translate-y-1/2 place-items-center rounded-full bg-white/80"
+            >
+              <CarouselArrowIcon className="rotate-180" />
+            </button>
+            <button
+              onClick={() => setActiveBannerIndex((current) => (current + 1) % bannerItems.length)}
+              aria-label="Next banner"
+              className="absolute right-2 top-1/2 z-10 grid h-8 w-8 -translate-y-1/2 place-items-center rounded-full bg-white/80"
+            >
+              <CarouselArrowIcon />
+            </button>
             <div className="absolute bottom-4 right-4 z-10 flex items-center gap-1 rounded-full bg-white px-2 py-1">
               {bannerItems.map((item, index) => (
                 <span
@@ -122,7 +160,10 @@ function HomePage() {
           <section className="mb-4">
             <div className="mb-3 flex items-center justify-between">
               <h2 className="text-[18px] font-bold text-[#1f2937]">Categories</h2>
-              <button className="font-['Plus_Jakarta_Sans','Rubik',sans-serif] text-[15px] font-semibold leading-[19px] tracking-[0.005em] text-[#42c236] transition hover:scale-105 hover:text-[#2f9e44]">
+              <button
+                onClick={() => navigate('/categories')}
+                className="font-['Plus_Jakarta_Sans','Rubik',sans-serif] text-[15px] font-semibold leading-[19px] tracking-[0.005em] text-[#42c236] transition hover:scale-105 hover:text-[#2f9e44]"
+              >
                 SEE ALL
               </button>
             </div>
@@ -146,7 +187,10 @@ function HomePage() {
           <section>
             <div className="mb-3 flex items-center justify-between">
               <h2 className="text-[18px] font-bold text-[#1f2937]">Popular Products</h2>
-              <button className="font-['Plus_Jakarta_Sans','Rubik',sans-serif] text-[15px] font-semibold leading-[19px] tracking-[0.005em] text-[#42c236] transition hover:scale-105 hover:text-[#2f9e44]">
+              <button
+                onClick={() => navigate('/popular-products')}
+                className="font-['Plus_Jakarta_Sans','Rubik',sans-serif] text-[15px] font-semibold leading-[19px] tracking-[0.005em] text-[#42c236] transition hover:scale-105 hover:text-[#2f9e44]"
+              >
                 SEE ALL
               </button>
             </div>
