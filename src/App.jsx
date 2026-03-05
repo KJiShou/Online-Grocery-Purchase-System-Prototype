@@ -13,6 +13,7 @@ import WishlistPage from './pages/WishlistPage'
 import NewAddressPage from './pages/NewAddressPage'
 import AddressDetailsPage from './pages/AddressDetailsPage'
 import EditAddressPage from './pages/EditAddressPage'
+import OrderPlacedPage from './pages/OrderPlaced'
 
 function App() {
   return (
@@ -26,6 +27,7 @@ function App() {
         <Route path="/wishlist" element={<WishlistPage />} />
         <Route path="/profile" element={<PlaceholderPage title="Profile Page" />} />
         <Route path="/payment" element={<PaymentPage title="" />} />
+        <Route path="/order-placed" element={<OrderPlacedPage title="" />} />
         <Route path="/select-payment" element={<SelectPaymentPage title=""/>} />
         <Route path="/select-voucher" element={<SelectVoucherPage title=""/>} />
         <Route path="/select-address" element={<SelectAddressPage title=""/>} />

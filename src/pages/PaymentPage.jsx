@@ -355,7 +355,21 @@ export default function CheckoutPage() {
               Cancel
             </button>
             <button 
-              onClick={() => console.log('Confirm Order')}
+              onClick={() => {
+                const checkoutData = {
+                  ...data,
+                  items,
+                  subtotal,
+                  totalQuantity,
+                  selectedAddress,
+                  paymentMethod,
+                  appliedVoucher,
+                  discountAmount,
+                  shippingDiscount,
+                  grandTotal,
+                }
+                navigate('/order-placed', { state: checkoutData })
+              }}
               className="flex-1 rounded-xl bg-[#1C1B1B] py-3.5 text-[16px] font-bold text-white transition hover:bg-black hover:shadow-lg active:scale-95"
             >
               Confirm
