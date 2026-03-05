@@ -9,6 +9,7 @@ import {
   SearchFieldIcon,
   SearchIcon,
 } from '../components/Icons'
+import { useNavigate } from 'react-router-dom'
 import { bannerItems, categories, products } from '../data/homeData'
 import { loadWishlistIds, saveWishlistIds, toggleWishlistId } from '../utils/wishlist'
 
@@ -17,6 +18,7 @@ function formatPrice(value) {
 }
 
 function HomePage() {
+  const navigate = useNavigate()
   const [likedProducts, setLikedProducts] = useState(() => {
     const stored = loadWishlistIds()
     if (stored.length > 0) return stored
@@ -39,9 +41,16 @@ function HomePage() {
     }
   }, [searchOpen])
 
-  const runSearch = () => {
-    const term = searchText.trim()
+  const runSearch = (inputText = searchText) => {
+    const term = inputText.trim()
     if (!term) return
+
+    if (term.toLowerCase() === 'sugar') {
+      setSearchOpen(false)
+      setFilterMenuOpen(false)
+      navigate('/grocery-list')
+      return
+    }
 
     setRecentSearches((current) => [term, ...current.filter((item) => item.toLowerCase() !== term.toLowerCase())].slice(0, 8))
     setFilterMenuOpen(false)
@@ -268,7 +277,10 @@ function HomePage() {
                   {recentSearches.map((item) => (
                     <button
                       key={item}
-                      onClick={() => setSearchText(item)}
+                      onClick={() => {
+                        setSearchText(item)
+                        runSearch(item)
+                      }}
                       className="flex h-12 w-full items-end justify-between border-b border-[#F4F5FD] bg-white px-4 pb-1 text-left"
                     >
                       <span className="font-['Plus_Jakarta_Sans','Rubik',sans-serif] text-[14px] font-medium leading-[150%] tracking-[0.005em] text-[#1C1B1B]">
