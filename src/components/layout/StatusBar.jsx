@@ -1,5 +1,4 @@
 import { useEffect, useState } from 'react'
-import { useLocation } from 'react-router-dom'
 
 function formatCurrentTime() {
   const now = new Date()
@@ -35,9 +34,7 @@ function StatusIcons() {
 
 function StatusBar() {
   const [currentTime, setCurrentTime] = useState(formatCurrentTime())
-  const location = useLocation()
-  const isHomePage = location.pathname === '/home' || location.pathname === '/'
-  const statusBgClass = isHomePage ? 'bg-white' : 'bg-[#f4f4f5]'
+  const statusBgClass = 'bg-white'
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -58,3 +55,4 @@ function StatusBar() {
 }
 
 export default StatusBar
+

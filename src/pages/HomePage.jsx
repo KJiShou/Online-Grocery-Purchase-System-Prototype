@@ -1,6 +1,7 @@
 import { Carousel } from '@arco-design/web-react'
 import { useEffect, useRef, useState } from 'react'
 import { bannerItems, categories, products } from '../data/homeData'
+import { loadWishlistIds, saveWishlistIds, toggleWishlistId } from '../utils/wishlist'
 
 function formatPrice(value) {
   return `RM${value.toFixed(2)}`
@@ -131,7 +132,13 @@ function CategoryIcon({ type }) {
 }
 
 function HomePage() {
-  const [likedProducts, setLikedProducts] = useState(['dutch-lady'])
+  const [likedProducts, setLikedProducts] = useState(() => {
+    const stored = loadWishlistIds()
+    if (stored.length > 0) return stored
+    const defaultIds = ['dutch-lady']
+    saveWishlistIds(defaultIds)
+    return defaultIds
+  })
   const [activeBannerIndex, setActiveBannerIndex] = useState(0)
   const [searchOpen, setSearchOpen] = useState(false)
   const [searchText, setSearchText] = useState('')
@@ -229,7 +236,7 @@ function HomePage() {
               {categories.map((category) => (
                 <button
                   key={category.id}
-                  className="h-[86px] rounded-2xl border border-[#e4e4e7] bg-[#f3f4f6] px-2 py-2 text-center transition duration-200 hover:-translate-y-0.5 hover:bg-white hover:shadow-md"
+                  className="h-[86px] rounded-2xl border border-[#e4e4e7] bg-white px-2 py-2 text-center transition duration-200 hover:-translate-y-0.5 hover:bg-white hover:shadow-md"
                 >
                   <span className="mb-1 grid place-items-center">
                     <CategoryIcon type={category.id} />
@@ -258,13 +265,7 @@ function HomePage() {
                     <div className="relative mb-2 h-32 overflow-hidden rounded-xl bg-[#d7f0d4]">
                       <img src={product.image} alt={product.name} className="h-full w-full object-cover" />
                       <button
-                        onClick={() =>
-                          setLikedProducts((current) =>
-                            current.includes(product.id)
-                              ? current.filter((id) => id !== product.id)
-                              : [...current, product.id],
-                          )
-                        }
+                        onClick={() => setLikedProducts(toggleWishlistId(product.id))}
                         className="absolute right-2 top-2 grid h-7 w-7 place-items-center rounded-full bg-[#18181b] text-white transition hover:scale-110 hover:bg-[#42c236]"
                       >
                         <HeartIcon filled={isLiked} />
@@ -277,7 +278,7 @@ function HomePage() {
                       {formatPrice(product.price)}
                     </p>
                     {product.oldPrice ? (
-                      <p className="font-['Plus_Jakarta_Sans','Rubik',sans-serif] text-[10px] leading-[13px] tracking-[0.015em] text-[#C0C0C0] line-through">
+                      <p className="font-['Plus_Jakarta_Sans','Rubik',sans-serif] text-[10px] leading-[13px] tracking-[0.015em] text-[#EE4D4D] line-through">
                         {formatPrice(product.oldPrice)}
                       </p>
                     ) : null}
@@ -395,3 +396,4 @@ function HomePage() {
 }
 
 export default HomePage
+
