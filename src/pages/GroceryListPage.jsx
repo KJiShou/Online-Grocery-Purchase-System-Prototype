@@ -75,6 +75,7 @@ const groceryProducts = [
     price: 2.85,
     oldPrice: 3.0,
     image: '/src/assets/grocery-list/gula-prai.png',
+    category: 'Cooking & Condiments',
   },
   {
     id: 'csr-white-sugar',
@@ -82,6 +83,7 @@ const groceryProducts = [
     price: 46.0,
     oldPrice: null,
     image: '/src/assets/grocery-list/csr-white-sugar.png',
+    category: 'Cooking & Condiments',
   },
   {
     id: 'better-brown',
@@ -89,6 +91,7 @@ const groceryProducts = [
     price: 6.5,
     oldPrice: null,
     image: '/src/assets/grocery-list/better-brown.png',
+    category: 'Cooking & Condiments',
   },
   {
     id: 'rock-sugar',
@@ -96,6 +99,7 @@ const groceryProducts = [
     price: 3.0,
     oldPrice: 5.0,
     image: '/src/assets/grocery-list/rock-sugar.png',
+    category: 'Cooking & Condiments',
   },
   {
     id: 'csr-soft-brown',
@@ -103,6 +107,7 @@ const groceryProducts = [
     price: 3.0,
     oldPrice: null,
     image: '/src/assets/grocery-list/csr-soft-brown-sugar.png',
+    category: 'Cooking & Condiments',
   },
   {
     id: 'soft-brown-2',
@@ -110,6 +115,7 @@ const groceryProducts = [
     price: 3.0,
     oldPrice: 5.0,
     image: '/src/assets/grocery-list/soft-brown-sugar-2.png',
+    category: 'Cooking & Condiments',
   },
 ]
 
@@ -124,16 +130,38 @@ function GroceryListPage() {
   const [maxPrice, setMaxPrice] = useState('')
   const [selectedCategories, setSelectedCategories] = useState([])
   const [categorySearch, setCategorySearch] = useState('')
+  
+  // Active filters (applied when user clicks Apply)
+  const [activeMinPrice, setActiveMinPrice] = useState('')
+  const [activeMaxPrice, setActiveMaxPrice] = useState('')
+  const [activeCategories, setActiveCategories] = useState([])
 
-  // Sort products based on selected sort option
-  const sortedProducts = [...groceryProducts].sort((a, b) => {
-    if (sortBy === 'price') {
-      const priceA = a.price ?? 0
-      const priceB = b.price ?? 0
-      return priceDirection === 'asc' ? priceA - priceB : priceB - priceA
-    }
-    return 0 // Best Match - keep original order
-  })
+  // Filter and sort products based on selected options
+  const filteredAndSortedProducts = groceryProducts
+    .filter((product) => {
+      // Price range filter
+      const min = activeMinPrice ? parseFloat(activeMinPrice) : null
+      const max = activeMaxPrice ? parseFloat(activeMaxPrice) : null
+      const productPrice = product.price ?? 0
+      
+      if (min !== null && productPrice < min) return false
+      if (max !== null && productPrice > max) return false
+      
+      // Category filter
+      if (activeCategories.length > 0 && !activeCategories.includes(product.category)) {
+        return false
+      }
+      
+      return true
+    })
+    .sort((a, b) => {
+      if (sortBy === 'price') {
+        const priceA = a.price ?? 0
+        const priceB = b.price ?? 0
+        return priceDirection === 'asc' ? priceA - priceB : priceB - priceA
+      }
+      return 0 // Best Match - keep original order
+    })
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -223,11 +251,25 @@ function GroceryListPage() {
         {/* Product List - Scrollable */}
         <div className="hide-scrollbar absolute inset-x-0 bottom-[86px] top-[130px] overflow-y-auto pb-6">
           <div className="mx-auto w-full max-w-[360px] px-5 pt-4">
-            <p className="mb-4 font-['Plus_Jakarta_Sans','Rubik',sans-serif] text-[14px] font-medium leading-[18px] tracking-[0.005em] text-[#6F7384]">
-              Showing results for "Sugar"
+            <p className="mb-2 font-['Plus_Jakarta_Sans','Rubik',sans-serif] text-[14px] font-medium leading-[18px] tracking-[0.005em] text-[#6F7384]">
+              Showing results for <b>"Sugar"</b>
             </p>
-            <div className="grid grid-cols-2 gap-3">
-              {sortedProducts.map((product, index) => {
+            {(activeMinPrice || activeMaxPrice || activeCategories.length > 0) && (
+              <p className="mb-4 font-['Plus_Jakarta_Sans','Rubik',sans-serif] text-[12px] font-normal leading-[16px] tracking-[0.005em] text-[#6F7384]">
+                Filters are applied.
+              </p>
+            )}
+            {filteredAndSortedProducts.length === 0 ? (
+              <div className="flex h-[300px] items-center justify-center text-center">
+                <p className="font-['Plus_Jakarta_Sans','Rubik',sans-serif] text-[14px] font-medium leading-[18px] tracking-[0.005em] text-[#6F7384]">
+                  {activeMinPrice || activeMaxPrice || activeCategories.length > 0
+                    ? 'No products found. Try another filter?'
+                    : 'No products found. Try another search keyword?'}
+                </p>
+              </div>
+            ) : (
+              <div className="grid grid-cols-2 gap-3">
+              {filteredAndSortedProducts.map((product, index) => {
                 const isLiked = likedProducts.includes(product.id)
 
                 return (
@@ -273,6 +315,7 @@ function GroceryListPage() {
                 )
               })}
             </div>
+            )}
           </div>
         </div>
 
@@ -387,6 +430,10 @@ function GroceryListPage() {
                       setMinPrice('')
                       setMaxPrice('')
                       setSelectedCategories([])
+                      setActiveMinPrice('')
+                      setActiveMaxPrice('')
+                      setActiveCategories([])
+                      setFilterOpen(false)
                     }}
                     className="flex flex-1 items-center justify-center gap-2 rounded-[12px] border border-[#E4E4E7] px-4 py-2.5 font-['Plus_Jakarta_Sans','Rubik',sans-serif] text-[14px] font-semibold text-[#1C1B1B] transition hover:bg-[#F9FAFB]"
                   >
@@ -394,7 +441,12 @@ function GroceryListPage() {
                     Reset
                   </button>
                   <button
-                    onClick={() => setFilterOpen(false)}
+                    onClick={() => {
+                      setActiveMinPrice(minPrice)
+                      setActiveMaxPrice(maxPrice)
+                      setActiveCategories(selectedCategories)
+                      setFilterOpen(false)
+                    }}
                     className="flex flex-1 items-center justify-center gap-2 rounded-[12px] bg-[#1C1B1B] px-4 py-2.5 font-['Plus_Jakarta_Sans','Rubik',sans-serif] text-[14px] font-semibold text-white transition hover:bg-[#333]"
                   >
                     <img src="/src/assets/grocery-list/filter-apply.png" alt="Apply" className="h-4 w-4" />
