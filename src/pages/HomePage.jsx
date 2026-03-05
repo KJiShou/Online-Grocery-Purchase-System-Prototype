@@ -2,6 +2,7 @@ import { Carousel } from '@arco-design/web-react'
 import { useEffect, useRef, useState } from 'react'
 import { bannerItems, categories, products } from '../data/homeData'
 import { loadWishlistIds, saveWishlistIds, toggleWishlistId } from '../utils/wishlist'
+import { Navigate, useNavigate } from 'react-router-dom'
 
 function formatPrice(value) {
   return `RM${value.toFixed(2)}`
@@ -139,6 +140,7 @@ function HomePage() {
     saveWishlistIds(defaultIds)
     return defaultIds
   })
+  const navigate = useNavigate()
   const [activeBannerIndex, setActiveBannerIndex] = useState(0)
   const [searchOpen, setSearchOpen] = useState(false)
   const [searchText, setSearchText] = useState('')
@@ -261,11 +263,17 @@ function HomePage() {
                 const isLiked = likedProducts.includes(product.id)
 
                 return (
-                  <article key={`${product.id}-${index}`} className="rounded-xl bg-[#c8e8c5] p-2.5">
+                  <article 
+                  onClick={() => navigate(`/product/${product.id}`)}
+                  key={`${product.id}-${index}`} 
+                  className="rounded-xl bg-[#c8e8c5] p-2.5">
                     <div className="relative mb-2 h-32 overflow-hidden rounded-xl bg-[#d7f0d4]">
                       <img src={product.image} alt={product.name} className="h-full w-full object-cover" />
                       <button
-                        onClick={() => setLikedProducts(toggleWishlistId(product.id))}
+                        onClick={(e) => {
+                          e.stopPropagation(); // 严厉警告：必须加上这一行，否则点击爱心会触发外层跳转！
+                          setLikedProducts(toggleWishlistId(product.id));
+                        }}
                         className="absolute right-2 top-2 grid h-7 w-7 place-items-center rounded-full bg-[#18181b] text-white transition hover:scale-110 hover:bg-[#42c236]"
                       >
                         <HeartIcon filled={isLiked} />

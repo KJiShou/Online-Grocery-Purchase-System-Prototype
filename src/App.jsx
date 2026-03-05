@@ -12,6 +12,9 @@ import WishlistPage from './pages/WishlistPage'
 import NewAddressPage from './pages/NewAddressPage'
 import AddressDetailsPage from './pages/AddressDetailsPage'
 import EditAddressPage from './pages/EditAddressPage'
+import ProfilePage from './pages/ProfilePage'
+import OrderHistoryPage from './pages/OrderHistoryPage'
+import ProductDetailPage from './pages/ProductDetailsPage'
 
 function App() {
   return (
@@ -22,7 +25,7 @@ function App() {
         <Route path="/categories" element={<CategoryPage title="Categories Page" />} />
         <Route path="/cart" element={<CartPage title="" />} />
         <Route path="/wishlist" element={<WishlistPage />} />
-        <Route path="/profile" element={<PlaceholderPage title="Profile Page" />} />
+        <Route path="/profile" element={<ProfilePage title="" />} />
         <Route path="/payment" element={<PaymentPage title="" />} />
         <Route path="/select-payment" element={<SelectPaymentPage title=""/>} />
         <Route path="/select-voucher" element={<SelectVoucherPage title=""/>} />
@@ -30,6 +33,8 @@ function App() {
         <Route path="/new-address" element={<NewAddressPage title=""/>} />
         <Route path="/edit-address" element={<EditAddressPage title=""/>} />
         <Route path="/address-details" element={<AddressDetailsPage title=""/>} />
+        <Route path="/order-history" element={<OrderHistoryPage />} />
+        <Route path="/product/:id" element={<ProductDetailPage />} />
       </Route>
     </Routes>
   )
