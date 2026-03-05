@@ -90,10 +90,10 @@ export default function SelectVoucherPage() {
 
   return (
     <div className="min-h-screen w-full overflow-x-hidden bg-[#f4f4f5]">
-      <section className="relative h-screen w-full overflow-hidden bg-[#f8fafc] max-[420px]:mx-auto max-[420px]:h-[min(800px,100dvh)] max-[420px]:w-[min(360px,100vw)] max-[420px]:rounded-[24px] max-[420px]:border max-[420px]:border-[#d4d4d8] max-[420px]:shadow-[0_12px_36px_rgba(0,0,0,0.12)]">
+      <section className="relative h-screen w-full overflow-hidden bg-[#f4f4f5] max-[420px]:mx-auto max-[420px]:h-[min(800px,100dvh)] max-[420px]:w-[min(360px,100vw)] max-[420px]:rounded-[24px] max-[420px]:border max-[420px]:border-[#d4d4d8] max-[420px]:shadow-[0_12px_36px_rgba(0,0,0,0.12)]">
         
         {/* === 顶部 Header === */}
-        <div className="absolute inset-x-0 top-0 z-20 bg-[#f4f4f5] pb-3 pt-4">
+        <div className="absolute inset-x-0 top-0 z-20 bg-white pb-5 pt-4">
           <div className="mx-auto w-full max-w-[360px] px-4">
             <div className="mb-2 flex items-center justify-between text-[15px] font-normal tracking-[-0.24px] text-[#1C1B1B]">
               <span className="leading-5">{currentTime}</span>
@@ -112,7 +112,7 @@ export default function SelectVoucherPage() {
         </div>
 
         {/* === 中间滚动内容区 === */}
-        <div className="hide-scrollbar absolute inset-x-0 bottom-[200px] top-[94px] overflow-y-auto">
+        <div className="hide-scrollbar absolute inset-x-0 bottom-[200px] top-[109px] overflow-y-auto">
           <div className="mx-auto w-full max-w-[360px] px-5 pb-8 pt-2">
             
             {/* 1. Shipping Vouchers 区块 */}

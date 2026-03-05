@@ -111,6 +111,14 @@ function formatPrice(value) {
   return `RM ${value.toFixed(2)}`
 }
 
+function formatAddressDisplay(address, unitNo) {
+  const trimmedAddress = (address || '').trim()
+  const trimmedUnit = (unitNo || '').trim()
+  if (!trimmedUnit) return trimmedAddress
+  if (!trimmedAddress) return trimmedUnit
+  return `${trimmedUnit}, ${trimmedAddress}`
+}
+
 function formatCurrentTime() {
   const now = new Date()
   const hours = String(now.getHours()).padStart(2, '0')
@@ -138,9 +146,17 @@ export default function CheckoutPage() {
   // 2. 安全地提取数据。如果用户是直接在浏览器输入网址进来的（没有经过购物车），
   // location.state 会是 null，我们需要给它一个默认值防止页面崩溃。
   const data = location.state?.checkoutData || location.state || {}
+  const defaultAddress = {
+    id: 'andrew',
+    name: 'Andrew',
+    phone: '(+60) 12-345 6789',
+    address:
+      'Ground Floor, Bangunan Tan Sri Khaw Kai Boh (Block A), Jalan Genting Kelang, Setapak, 53300 Kuala Lumpur, Federal Territory of Kuala Lumpur',
+  }
   const { items = [], 
     subtotal = 0, 
     totalQuantity = 0, 
+    selectedAddress = defaultAddress,
     paymentMethod = 'maybank', 
     appliedVoucher = null, 
     discountAmount = 0, 
@@ -168,7 +184,7 @@ export default function CheckoutPage() {
       <section className="relative h-screen w-full overflow-hidden bg-white max-[420px]:mx-auto max-[420px]:h-[min(800px,100dvh)] max-[420px]:w-[min(360px,100vw)] max-[420px]:rounded-[24px] max-[420px]:border max-[420px]:border-[#d4d4d8] max-[420px]:shadow-[0_12px_36px_rgba(0,0,0,0.12)]">
         
         {/* === 顶部 Header === */}
-        <div className="absolute inset-x-0 top-0 z-20 bg-[#f4f4f5] pb-3 pt-4">
+        <div className="absolute inset-x-0 top-0 z-20 bg-white pb-5 pt-4 border-[#e5e7eb] border-b mt-3">
           <div className="mx-auto w-full max-w-[360px] px-5">
             <div className="mb-2 flex items-center justify-between text-[15px] font-normal tracking-[-0.24px] text-[#1C1B1B]">
               <span className="leading-5">{currentTime}</span>
@@ -187,21 +203,24 @@ export default function CheckoutPage() {
         </div>
 
         {/* === 中间滚动内容区 === */}
-        <div className="hide-scrollbar absolute inset-x-0 bottom-[50px] top-[94px] overflow-y-auto">
+        <div className="hide-scrollbar absolute inset-x-0 bottom-[50px] top-[108px] overflow-y-auto">
           <div className="mx-auto w-full max-w-[360px] px-5 pb-8">
             
             {/* 1. 收货地址 */}
-            <div className="flex items-start justify-between border-b border-[#f3f4f6] py-5">
+            <div
+              onClick={() => navigate('/select-address', { state: data })}
+              className="flex cursor-pointer items-start justify-between border-b border-[#f3f4f6] py-5"
+            >
               <div className="flex items-start gap-2">
                 <div className="mt-0.5">
                   <LocationIcon />
                 </div>
                 <div className="flex flex-col gap-1">
                   <p className="text-[14px] text-[#1C1B1B]">
-                    <span className="font-bold">Andrew</span> <span className="text-[#6b7280]">(+60) 12-345 6789</span>
+                    <span className="font-bold">{selectedAddress.name}</span> <span className="text-[#6b7280]">{selectedAddress.phone}</span>
                   </p>
                   <p className="text-[13px] leading-relaxed text-[#4b5563] pr-4">
-                    Ground Floor, Bangunan Tan Sri Khaw Kai Boh (Block A), Jalan Genting Kelang, Setapak, 53300 Kuala Lumpur, Federal Territory of Kuala Lumpur
+                    {formatAddressDisplay(selectedAddress.address, selectedAddress.unitNo)}
                   </p>
                 </div>
               </div>
@@ -251,7 +270,7 @@ export default function CheckoutPage() {
 
             {/* 3. 优惠券 */}
             <div
-            onClick={() => navigate('/select-voucher', { state: location.state })} 
+            onClick={() => navigate('/select-voucher', { state: data })} 
             className="border-b border-[#f3f4f6] py-5">
               <div className="flex items-center justify-between mb-3 cursor-pointer">
                 <span className="text-[15px] font-bold text-[#1C1B1B]">Voucher</span>
@@ -274,7 +293,7 @@ export default function CheckoutPage() {
 
             {/* 4. 支付方式 */}
             <div
-            onClick={() => navigate('/select-payment', { state: location.state })}
+            onClick={() => navigate('/select-payment', { state: data })}
             className="border-b border-[#f3f4f6] py-5">
               <div className="flex items-center justify-between mb-3 cursor-pointer">
                 <span className="text-[15px] font-bold text-[#1C1B1B]">Payment Method</span>

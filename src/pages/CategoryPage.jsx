@@ -73,7 +73,7 @@ function CategoryPage() {
       <section
         className="relative h-screen w-full overflow-hidden bg-[#f4f4f5] max-[420px]:mx-auto max-[420px]:h-[min(800px,100dvh)] max-[420px]:w-[min(360px,100vw)] max-[420px]:rounded-[24px] max-[420px]:border max-[420px]:border-[#d4d4d8] max-[420px]:shadow-[0_12px_36px_rgba(0,0,0,0.12)]"
       >
-        <div className="absolute inset-x-0 top-0 z-20 bg-[#f4f4f5] pb-3 pt-4">
+        <div className="absolute inset-x-0 top-0 z-20 bg-white pb-5 pt-4">
           <div className="mx-auto w-full max-w-[360px] px-5">
             <div className="mb-2 flex items-center justify-between text-[15px] font-normal tracking-[-0.24px] text-[#1C1B1B]">
               <span className="leading-5">{currentTime}</span>
@@ -91,7 +91,7 @@ function CategoryPage() {
           </div>
         </div>
 
-        <div className="hide-scrollbar absolute inset-x-0 bottom-[86px] top-[94px] overflow-y-auto pb-6">
+        <div className="hide-scrollbar absolute inset-x-0 bottom-[86px] top-[108px] overflow-y-auto pb-6">
           <div className="mx-auto w-full max-w-[360px] px-5 pt-4">
             <div className="grid grid-cols-2 gap-2">
               {categories.map((category) => (
