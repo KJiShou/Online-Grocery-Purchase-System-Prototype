@@ -8,6 +8,11 @@ import SelectPaymentPage from './pages/SelectPaymentPage'
 import SelectVoucherPage from './pages/SelectVoucherPage'
 import CategoryPage from './pages/CategoryPage'
 import GroceryListPage from './pages/GroceryListPage'
+import SelectAddressPage from './pages/SelectAddressPage'
+import WishlistPage from './pages/WishlistPage'
+import NewAddressPage from './pages/NewAddressPage'
+import AddressDetailsPage from './pages/AddressDetailsPage'
+import EditAddressPage from './pages/EditAddressPage'
 
 function App() {
   return (
@@ -18,11 +23,15 @@ function App() {
         <Route path="/categories" element={<CategoryPage title="Categories Page" />} />
         <Route path="/grocery-list" element={<GroceryListPage title="Grocery List Page" />} />
         <Route path="/cart" element={<CartPage title="" />} />
-        <Route path="/wishlist" element={<PlaceholderPage title="Wishlist Page" />} />
+        <Route path="/wishlist" element={<WishlistPage />} />
         <Route path="/profile" element={<PlaceholderPage title="Profile Page" />} />
         <Route path="/payment" element={<PaymentPage title="" />} />
         <Route path="/select-payment" element={<SelectPaymentPage title=""/>} />
         <Route path="/select-voucher" element={<SelectVoucherPage title=""/>} />
+        <Route path="/select-address" element={<SelectAddressPage title=""/>} />
+        <Route path="/new-address" element={<NewAddressPage title=""/>} />
+        <Route path="/edit-address" element={<EditAddressPage title=""/>} />
+        <Route path="/address-details" element={<AddressDetailsPage title=""/>} />
       </Route>
     </Routes>
   )

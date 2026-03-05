@@ -157,7 +157,7 @@ export default function SelectPaymentPage() {
       <section className="relative h-screen w-full overflow-hidden bg-[#f4f4f5] max-[420px]:mx-auto max-[420px]:h-[min(800px,100dvh)] max-[420px]:w-[min(360px,100vw)] max-[420px]:rounded-[24px] max-[420px]:border max-[420px]:border-[#d4d4d8] max-[420px]:shadow-[0_12px_36px_rgba(0,0,0,0.12)]">
         
         {/* === 顶部 Header === */}
-        <div className="absolute inset-x-0 top-0 z-20 bg-[#f4f4f5] pb-3 pt-4">
+        <div className="absolute inset-x-0 top-0 z-20 bg-white pb-5 pt-4">
           <div className="mx-auto w-full max-w-[360px] px-5">
             <div className="mb-4 flex items-center justify-between text-[15px] font-normal tracking-[-0.24px] text-[#1C1B1B]">
               <span className="leading-5">{currentTime}</span>
@@ -176,7 +176,7 @@ export default function SelectPaymentPage() {
         </div>
 
         {/* === 中间滚动内容区 === */}
-        <div className="hide-scrollbar absolute inset-x-0 bottom-[100px] top-[94px] overflow-y-auto">
+        <div className="hide-scrollbar absolute inset-x-0 bottom-[100px] top-[109px] overflow-y-auto">
           <div className="mx-auto flex w-full max-w-[360px] flex-col gap-5 px-5 pb-8 pt-2">
             
             {/* 1. Online Banking 区块 */}
@@ -262,7 +262,7 @@ export default function SelectPaymentPage() {
             <div 
               onClick={() => setSelectedMethod('cod')}
               className={`flex cursor-pointer items-center justify-between rounded-2xl bg-white p-4 shadow-sm transition hover:bg-gray-50 
-                ${selectedMethod === 'cod' ? 'border-2 border-[#1C1B1B]' : 'border-2 border-transparent'}`}
+                ${selectedMethod === 'cod' ? 'border-2 border-[#42c236]' : 'border-2 border-transparent'}`}
             >
               <div className="flex items-center gap-3 text-[#6b7280]">
                 <CashIcon />
@@ -270,9 +270,9 @@ export default function SelectPaymentPage() {
               </div>
               {/* Radio Button 逻辑 */}
               <div className={`flex h-5 w-5 items-center justify-center rounded-full border-2 
-                ${selectedMethod === 'cod' ? 'border-[#1C1B1B]' : 'border-[#d4d4d8]'}`}
+                ${selectedMethod === 'cod' ? 'border-[#42c236]' : 'border-[#d4d4d8]'}`}
               >
-                {selectedMethod === 'cod' && <div className="h-2.5 w-2.5 rounded-full bg-[#1C1B1B]"></div>}
+                {selectedMethod === 'cod' && <div className="h-2.5 w-2.5 rounded-full bg-[#42c236]"></div>}
               </div>
             </div>
 
@@ -288,7 +288,7 @@ export default function SelectPaymentPage() {
                 <div 
                   onClick={() => setSelectedMethod('gpay')}
                   className={`flex h-[64px] cursor-pointer items-center justify-center rounded-2xl bg-[#F4FDFA] shadow-sm transition hover:-translate-y-0.5 
-                    ${selectedMethod === 'gpay' ? 'border-2 border-[#1C1B1B]' : 'border-2 border-transparent'}`}
+                    ${selectedMethod === 'gpay' ? 'border-2 border-[#42c236]' : 'border-2 border-transparent'}`}
                 >
                   <GPayIcon />
                 </div>
@@ -296,7 +296,7 @@ export default function SelectPaymentPage() {
                 <div 
                   onClick={() => setSelectedMethod('tng')}
                   className={`flex h-[64px] cursor-pointer items-center justify-center rounded-2xl bg-[#F4FDFA] shadow-sm transition hover:-translate-y-0.5 
-                    ${selectedMethod === 'tng' ? 'border-2 border-[#1C1B1B]' : 'border-2 border-transparent'}`}
+                    ${selectedMethod === 'tng' ? 'border-2 border-[#42c236]' : 'border-2 border-transparent'}`}
                 >
                   <TngIcon />
                 </div>
