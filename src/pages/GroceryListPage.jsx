@@ -175,7 +175,7 @@ function GroceryListPage() {
     <div className="min-h-screen w-full overflow-x-hidden bg-[#f4f4f5]">
       <section className="relative h-screen w-full overflow-hidden bg-[#f4f4f5] max-[420px]:mx-auto max-[420px]:h-[min(800px,100dvh)] max-[420px]:w-[min(360px,100vw)] max-[420px]:rounded-[24px] max-[420px]:border max-[420px]:border-[#d4d4d8] max-[420px]:shadow-[0_12px_36px_rgba(0,0,0,0.12)]">
         {/* Navigation Bar - Fixed */}
-        <div className="absolute inset-x-0 top-0 z-20 bg-[#f4f4f5] pb-3 pt-4">
+        <div className="absolute inset-x-0 top-0 z-20 bg-white pb-3 pt-4">
           <div className="mx-auto w-full max-w-[360px] px-5">
             <div className="mb-2 flex items-center justify-between text-[15px] font-normal tracking-[-0.24px] text-[#1C1B1B]">
               <span className="leading-5">{currentTime}</span>
@@ -199,7 +199,7 @@ function GroceryListPage() {
         </div>
 
         {/* Sort Options Bar - Fixed, not scrollable */}
-        <div className="absolute inset-x-0 top-[94px] z-20 bg-[#f4f4f5] pb-1 pt-1">
+        <div className="absolute inset-x-0 top-[87px] z-20 bg-white pb-2 pt-2">
           <div className="mx-auto w-full max-w-[360px] px-5">
             <div className="flex items-center gap-3">
               {/* Best Match Button */}
