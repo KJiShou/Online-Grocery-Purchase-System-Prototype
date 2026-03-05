@@ -195,8 +195,10 @@ function BottomNav() {
     })?.id ?? 'home'
 
   return (
-    <nav className="absolute bottom-0 left-0 z-20 w-full border-t border-[#e4e4e7] bg-[#f8fafc] pb-2 pt-3">
-      <div className="mx-auto w-full max-w-[360px] px-2">
+    <nav
+      className="absolute bottom-0 left-0 z-20 w-full border-t border-[#F4F5FD] bg-white pb-2 pt-3"
+    >
+      <div className="mx-auto w-full max-w-[360px] bg-white px-2">
         <div className="mb-2 grid grid-cols-5">
           {navItems.map((item) => {
             const active = activeTab === item.id
@@ -211,7 +213,7 @@ function BottomNav() {
                   <BottomIcon type={item.icon} active={active} />
                 </span>
                 <span
-                  className={`font-['Plus_Jakarta_Sans','Rubik',sans-serif] text-[15px] leading-[19px] tracking-[0.005em] ${active ? 'font-bold text-[#1C1B1B]' : 'font-semibold text-[#6F7384]'}`}
+                  className={`font-['Plus_Jakarta_Sans','Rubik',sans-serif] text-[13px] leading-[16px] tracking-[0.005em] ${active ? 'font-bold text-[#1C1B1B]' : 'font-semibold text-[#6F7384]'}`}
                 >
                   {item.label}
                 </span>

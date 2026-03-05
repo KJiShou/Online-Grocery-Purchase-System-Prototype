@@ -277,7 +277,7 @@ function HomePage() {
                       {formatPrice(product.price)}
                     </p>
                     {product.oldPrice ? (
-                      <p className="font-['Plus_Jakarta_Sans','Rubik',sans-serif] text-[10px] leading-[13px] tracking-[0.015em] text-[#C0C0C0] line-through">
+                      <p className="font-['Plus_Jakarta_Sans','Rubik',sans-serif] text-[10px] leading-[13px] tracking-[0.015em] text-[#EE4D4D] line-through">
                         {formatPrice(product.oldPrice)}
                       </p>
                     ) : null}
@@ -395,3 +395,4 @@ function HomePage() {
 }
 
 export default HomePage
+

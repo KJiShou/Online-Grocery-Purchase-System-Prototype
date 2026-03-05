@@ -4,9 +4,8 @@ import StatusBar from './StatusBar'
 
 function MainLayout() {
   const location = useLocation()
-  const isHomePage = location.pathname === '/home' || location.pathname === '/'
   const isPaymentPage = location.pathname === '/payment'
-  const pageBgClass = isHomePage ? 'bg-white' : 'bg-[#f4f4f5]'
+  const pageBgClass = 'bg-[#f4f5fd]'
 
   return (
     <div className={`min-h-screen w-full overflow-x-hidden ${pageBgClass}`}>
@@ -20,3 +19,4 @@ function MainLayout() {
 }
 
 export default MainLayout
+
