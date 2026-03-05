@@ -75,7 +75,7 @@ export default function AddressDetailsPage() {
       if (!postalCode && parsed.postalCode) setPostalCode(parsed.postalCode)
       if (!unitNo && parsed.subpremise) setUnitNo(parsed.subpremise)
     })
-  }, [isLoaded, addressLine])
+  }, [isLoaded, addressLine, postalCode, unitNo])
 
   const reverseGeocode = (latLng) => {
     if (!geocoder) return
@@ -116,18 +116,22 @@ export default function AddressDetailsPage() {
   return (
     <div className="min-h-screen w-full overflow-x-hidden bg-[#F4F5FD]">
       <section className="relative h-screen w-full overflow-hidden bg-[#F4F5FD] max-[420px]:mx-auto max-[420px]:h-[min(800px,100dvh)] max-[420px]:w-[min(360px,100vw)] max-[420px]:rounded-[24px] max-[420px]:border max-[420px]:border-[#d4d4d8] max-[420px]:shadow-[0_12px_36px_rgba(0,0,0,0.12)]">
-        <div className="absolute inset-x-0 top-0 z-20 bg-white pt-3">
+        <div className="absolute inset-x-0 top-0 z-20 border-b border-[#F4F5FD] bg-white pt-3">
           <div className="mx-auto w-full max-w-[360px] px-4">
             <div className="mb-2 flex items-center justify-between text-[15px] font-normal tracking-[-0.24px] text-[#1C1B1B]">
               <span className="leading-5">{currentTime}</span>
               <StatusIcons />
             </div>
           </div>
-          <div className="h-14 border-b border-[#F4F5FD]">
-            <div className="mx-auto flex h-full w-full max-w-[360px] items-center gap-2 px-4">
-              <button onClick={() => navigate(-1)} className="text-[#1f2937]" aria-label="Back">
+          <div className="mx-auto flex w-full max-w-[360px] items-center gap-2 px-4 pb-3">
+            <button
+              onClick={() => navigate(-1)}
+              className="grid min-h-[44px] min-w-[44px] place-items-center rounded-xl text-[#1f2937] transition hover:bg-[#F4F5FD] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#1C1B1B]"
+              aria-label="Back"
+            >
                 <BackIcon />
-              </button>
+            </button>
+            <div className="min-w-0">
               <h1 className="font-['Plus_Jakarta_Sans','Rubik',sans-serif] text-[25px] font-bold leading-[120%] text-[#1C1B1B]">
                 Address Details
               </h1>
@@ -137,7 +141,11 @@ export default function AddressDetailsPage() {
 
         <div className="hide-scrollbar absolute inset-x-0 bottom-0 top-[101px] overflow-y-auto px-[10px] pb-8 pt-[10px]">
           <div className="mx-auto flex w-full max-w-[360px] flex-col gap-6">
-            <div className="rounded-2xl bg-white p-[10px] shadow-[0_8px_18px_rgba(28,27,27,0.08)]">
+            <div className="rounded-2xl border border-[#F4F5FD] bg-white p-[12px] shadow-[0_8px_18px_rgba(28,27,27,0.08)]">
+              <div className="mb-2 flex items-center justify-between">
+                <h2 className="text-[14px] font-semibold text-[#1C1B1B]">Map Location</h2>
+                <span className="text-[11px] font-medium text-[#6F7384]">Tap map to reposition pin</span>
+              </div>
               <div className="overflow-hidden rounded-xl border border-[#F4F5FD] bg-[#E5E7EB]">
                 {!googleApiKey ? (
                   <div className="flex h-[252px] items-center justify-center px-6 text-center text-[14px] text-[#6B7280]">
@@ -182,7 +190,7 @@ export default function AddressDetailsPage() {
               </div>
             </div>
 
-            <div className="rounded-2xl bg-white p-[10px] shadow-[0_10px_22px_rgba(28,27,27,0.10)]">
+            <div className="rounded-2xl border border-[#F4F5FD] bg-white p-[12px] shadow-[0_10px_22px_rgba(28,27,27,0.10)]">
               <div className="flex flex-col gap-3">
                 <label htmlFor="address" className="font-['Plus_Jakarta_Sans','Rubik',sans-serif] text-[18px] font-bold leading-[23px] tracking-[0.0025em] text-[#1C1B1B]">
                   Address <span className="text-[#F25555]">*</span>
@@ -192,22 +200,30 @@ export default function AddressDetailsPage() {
                   type="text"
                   value={addressLine}
                   onChange={(e) => setAddressLine(e.target.value)}
-                  className="h-[60px] rounded-xl border border-[#F4F5FD] bg-white px-4 font-['Plus_Jakarta_Sans','Rubik',sans-serif] text-[14px] leading-[18px] tracking-[0.005em] text-[#1C1B1B] placeholder:text-[#C0C0C0] focus:outline-none"
+                  className="h-[60px] rounded-xl border border-[#F4F5FD] bg-white px-4 font-['Plus_Jakarta_Sans','Rubik',sans-serif] text-[14px] leading-[18px] tracking-[0.005em] text-[#1C1B1B] placeholder:text-[#C0C0C0] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#1C1B1B]"
                   placeholder="House No., Building, Street Name"
                 />
+                <label htmlFor="unitNo" className="text-[12px] font-semibold uppercase tracking-[0.04em] text-[#6F7384]">
+                  Unit Number
+                </label>
                 <input
+                  id="unitNo"
                   type="text"
                   value={unitNo}
                   onChange={(e) => setUnitNo(e.target.value)}
                   placeholder="Unit No (optional)"
-                  className="h-[60px] rounded-xl border border-[#F4F5FD] bg-white px-4 font-['Plus_Jakarta_Sans','Rubik',sans-serif] text-[14px] leading-[18px] tracking-[0.005em] text-[#1C1B1B] placeholder:text-[#C0C0C0] focus:outline-none"
+                  className="h-[60px] rounded-xl border border-[#F4F5FD] bg-white px-4 font-['Plus_Jakarta_Sans','Rubik',sans-serif] text-[14px] leading-[18px] tracking-[0.005em] text-[#1C1B1B] placeholder:text-[#C0C0C0] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#1C1B1B]"
                 />
+                <label htmlFor="postalCode" className="text-[12px] font-semibold uppercase tracking-[0.04em] text-[#6F7384]">
+                  Postal Code
+                </label>
                 <input
+                  id="postalCode"
                   type="text"
                   value={postalCode}
                   onChange={(e) => setPostalCode(e.target.value)}
                   placeholder="Postal Code"
-                  className="h-[60px] rounded-xl border border-[#F4F5FD] bg-white px-4 font-['Plus_Jakarta_Sans','Rubik',sans-serif] text-[14px] leading-[18px] tracking-[0.005em] text-[#1C1B1B] placeholder:text-[#C0C0C0] focus:outline-none"
+                  className="h-[60px] rounded-xl border border-[#F4F5FD] bg-white px-4 font-['Plus_Jakarta_Sans','Rubik',sans-serif] text-[14px] leading-[18px] tracking-[0.005em] text-[#1C1B1B] placeholder:text-[#C0C0C0] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#1C1B1B]"
                 />
                 {mapError ? <p className="text-[13px] text-[#EE4D4D]">{mapError}</p> : null}
               </div>
@@ -216,13 +232,13 @@ export default function AddressDetailsPage() {
             <div className="grid grid-cols-2 gap-6">
               <button
                 onClick={() => navigate(-1)}
-                className="h-[60px] rounded-xl border border-[#EE4D4D] bg-transparent font-['Plus_Jakarta_Sans','Rubik',sans-serif] text-[17px] font-bold text-[#EE4D4D]"
+                className="h-[60px] rounded-xl border border-[#EE4D4D] bg-transparent font-['Plus_Jakarta_Sans','Rubik',sans-serif] text-[17px] font-bold text-[#EE4D4D] transition hover:bg-[#FFF1F1] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#EE4D4D]"
               >
                 Cancel
               </button>
               <button
                 onClick={handleConfirm}
-                className="h-[60px] rounded-xl bg-[#1C1B1B] font-['Plus_Jakarta_Sans','Rubik',sans-serif] text-[17px] font-bold text-white"
+                className="h-[60px] rounded-xl bg-[#1C1B1B] font-['Plus_Jakarta_Sans','Rubik',sans-serif] text-[17px] font-bold text-white transition hover:bg-[#131313] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#1C1B1B]"
               >
                 Confirm
               </button>

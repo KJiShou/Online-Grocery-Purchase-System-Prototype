@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
 import StatusIcons from '../components/layout/StatusBar'
 
@@ -66,45 +66,33 @@ export default function SelectAddressPage() {
   const location = useLocation()
   const data = location.state?.checkoutData || location.state || {}
   const incomingAddresses = Array.isArray(data.addresses) && data.addresses.length > 0 ? data.addresses : defaultAddresses
+  const savedAddress = location.state?.savedAddress
+  const deletedAddressId = location.state?.deletedAddressId
 
   const [currentTime, setCurrentTime] = useState(formatCurrentTime())
-  const [addresses, setAddresses] = useState(incomingAddresses)
-  const initialAddressId = data.selectedAddress?.id || incomingAddresses.find((item) => item.isDefault)?.id || incomingAddresses[0]?.id || 'andrew'
-  const [selectedAddressId, setSelectedAddressId] = useState(initialAddressId)
+  const addresses = useMemo(() => {
+    let nextAddresses = incomingAddresses
 
-  useEffect(() => {
-    const timer = setInterval(() => {
-      setCurrentTime(formatCurrentTime())
-    }, 1000)
-    return () => clearInterval(timer)
-  }, [])
+    if (savedAddress) {
+      const exists = nextAddresses.some((item) => item.id === savedAddress.id)
+      nextAddresses = exists
+        ? nextAddresses.map((item) => (item.id === savedAddress.id ? { ...item, ...savedAddress } : item))
+        : [...nextAddresses, savedAddress]
 
-  useEffect(() => {
-    if (!location.state?.savedAddress) return
-    const saved = location.state.savedAddress
-    const exists = addresses.some((item) => item.id === saved.id)
-    let nextAddresses = exists
-      ? addresses.map((item) => (item.id === saved.id ? { ...item, ...saved } : item))
-      : [...addresses, saved]
-
-    if (saved.isDefault) {
-      nextAddresses = nextAddresses.map((item) => ({
-        ...item,
-        isDefault: item.id === saved.id,
-      }))
+      if (savedAddress.isDefault) {
+        nextAddresses = nextAddresses.map((item) => ({
+          ...item,
+          isDefault: item.id === savedAddress.id,
+        }))
+      }
     }
 
-    setAddresses(nextAddresses)
-    setSelectedAddressId(saved.id)
-  }, [location.state?.savedAddress])
+    if (deletedAddressId) {
+      nextAddresses = nextAddresses.filter((item) => item.id !== deletedAddressId)
 
-  useEffect(() => {
-    if (!location.state?.deletedAddressId) return
-    const deletedId = location.state.deletedAddressId
-    let nextAddresses = addresses.filter((item) => item.id !== deletedId)
-
-    if (nextAddresses.length === 0) {
-      nextAddresses = defaultAddresses
+      if (nextAddresses.length === 0) {
+        nextAddresses = defaultAddresses
+      }
     }
 
     if (!nextAddresses.some((item) => item.isDefault) && nextAddresses[0]) {
@@ -114,29 +102,41 @@ export default function SelectAddressPage() {
       }))
     }
 
-    setAddresses(nextAddresses)
-    if (selectedAddressId === deletedId) {
-      setSelectedAddressId(nextAddresses[0].id)
-    }
-  }, [location.state?.deletedAddressId])
+    return nextAddresses
+  }, [incomingAddresses, savedAddress, deletedAddressId])
 
-  const selectedAddress = addresses.find((item) => item.id === selectedAddressId) || addresses[0]
+  const initialAddressId = savedAddress?.id || data.selectedAddress?.id || addresses.find((item) => item.isDefault)?.id || addresses[0]?.id || 'andrew'
+  const [selectedAddressId, setSelectedAddressId] = useState(initialAddressId)
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setCurrentTime(formatCurrentTime())
+    }, 1000)
+    return () => clearInterval(timer)
+  }, [])
+
+  const effectiveSelectedAddressId = addresses.some((item) => item.id === selectedAddressId) ? selectedAddressId : addresses[0]?.id
+  const selectedAddress = addresses.find((item) => item.id === effectiveSelectedAddressId) || addresses[0]
 
   return (
     <div className="min-h-screen w-full overflow-x-hidden bg-[#f4f4f5]">
-      <section className="relative h-screen w-full overflow-hidden bg-[#F4F5FD] max-[420px]:mx-auto max-[420px]:h-[min(800px,100dvh)] max-[420px]:w-[min(360px,100vw)] max-[420px]:rounded-[24px] max-[420px]:border max-[420px]:border-[#d4d4d8] max-[420px]:shadow-[0_12px_36px_rgba(0,0,0,0.12)]">
-        <div className="absolute inset-x-0 top-0 z-20 bg-white pt-3">
+      <section className="relative h-screen w-full overflow-hidden bg-[#F4F5FD] max-[420px]:mx-auto max-[420px]:h-[min(800px,100dvh)] max-[420px]:w-[min(360px,100vw)] max-[420px]:rounded-[24px] max-[420px]:border max-[420px]:border-[#d4d4d8] max-[420px]:shadow-[0_12px_36px_rgba(15,23,42,0.14)]">
+        <div className="absolute inset-x-0 top-0 z-20 border-b border-[#F4F5FD] bg-white pt-3">
           <div className="mx-auto w-full max-w-[360px] px-4">
             <div className="mb-2 flex items-center justify-between text-[15px] font-normal tracking-[-0.24px] text-[#1C1B1B]">
               <span className="leading-5">{currentTime}</span>
               <StatusIcons />
             </div>
           </div>
-          <div className="h-14 border-b border-[#F4F5FD]">
-            <div className="mx-auto flex h-full w-full max-w-[360px] items-center gap-2 px-4">
-              <button onClick={() => navigate(-1)} className="text-[#1f2937] transition hover:scale-110" aria-label="Back">
+          <div className="mx-auto flex w-full max-w-[360px] items-center gap-2 px-4 pb-3">
+            <button
+              onClick={() => navigate(-1)}
+              className="grid h-10 w-10 place-items-center rounded-xl text-[#1f2937] transition duration-200 hover:bg-[#F4F5FD] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#1C1B1B]"
+              aria-label="Back"
+            >
                 <BackIcon />
-              </button>
+            </button>
+            <div className="min-w-0">
               <h1 className="font-['Plus_Jakarta_Sans','Rubik',sans-serif] text-[25px] font-bold leading-[120%] text-[#1C1B1B]">
                 Select Address
               </h1>
@@ -144,38 +144,59 @@ export default function SelectAddressPage() {
           </div>
         </div>
 
-        <div className="hide-scrollbar absolute inset-x-0 bottom-[112px] top-[101px] overflow-y-auto">
-          <div className="mx-auto w-full max-w-[360px] px-[6px] pb-8 pt-3">
-            <h2 className="mb-3 px-2 font-['Plus_Jakarta_Sans','Rubik',sans-serif] text-[14px] font-medium tracking-[0.005em] text-[#1C1B1B]">
-              Address
-            </h2>
+        <div className="hide-scrollbar absolute inset-x-0 bottom-[128px] top-[112px] overflow-y-auto">
+          <div className="mx-auto w-full max-w-[360px] px-3 pb-8 pt-4">
+            <div className="mb-3 flex items-center justify-between rounded-2xl border border-[#F4F5FD] bg-white px-3 py-2.5">
+              <h2 className="font-['Plus_Jakarta_Sans','Rubik',sans-serif] text-[14px] font-semibold tracking-[0.005em] text-[#1C1B1B]">
+                Address
+              </h2>
+              <span className="rounded-full bg-[#F4F5FD] px-2 py-1 text-[11px] font-semibold text-[#1C1B1B]">
+                {addresses.length} Saved
+              </span>
+            </div>
 
-            <div className="flex flex-col gap-1.5">
-              {addresses.map((item) => (
+            <div className="flex flex-col gap-2.5">
+              {addresses.map((item) => {
+                const isSelected = effectiveSelectedAddressId === item.id
+
+                return (
                 <article
                   key={item.id}
                   onClick={() => setSelectedAddressId(item.id)}
-                  className="relative cursor-pointer rounded-2xl bg-white px-3 py-3 shadow-[0_8px_20px_rgba(28,27,27,0.10)] transition active:scale-[0.99]"
+                  className={`relative cursor-pointer rounded-2xl border px-3 py-3.5 transition duration-200 ${
+                    isSelected
+                      ? 'border-[#1C1B1B] bg-white shadow-[0_8px_20px_rgba(28,27,27,0.14)]'
+                      : 'border-[#F4F5FD] bg-white shadow-[0_4px_14px_rgba(15,23,42,0.08)] hover:border-[#D4D4D8] hover:shadow-[0_8px_18px_rgba(15,23,42,0.10)]'
+                  }`}
                 >
-                  <div className="flex items-start gap-3">
-                    <div className="min-w-0 flex-1 pr-10">
-                      <div className="mb-1 flex items-center gap-2">
-                        <LocationPin />
-                        <span className="font-['Plus_Jakarta_Sans','Rubik',sans-serif] text-[13px] font-semibold leading-4 tracking-[0.005em] text-[#1C1B1B]">
+                  <div className="flex items-start gap-2.5">
+                    <div className="mt-0.5 rounded-lg bg-white p-1.5 shadow-sm">
+                      <LocationPin />
+                    </div>
+                    <div className="min-w-0 flex-1 pr-12">
+                      <div className="mb-0.5 flex flex-wrap items-center gap-1.5">
+                        <span className="font-['Plus_Jakarta_Sans','Rubik',sans-serif] text-[14px] font-semibold leading-5 tracking-[0.005em] text-[#1C1B1B]">
                           {item.name}
                         </span>
-                        <span className="font-['Plus_Jakarta_Sans','Rubik',sans-serif] text-[14px] leading-[18px] tracking-[0.005em] text-[#6F7384]">
+                        <span className="rounded-md bg-[#F4F5FD] px-1.5 py-0.5 text-[11px] font-semibold text-[#6F7384]">
                           {item.phone}
                         </span>
                       </div>
-                      <p className="font-['Plus_Jakarta_Sans','Rubik',sans-serif] text-[14px] leading-[22px] tracking-[0.005em] text-[#1C1B1B]">
+                      <p className="font-['Plus_Jakarta_Sans','Rubik',sans-serif] text-[14px] leading-[1.55] tracking-[0.005em] text-[#1C1B1B]">
                         {formatAddressDisplay(item.address, item.unitNo)}
                       </p>
-                      {item.isDefault ? (
-                        <span className="mt-1 inline-flex h-6 items-center rounded-full bg-[#FFECE8] px-2.5 text-[12px] font-semibold tracking-[0.005em] text-[#F53F3F]">
-                          Default
-                        </span>
-                      ) : null}
+                      <div className="mt-2 flex items-center gap-2">
+                        {item.isDefault ? (
+                          <span className="inline-flex h-6 items-center rounded-full bg-[#FFECE8] px-2.5 text-[12px] font-semibold tracking-[0.005em] text-[#F53F3F]">
+                            Default
+                          </span>
+                        ) : null}
+                        {isSelected ? (
+                          <span className="inline-flex h-6 items-center rounded-full bg-[#EAF8E7] px-2.5 text-[12px] font-semibold tracking-[0.005em] text-[#4CBF35]">
+                            Selected
+                          </span>
+                        ) : null}
+                      </div>
                     </div>
                   </div>
                   <button
@@ -189,7 +210,7 @@ export default function SelectAddressPage() {
                         },
                       })
                     }}
-                    className="absolute right-3 top-3 text-[14px] font-semibold leading-[18px] text-[#1C1B1B] underline"
+                    className="absolute right-3 top-3 rounded-md px-1.5 py-0.5 text-[13px] font-semibold leading-[18px] text-[#2563EB] transition hover:bg-[#EAF2FF] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#2563EB]"
                   >
                     Edit
                   </button>
@@ -197,20 +218,27 @@ export default function SelectAddressPage() {
                     onClick={() => setSelectedAddressId(item.id)}
                     aria-label={`Choose ${item.name}`}
                     type="button"
-                    className={`absolute right-3 top-1/2 grid h-6 w-6 -translate-y-1/2 place-items-center rounded-full border-2 ${
-                      selectedAddressId === item.id ? 'border-[#4CBF35]' : 'border-[#1C1B1B]'
-                    } z-10`}
+                    className={`absolute right-3 top-1/2 grid min-h-[44px] min-w-[44px] -translate-y-1/2 place-items-center rounded-full ${
+                      isSelected ? 'text-[#4CBF35]' : 'text-[#1C1B1B]'
+                    } focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#1C1B1B]`}
                   >
-                    {selectedAddressId === item.id ? <span className="h-2.5 w-2.5 rounded-full bg-[#4CBF35]"></span> : null}
+                    <span
+                      className={`grid h-6 w-6 place-items-center rounded-full border-2 ${
+                        isSelected ? 'border-[#4CBF35]' : 'border-[#1C1B1B]'
+                      }`}
+                    >
+                      {isSelected ? <span className="h-2.5 w-2.5 rounded-full bg-[#4CBF35]"></span> : null}
+                    </span>
                   </button>
                 </article>
-              ))}
+                )
+              })}
             </div>
           </div>
         </div>
 
-        <div className="absolute inset-x-0 bottom-0 z-20 bg-[#F4F5FD] px-[15px] pb-8 pt-4">
-          <div className="mx-auto grid w-full max-w-[360px] grid-cols-2 gap-[15px]">
+        <div className="absolute inset-x-0 bottom-0 z-20 border-t border-[#F4F5FD] bg-[#F4F5FD] px-[15px] pb-8 pt-4">
+          <div className="mx-auto grid w-full max-w-[360px] grid-cols-2 gap-[12px]">
             <button
               onClick={() =>
                 navigate('/edit-address', {
@@ -222,10 +250,10 @@ export default function SelectAddressPage() {
                   },
                 })
               }
-              className="flex h-[60px] items-center justify-center gap-2 rounded-xl bg-[#1C1B1B] text-[17px] font-bold text-white"
+              className="flex h-[60px] items-center justify-center gap-2 rounded-xl border border-[#1C1B1B] bg-white text-[16px] font-bold text-[#1C1B1B] transition duration-200 hover:bg-[#F4F5FD] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#1C1B1B]"
             >
               <span>New Address</span>
-              <span className="grid h-6 w-6 place-items-center rounded-md border border-white">
+              <span className="grid h-6 w-6 place-items-center rounded-md border border-[#1C1B1B]">
                 <PlusIcon />
               </span>
             </button>
@@ -240,7 +268,7 @@ export default function SelectAddressPage() {
                   replace: true,
                 })
               }
-              className="h-[60px] rounded-xl bg-[#1C1B1B] text-[17px] font-bold text-white"
+              className="h-[60px] rounded-xl bg-[#1C1B1B] text-[17px] font-bold text-white shadow-[0_10px_18px_rgba(28,27,27,0.28)] transition duration-200 hover:bg-[#131313] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#1C1B1B]"
             >
               Confirm
             </button>

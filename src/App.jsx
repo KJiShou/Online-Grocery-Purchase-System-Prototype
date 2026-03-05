@@ -8,6 +8,7 @@ import SelectPaymentPage from './pages/SelectPaymentPage'
 import SelectVoucherPage from './pages/SelectVoucherPage'
 import CategoryPage from './pages/CategoryPage'
 import GroceryListPage from './pages/GroceryListPage'
+import PopularProductsPage from './pages/PopularProductsPage'
 import SelectAddressPage from './pages/SelectAddressPage'
 import WishlistPage from './pages/WishlistPage'
 import NewAddressPage from './pages/NewAddressPage'
@@ -26,6 +27,7 @@ function App() {
         <Route path="/home" element={<HomePage />} />
         <Route path="/categories" element={<CategoryPage title="Categories Page" />} />
         <Route path="/grocery-list" element={<GroceryListPage title="Grocery List Page" />} />
+        <Route path="/popular-products" element={<PopularProductsPage />} />
         <Route path="/cart" element={<CartPage title="" />} />
         <Route path="/wishlist" element={<WishlistPage />} />
         <Route path="/profile" element={<ProfilePage title="" />} />
