@@ -2,6 +2,7 @@ import { useEffect } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import { useOrder } from '../contexts/OrderContext'
 import { paymentMethods } from '../utils/helper'
+import { OrderStatusTag } from '../utils/orderStatus'
 
 // --- 图标组件 ---
 function BackIcon() {
@@ -29,7 +30,7 @@ export default function OrderDetailPage() {
   // 你的路由配置必须是：<Route path="/order-detail/:orderId" element={<OrderDetailPage />} />
   const { orderId } = useParams()
 
-  const { getOrderById } = useOrder()
+  const { getOrderById, completeOrder } = useOrder()
 
   // 模拟从后端根据 orderId 获取到的订单详情数据
   const orderData = getOrderById('#' + orderId)
@@ -60,16 +61,17 @@ export default function OrderDetailPage() {
         </div>
 
         {/* === 中间滚动详情区 === */}
-        <div className="hide-scrollbar absolute inset-x-0 bottom-0 top-[94px] overflow-y-auto">
+        <div className="hide-scrollbar absolute inset-x-0 bottom-[40px] top-[94px] overflow-y-auto">
           <div className="mx-auto w-full max-w-[360px] px-5 pb-10 pt-4">
             
             {/* 1. 订单编号与日期区块 */}
             <div className="border-b border-[#f3f4f6] pb-6">
               <div className="mb-4 flex items-center justify-between">
                 <span className="text-[18px] font-bold text-[#1C1B1B]">{orderData.id}</span>
-                <span className={`rounded-lg px-3 py-1.5 text-[13px] font-semibold text-white ${orderData.status === 'Shipping' ? 'bg-[#7c8deb]' : orderData.status === 'Pending' ? 'bg-[#FFCB45]' : 'bg-[#4ade80]'}`}>
+                {/* <span className={`rounded-lg px-3 py-1.5 text-[13px] font-semibold text-white ${orderData.status === 'Shipping' ? 'bg-[#7c8deb]' : orderData.status === 'Pending' ? 'bg-[#FFCB45]' : 'bg-[#4ade80]'}`}>
                   {orderData.status}
-                </span>
+                </span> */}
+                <OrderStatusTag status={orderData.status} />
               </div>
               <div className="flex flex-col gap-2 text-[13px] font-medium">
                 <p className="text-[#1C1B1B]">Order Date: <span className="font-normal text-[#6b7280]">{orderData.date}</span></p>
@@ -181,6 +183,24 @@ export default function OrderDetailPage() {
 
           </div>
         </div>
+
+        {orderData.status === 'Out for Delivery' && (
+          <div className="absolute bottom-[0px] left-0 z-20 w-full border-t border-[#e4e4e7] bg-[#f8fafc] pb-2 pt-3">
+            <div className="mx-auto w-full max-w-[360px] px-5">
+                <div className="border-b border-[#f3f4f6] py-0">
+                  <button 
+                  onClick={() => {
+                    completeOrder(orderData.id)
+                    alert('Order marked as Delivered!')
+                  }}
+                  className={`mb-2 w-full rounded-xl py-3 text-[15px] font-semibold text-white transition bg-[#111827] hover:bg-[#1f2937] shadow-lg hover:-translate-y-0.5
+                  `}>
+                  Complete Order
+                </button>
+                </div>
+              </div>
+            </div>
+              )}
 
       </>
   )

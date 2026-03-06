@@ -2,17 +2,8 @@ import { useEffect, useRef } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
 import { useOrder } from '../contexts/OrderContext'
 import { useCart } from '../contexts/CartContext'
-import { formatPrice, generateOrderID, generateOrderDate } from '../utils/helper'
-import { BackIcon, LocationIcon, ChevronRightIcon, MaybankIcon, PublicBankIcon, CimbIcon, GPayIcon, TngIcon, CashIcon, TruckIcon } from '../components/Icons'
-
-const paymentMethods = {
-  maybank: { label: 'Maybank2U', icon: <MaybankIcon /> },
-  publicbank: { label: 'Public Bank', icon: <PublicBankIcon /> },
-  cimb: { label: 'CIMB Clicks', icon: <CimbIcon /> },
-  gpay: { label: 'Google Pay', icon: <GPayIcon /> },
-  tng: { label: 'Touch \'n Go', icon: <TngIcon /> },
-  cod: { label: 'Cash On Delivery', icon: <CashIcon /> },
-}
+import { formatPrice, generateOrderID, generateOrderDate, paymentMethods } from '../utils/helper'
+import { BackIcon, LocationIcon, ChevronRightIcon, TruckIcon } from '../components/Icons'
 
 function formatAddressDisplay(address, unitNo) {
   const trimmedAddress = (address || '').trim()
@@ -27,7 +18,7 @@ function formatAddressDisplay(address, unitNo) {
 export default function CheckoutPage() {
   const navigate = useNavigate()
   const location = useLocation()
-  const { addOrder, resetOrders } = useOrder()
+  const { addOrder, updateOrderStatus, resetOrders } = useOrder()
   const { selectedItems, subtotal, removeMultiple } = useCart()
 
   const isPaymentSuccessful = useRef(false)
@@ -176,11 +167,14 @@ export default function CheckoutPage() {
               </div>
               <div className="flex items-center gap-3">
                 {
-                  <>
-                  {paymentMethods[paymentMethod]?.icon}
+                    (() => {
+                      const IconComponent = paymentMethods[paymentMethod].icon;
+                      return (
+                        <IconComponent />
+                      )
+                    })()
+                  }
                   <span className="text-[14px] font-semibold text-[#1C1B1B]">{paymentMethods[paymentMethod]?.label}</span>
-                </>
-                }
               </div>
             </div>
 
@@ -245,8 +239,9 @@ export default function CheckoutPage() {
                   grandTotal,
                 }
                 isPaymentSuccessful.current = true
+                const currentOrderId = generateOrderID();
                 addOrder({
-                id: generateOrderID(),
+                id: currentOrderId,
                 status: 'Pending',
                 date: generateOrderDate(),
                 shippedDate: null,
@@ -265,8 +260,24 @@ export default function CheckoutPage() {
                 },
                 paymentMethod: paymentMethods[paymentMethod]?.label || 'Maybank2U',
                 })
+
+                // 1. 模拟第一阶段：30秒（30000毫秒）后，把状态改为 Shipped
+                setTimeout(() => {
+                  updateOrderStatus(currentOrderId, 'Shipped');
+                  console.log(`后台模拟推送：订单 ${currentOrderId} 第一阶段 -> Shipped`);
+
+                  // 2. 模拟第二阶段：在变成 Shipped 之后，再开启一个新的 30 秒定时器
+                  setTimeout(() => {
+                    updateOrderStatus(currentOrderId, 'Out for Delivery');
+                    console.log(`后台模拟推送：订单 ${currentOrderId} 第二阶段 -> Out for Delivery`);
+                    
+                    // 因为这里是终点，所以不需要再嵌套定时器了，更新到此停止。
+                  }, 30000);
+
+                }, 30000);
+
                 removeMultiple(selectedItems.map(item => item.id))
-                navigate('/order-placed', { state: { from: location.pathname, replace: true, checkoutData: checkoutData } })
+                navigate('/order-placed', { state: { from: location.pathname, checkoutData: checkoutData }, replace: true })
               }}
               className="flex-1 rounded-xl bg-[#1C1B1B] py-3.5 text-[16px] font-bold text-white transition hover:bg-black hover:shadow-lg active:scale-95"
             >

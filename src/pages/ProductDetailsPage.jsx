@@ -4,101 +4,11 @@ import BottomNav from '../components/navigation/BottomNav'
 import { products } from '../data/homeData'
 import { useCart } from '../contexts/CartContext'
 import { loadWishlistIds, saveWishlistIds, toggleWishlistId } from '../utils/wishlist'
-
-function formatPrice(value) {
-  return `RM${value.toFixed(2)}`
-}
-
-// --- 图标组件 ---
-function BackIcon() {
-  return (
-    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#1C1B1B" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M19 12H5M12 19l-7-7 7-7"/>
-    </svg>
-  )
-}
-
-function HeartIcon({ filled = false }) {
-  return (
-    <svg viewBox="0 0 24 24" className="h-4 w-4" fill={filled ? 'currentColor' : 'none'} stroke="currentColor" strokeWidth="2">
-      <path d="M20.8 8.6c0 5.5-8.8 11.1-8.8 11.1S3.2 14.1 3.2 8.6a5 5 0 0 1 8.8-3.2A5 5 0 0 1 20.8 8.6z"></path>
-    </svg>
-  )
-}
-
-function CartAddIcon() {
-  return (
-    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <circle cx="9" cy="21" r="1"></circle>
-      <circle cx="20" cy="21" r="1"></circle>
-      <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
-    </svg>
-  )
-}
-
-function MinusIcon() {
-  return (
-    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#9ca3af" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <line x1="5" y1="12" x2="19" y2="12"></line>
-    </svg>
-  )
-}
-
-function PlusIcon() {
-  return (
-    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#1C1B1B" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <line x1="12" y1="5" x2="12" y2="19"></line>
-      <line x1="5" y1="12" x2="19" y2="12"></line>
-    </svg>
-  )
-}
-
-function ChevronLeftIcon() {
-  return (
-    <svg fill="none" stroke="currentColor" strokeWidth="4" viewBox="0 0 48 48" aria-hidden="true" focusable="false" className="arco-icon arco-icon-left"><path d="M32 8.4 16.444 23.956 32 39.513"></path></svg>
-  )
-}
-
-function ChevronRightIcon() {
-  return (
-    <svg fill="none" stroke="currentColor" strokeWidth="4" viewBox="0 0 48 48" aria-hidden="true" focusable="false" className="arco-icon arco-icon-right"><path d="m16 39.513 15.556-15.557L16 8.4"></path></svg>
-  )
-}
-
-// Toast 左侧的绿色打勾图标
-function ToastCheckIcon() {
-  return (
-    <div className="flex h-7 w-7 flex-shrink-0 items-center justify-center rounded-md bg-[#42c236]">
-    <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <path d="M10.0003 18.9577C5.05866 18.9577 1.04199 14.941 1.04199 9.99935C1.04199 5.05768 5.05866 1.04102 10.0003 1.04102C14.942 1.04102 18.9587 5.05768 18.9587 9.99935C18.9587 14.941 14.942 18.9577 10.0003 18.9577ZM10.0003 2.29102C5.75033 2.29102 2.29199 5.74935 2.29199 9.99935C2.29199 14.2493 5.75033 17.7077 10.0003 17.7077C14.2503 17.7077 17.7087 14.2493 17.7087 9.99935C17.7087 5.74935 14.2503 2.29102 10.0003 2.29102Z" fill="white"/>
-        <path d="M8.81621 12.9827C8.64954 12.9827 8.49121 12.916 8.37454 12.7993L6.01621 10.441C5.77454 10.1993 5.77454 9.79935 6.01621 9.55768C6.25788 9.31602 6.65788 9.31602 6.89954 9.55768L8.81621 11.4743L13.0995 7.19102C13.3412 6.94935 13.7412 6.94935 13.9829 7.19102C14.2245 7.43268 14.2245 7.83268 13.9829 8.07435L9.25788 12.7993C9.14121 12.916 8.98288 12.9827 8.81621 12.9827Z" fill="white"/>
-    </svg>  
-    </div>
-  )
-}
-
-// Toast 右侧的绿色购物车图标
-function ToastCartIcon() {
-  return (
-    <svg width="21" height="21" viewBox="0 0 21 21" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <path d="M1.75 1.75H3.2725C4.2175 1.75 4.96125 2.56375 4.8825 3.5L4.15625 12.215C4.03375 13.6412 5.16249 14.8662 6.59749 14.8662H15.9163C17.1763 14.8662 18.2788 13.8338 18.375 12.5825L18.8475 6.02C18.9525 4.5675 17.85 3.38625 16.3887 3.38625H5.09251" stroke="#4CBF35" strokeWidth="1.5" strokeMiterlimit="10" strokeLinecap="round" strokeLinejoin="round"/>
-    <path d="M14.2188 19.25C14.8228 19.25 15.3125 18.7603 15.3125 18.1562C15.3125 17.5522 14.8228 17.0625 14.2188 17.0625C13.6147 17.0625 13.125 17.5522 13.125 18.1562C13.125 18.7603 13.6147 19.25 14.2188 19.25Z" stroke="#4CBF35" strokeWidth="1.5" strokeMiterlimit="10" strokeLinecap="round" strokeLinejoin="round"/>
-    <path d="M7.21875 19.25C7.82281 19.25 8.3125 18.7603 8.3125 18.1562C8.3125 17.5522 7.82281 17.0625 7.21875 17.0625C6.61469 17.0625 6.125 17.5522 6.125 18.1562C6.125 18.7603 6.61469 19.25 7.21875 19.25Z" stroke="#4CBF35" strokeWidth="1.5" strokeMiterlimit="10" strokeLinecap="round" strokeLinejoin="round"/>
-    <path d="M7.875 7H18.375" stroke="#4CBF35" strokeWidth="1.5" strokeMiterlimit="10" strokeLinecap="round" strokeLinejoin="round"/>
-    </svg>
-  )
-}
-
-function formatCurrentTime() {
-  const now = new Date()
-  const hours = String(now.getHours()).padStart(2, '0')
-  const minutes = String(now.getMinutes()).padStart(2, '0')
-  return `${hours}:${minutes}`
-}
+import { formatPrice } from '../utils/helper'
+import { BackIcon, HeartIcon, ChevronRightIcon, CartAddIcon, PlusIcon, MinusIcon, ChevronLeftIcon, ToastCheckIcon, ToastCartIcon } from '../components/Icons'
 
 export default function ProductDetailPage() {
   const navigate = useNavigate()
-  const [currentTime, setCurrentTime] = useState(formatCurrentTime())
   const { addToCart, cartItems } = useCart()
 
   // 数量状态管理
@@ -123,17 +33,17 @@ export default function ProductDetailPage() {
 
   const [isClicked, setIsClicked] = useState(false)
 
-    // 1. 只需要一个布尔值状态来记录是否展开（默认不展开）
-    const [isExpanded, setIsExpanded] = useState(false);
+  // 1. 只需要一个布尔值状态来记录是否展开（默认不展开）
+  const [isExpanded, setIsExpanded] = useState(false);
 
-    // 2. 预先判断原始文本是否真的超过了限制（比如 150 个字符，移动端 300 个字符通常太长了，你可以自己调）
-    const maxLength = 150;
-    const isLongText = product.description.length > maxLength;
+  // 2. 预先判断原始文本是否真的超过了限制（比如 150 个字符，移动端 300 个字符通常太长了，你可以自己调）
+  const maxLength = 150;
+  const isLongText = product.description.length > maxLength;
 
-    // 3. 渲染时实时计算当前应该显示的文本
-    const displayText = isExpanded 
-    ? product.description 
-    : product.description.slice(0, maxLength) + (isLongText ? ' ...' : '');
+  // 3. 渲染时实时计算当前应该显示的文本
+  const displayText = isExpanded 
+  ? product.description 
+  : product.description.slice(0, maxLength) + (isLongText ? ' ...' : '');
 
   // 1. 记录当前索引 (你已经有了)
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
@@ -141,7 +51,7 @@ export default function ProductDetailPage() {
   // 2. 严厉检查：确保有一个图片数组用于轮播 (你已经有了)
   const carouselImages = product.images && product.images.length > 0 
     ? product.images 
-    : [product.image, product.image, product.image]; 
+    : [product.image]; 
 
   // 3. 新增：创建一个 Ref 指向滚动容器
   const scrollContainerRef = useRef(null);
@@ -199,18 +109,6 @@ export default function ProductDetailPage() {
     return () => {
       if (toastTimerRef.current) clearTimeout(toastTimerRef.current)
     }
-  }, [])
-
-  // useEffect(() => {
-  //   console.log("从 URL 接收到的商品 ID 是:", id)
-  //   console.log("Description Length:", product.description.length)
-  // }, [id])
-
-  useEffect(() => {
-    const timer = setInterval(() => {
-      setCurrentTime(formatCurrentTime())
-    }, 1000)
-    return () => clearInterval(timer)
   }, [])
 
   const increment = () => setQuantity(q => q + 1)
@@ -422,9 +320,6 @@ export default function ProductDetailPage() {
             </div>
           </div>
         </div>
-
-        {/* 底部系统导航 */}
-        <BottomNav />
      </>
   )
 }

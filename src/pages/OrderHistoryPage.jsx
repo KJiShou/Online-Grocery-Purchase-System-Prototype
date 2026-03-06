@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useOrder } from '../contexts/OrderContext'
+import { OrderStatusTag } from '../utils/orderStatus'
 
 // --- 图标组件 ---
 function BackIcon() {
@@ -84,11 +85,12 @@ export default function OrderListPage() {
                   <span className="text-[17px] font-bold text-[#1C1B1B]">
                     {order.id}
                   </span>
-                  <span className={`rounded-lg px-3 py-1 text-[13px] font-semibold text-white 
+                  {/* <span className={`rounded-lg px-3 py-1 text-[13px] font-semibold text-white 
                     ${order.status === 'Shipping' ? 'bg-[#7c8deb]' : order.status === 'Pending' ? 'bg-[#FFCB45]' : 'bg-[#4ade80]'}`}
                   >
                     {order.status}
-                  </span>
+                  </span> */}
+                  <OrderStatusTag status={order.status} />
                 </div>
 
                 {/* 中间：数量与金额 + 右箭头 */}

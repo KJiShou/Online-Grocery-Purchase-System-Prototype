@@ -37,8 +37,30 @@ export function OrderProvider({ children }) {
     return orders.find((order) => order.id === id)
   }
 
+  const completeOrder = (id) => {
+    setOrders((prevOrders) => {
+      return prevOrders.map((order) => {
+        if (order.id === id) {
+          return { ...order, status: 'Delivered' }
+        }
+        return order
+      })
+    })
+  }
+
   const resetOrders = () => {
     setOrders([])
+  }
+
+  // === 新增方法：更新特定订单的状态 ===
+  const updateOrderStatus = (orderId, newStatus) => {
+    setOrders((prevOrders) =>
+      prevOrders.map((order) =>
+        order.id === orderId 
+          ? { ...order, status: newStatus } // 找到目标订单，只更新 status 字段
+          : order
+      )
+    )
   }
 
   // 将数据和方法打包提供出去
@@ -48,7 +70,9 @@ export function OrderProvider({ children }) {
         orders,      // 所有的订单列表 (给 OrderListPage 用)
         addOrder,    // 写入新订单的方法 (给 Payment 结算页用)
         getOrderById, // 查找单个订单的方法 (给 OrderDetailPage 用)
-        resetOrders   // 重置订单列表的方法
+        completeOrder, // 完成订单的方法 (给 OrderDetailPage 用)
+        resetOrders,   // 重置订单列表的方法
+        updateOrderStatus, // 更新订单状态的方法
       }}
     >
       {children}
