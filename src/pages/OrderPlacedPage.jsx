@@ -1,7 +1,8 @@
-import { useEffect, useState } from 'react'
-import { useLocation, useNavigate } from 'react-router-dom'
+import { useEffect, useState, useRef } from 'react'
+import { useLocation, useNavigate, useNavigationType } from 'react-router-dom'
+import { useOrder } from '../contexts/OrderContext'
 import tickIcon from '../assets/order-placed/tick.png'
-import homeIcon from '../assets/order-placed/home.png'
+import changeAddressIcon from '../assets/order-placed/change-address.png'
 import orderIcon from '../assets/order-placed/order.png'
 
 function formatCurrentTime() {
@@ -66,10 +67,25 @@ function LocationIcon() {
 	)
 }
 
+function ToastCheckIcon() {
+	return (
+		<div className="flex h-7 w-7 flex-shrink-0 items-center justify-center rounded-md bg-[#42c236]">
+		<svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+			<path d="M10.0003 18.9577C5.05866 18.9577 1.04199 14.941 1.04199 9.99935C1.04199 5.05768 5.05866 1.04102 10.0003 1.04102C14.942 1.04102 18.9587 5.05768 18.9587 9.99935C18.9587 14.941 14.942 18.9577 10.0003 18.9577ZM10.0003 2.29102C5.75033 2.29102 2.29199 5.74935 2.29199 9.99935C2.29199 14.2493 5.75033 17.7077 10.0003 17.7077C14.2503 17.7077 17.7087 14.2493 17.7087 9.99935C17.7087 5.74935 14.2503 2.29102 10.0003 2.29102Z" fill="white"/>
+			<path d="M8.81621 12.9827C8.64954 12.9827 8.49121 12.916 8.37454 12.7993L6.01621 10.441C5.77454 10.1993 5.77454 9.79935 6.01621 9.55768C6.25788 9.31602 6.65788 9.31602 6.89954 9.55768L8.81621 11.4743L13.0995 7.19102C13.3412 6.94935 13.7412 6.94935 13.9829 7.19102C14.2245 7.43268 14.2245 7.83268 13.9829 8.07435L9.25788 12.7993C9.14121 12.916 8.98288 12.9827 8.81621 12.9827Z" fill="white"/>
+		</svg>  
+		</div>
+	)
+}
+
 export default function OrderPlacedPage() {
 	const navigate = useNavigate()
+  	const navigationType = useNavigationType()
 	const location = useLocation()
-	const data = location.state?.checkoutData || location.state || {}
+	const { updateOrder, getOrderById } = useOrder()
+	const data = { ...(location.state?.checkoutData || location.state || {}) }
+
+	const [showToast, setShowToast] = useState(false)
 
 	const defaultAddress = {
 		id: 'andrew',
@@ -87,6 +103,27 @@ export default function OrderPlacedPage() {
 		shippingDiscount = 0,
 		grandTotal = subtotal + 5,
 	} = data
+	
+	useEffect(() => {
+		if (data.from && navigationType !== 'POP') {
+			const order = getOrderById(data.currentOrderId)
+			if (!order) {
+				throw new Error('No order data found.')
+			}
+			const shippingInfo = order.shippingInfo;
+			shippingInfo.address = formatAddressDisplay(data.selectedAddress.address, data.selectedAddress.unitNo);
+			shippingInfo.name = data.selectedAddress.name;
+			shippingInfo.phone = data.selectedAddress.phone;
+			updateOrder(data.currentOrderId, { shippingInfo })
+			
+			// Show toast when shipping address is updated
+			setShowToast(true)
+			setTimeout(() => {
+				setShowToast(false)
+			}, 3000)
+		}
+	}, [data.currentOrderId, data.from])
+
 
 	const [currentTime, setCurrentTime] = useState(formatCurrentTime())
 
@@ -116,12 +153,23 @@ export default function OrderPlacedPage() {
 								Order Placed
 							</h1>
 						</header>
+
+						{/* Toast notification */}
+						<div 
+							className={`absolute left-1/2 top-[50px] z-50 flex w-[calc(100%-40px)] max-w-[320px] -translate-x-1/2 items-center gap-3 rounded-2xl border border-[#f3f4f6] bg-white p-3 shadow-[0_12px_30px_rgba(0,0,0,0.08)] transition-all duration-300 ease-out 
+							${showToast ? 'translate-y-0 opacity-100 pointer-events-auto' : '-translate-y-6 opacity-0 pointer-events-none'}`}
+						>
+							<ToastCheckIcon />
+							<p className="w-full text-[13px] font-semibold leading-tight text-[#1C1B1B]">
+								Shipping address updated successfully!
+							</p>
+						</div>
 					</div>
 				</div>
 
 				<div className="hide-scrollbar absolute inset-x-0 bottom-[80px] top-[95px] overflow-y-auto pb-8">
-					<div className="mx-auto w-full max-w-[360px] px-5 pt-4">
-						<div className="mb-4 rounded-[16px] bg-white p-[20px]">
+					<div className="mx-auto w-full max-w-[360px] px-3 pt-4">
+						<div className="mb-4 rounded-[16px] bg-white p-[20px] px-[16px]">
 							<div className="flex flex-col items-center">
 								<img src={tickIcon} alt="Order placed" className="h-[72px] w-[72px] object-contain" />
 								<h2 className="mt-5 text-center text-[22px] font-bold leading-[1.1] tracking-[-0.03em] text-[#1C1B1B]">
@@ -150,24 +198,24 @@ export default function OrderPlacedPage() {
 
 							<div className="mt-4 grid grid-cols-2 gap-2">
 								<button
-									onClick={() => navigate('/home')}
+									onClick={() => navigate('/select-address', { state: {...data, from: location.pathname } })}
 									className="flex h-[46px] items-center justify-center gap-2 rounded-[12px] border border-[#e4e4e7] bg-white text-[15px] font-semibold text-[#1C1B1B]"
 								>
-									<img src={homeIcon} alt="Home" className="h-[20px] w-[20px] object-contain" />
-									<span>Home</span>
+									<img src={changeAddressIcon} alt="Change Address" className="h-[20px] w-[20px] object-contain" />
+									<span>Change Address</span>
 								</button>
 
 								<button
-									  onClick={() => navigate('/placeholder')}
+									  onClick={() => navigate('/order-detail/' + data.currentOrderId.substring(1))}
 									className="flex h-[46px] items-center justify-center gap-2 rounded-[12px] bg-[#1C1B1B] text-[15px] font-semibold text-white"
 								>
-									<img src={orderIcon} alt="Order status" className="h-[20px] w-[20px] object-contain" />
-									<span>Order Status</span>
+									<img src={orderIcon} alt="Order detail" className="h-[20px] w-[20px] object-contain" />
+									<span>Order Detail</span>
 								</button>
 							</div>
 						</div>
 
-						<div className="rounded-[16px] bg-white p-[20px]">
+						<div className="rounded-[16px] bg-white p-[20px] px-[16px]">
 							<h2 className="mb-4 text-[22px] font-bold leading-[1.1] tracking-[-0.03em] text-[#1C1B1B]">
 								What You've Ordered
 							</h2>

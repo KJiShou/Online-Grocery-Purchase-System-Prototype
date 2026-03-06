@@ -277,7 +277,7 @@ export default function CheckoutPage() {
                 }, 30000);
 
                 removeMultiple(selectedItems.map(item => item.id))
-                navigate('/order-placed', { state: { from: location.pathname, checkoutData: checkoutData }, replace: true })
+                navigate('/order-placed', { state: { from: location.pathname, checkoutData: {...checkoutData, currentOrderId} }, replace: true  })
               }}
               className="flex-1 rounded-xl bg-[#1C1B1B] py-3.5 text-[16px] font-bold text-white transition hover:bg-black hover:shadow-lg active:scale-95"
             >

@@ -47,6 +47,14 @@ export function OrderProvider({ children }) {
       })
     })
   }
+  
+  const updateOrder = (id, updatedData) => {
+    setOrders((prevOrders) =>
+      prevOrders.map((order) =>
+        order.id === id ? { ...order, ...updatedData } : order
+      )
+    )
+  }
 
   const resetOrders = () => {
     setOrders([])
@@ -69,6 +77,7 @@ export function OrderProvider({ children }) {
       value={{
         orders,      // 所有的订单列表 (给 OrderListPage 用)
         addOrder,    // 写入新订单的方法 (给 Payment 结算页用)
+        updateOrder, // 更新订单的方法 (给 OrderPlacedPage 用)
         getOrderById, // 查找单个订单的方法 (给 OrderDetailPage 用)
         completeOrder, // 完成订单的方法 (给 OrderDetailPage 用)
         resetOrders,   // 重置订单列表的方法
