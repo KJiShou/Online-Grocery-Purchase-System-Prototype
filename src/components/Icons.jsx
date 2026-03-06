@@ -132,10 +132,24 @@ export function LocationIcon() {
   )
 }
 
+export function ChevronLeftIcon() {
+  return (
+    <svg fill="none" stroke="currentColor" strokeWidth="4" viewBox="0 0 48 48" aria-hidden="true" focusable="false" className="arco-icon arco-icon-left"><path d="M32 8.4 16.444 23.956 32 39.513"></path></svg>
+  )
+}
+
 export function ChevronRightIcon() {
   return (
     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#9CA3AF" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
       <path d="M9 18l6-6-6-6"/>
+    </svg>
+  )
+}
+
+export function ChevronUpIcon() {
+  return (
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <polyline points="18 15 12 9 6 15" />
     </svg>
   )
 }
@@ -218,8 +232,7 @@ export function CashIcon() {
   )
 }
 
-export 
-function TruckIcon() {
+export function TruckIcon() {
   return (
     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#1C1B1B" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
       <rect x="1" y="3" width="15" height="13"></rect>
@@ -228,6 +241,145 @@ function TruckIcon() {
       <circle cx="18.5" cy="18.5" r="2.5"></circle>
       <path d="M1 8h3"></path>
       <path d="M1 12h3"></path>
+    </svg>
+  )
+}
+
+export function CartAddIcon() {
+  return (
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <circle cx="9" cy="21" r="1"></circle>
+      <circle cx="20" cy="21" r="1"></circle>
+      <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
+    </svg>
+  )
+}
+
+export function CardIcon() {
+  return (
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <rect x="2" y="5" width="20" height="14" rx="2" />
+      <line x1="2" y1="10" x2="22" y2="10" />
+      <path d="M7 15h.01M11 15h2" />
+    </svg>
+  )
+}
+
+export function MinusIcon() {
+  return (
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#9ca3af" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <line x1="5" y1="12" x2="19" y2="12"></line>
+    </svg>
+  )
+}
+
+export function PlusIcon() {
+  return (
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#1C1B1B" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <line x1="12" y1="5" x2="12" y2="19"></line>
+      <line x1="5" y1="12" x2="19" y2="12"></line>
+    </svg>
+  )
+}
+
+// Toast 左侧的绿色打勾图标
+export function ToastCheckIcon() {
+  return (
+    <div className="flex h-7 w-7 flex-shrink-0 items-center justify-center rounded-md bg-[#42c236]">
+    <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M10.0003 18.9577C5.05866 18.9577 1.04199 14.941 1.04199 9.99935C1.04199 5.05768 5.05866 1.04102 10.0003 1.04102C14.942 1.04102 18.9587 5.05768 18.9587 9.99935C18.9587 14.941 14.942 18.9577 10.0003 18.9577ZM10.0003 2.29102C5.75033 2.29102 2.29199 5.74935 2.29199 9.99935C2.29199 14.2493 5.75033 17.7077 10.0003 17.7077C14.2503 17.7077 17.7087 14.2493 17.7087 9.99935C17.7087 5.74935 14.2503 2.29102 10.0003 2.29102Z" fill="white"/>
+        <path d="M8.81621 12.9827C8.64954 12.9827 8.49121 12.916 8.37454 12.7993L6.01621 10.441C5.77454 10.1993 5.77454 9.79935 6.01621 9.55768C6.25788 9.31602 6.65788 9.31602 6.89954 9.55768L8.81621 11.4743L13.0995 7.19102C13.3412 6.94935 13.7412 6.94935 13.9829 7.19102C14.2245 7.43268 14.2245 7.83268 13.9829 8.07435L9.25788 12.7993C9.14121 12.916 8.98288 12.9827 8.81621 12.9827Z" fill="white"/>
+    </svg>  
+    </div>
+  )
+}
+
+// Toast 右侧的绿色购物车图标
+export function ToastCartIcon() {
+  return (
+    <svg width="21" height="21" viewBox="0 0 21 21" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M1.75 1.75H3.2725C4.2175 1.75 4.96125 2.56375 4.8825 3.5L4.15625 12.215C4.03375 13.6412 5.16249 14.8662 6.59749 14.8662H15.9163C17.1763 14.8662 18.2788 13.8338 18.375 12.5825L18.8475 6.02C18.9525 4.5675 17.85 3.38625 16.3887 3.38625H5.09251" stroke="#4CBF35" strokeWidth="1.5" strokeMiterlimit="10" strokeLinecap="round" strokeLinejoin="round"/>
+    <path d="M14.2188 19.25C14.8228 19.25 15.3125 18.7603 15.3125 18.1562C15.3125 17.5522 14.8228 17.0625 14.2188 17.0625C13.6147 17.0625 13.125 17.5522 13.125 18.1562C13.125 18.7603 13.6147 19.25 14.2188 19.25Z" stroke="#4CBF35" strokeWidth="1.5" strokeMiterlimit="10" strokeLinecap="round" strokeLinejoin="round"/>
+    <path d="M7.21875 19.25C7.82281 19.25 8.3125 18.7603 8.3125 18.1562C8.3125 17.5522 7.82281 17.0625 7.21875 17.0625C6.61469 17.0625 6.125 17.5522 6.125 18.1562C6.125 18.7603 6.61469 19.25 7.21875 19.25Z" stroke="#4CBF35" strokeWidth="1.5" strokeMiterlimit="10" strokeLinecap="round" strokeLinejoin="round"/>
+    <path d="M7.875 7H18.375" stroke="#4CBF35" strokeWidth="1.5" strokeMiterlimit="10" strokeLinecap="round" strokeLinejoin="round"/>
+    </svg>
+  )
+}
+
+export function LogoutIcon() {
+  return (
+    <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M23.2535 20.4933C23.0002 20.4933 22.7468 20.3999 22.5468 20.1999C22.1602 19.8133 22.1602 19.1733 22.5468 18.7866L25.2535 16.0799L22.5468 13.3733C22.1602 12.9866 22.1602 12.3466 22.5468 11.9599C22.9335 11.5733 23.5735 11.5733 23.9602 11.9599L27.3735 15.3733C27.7602 15.7599 27.7602 16.3999 27.3735 16.7866L23.9602 20.1999C23.7602 20.3999 23.5068 20.4933 23.2535 20.4933Z" fill="#EE4D4D"/>
+    <path d="M26.5732 17.0801H13.0132C12.4665 17.0801 12.0132 16.6267 12.0132 16.0801C12.0132 15.5334 12.4665 15.0801 13.0132 15.0801H26.5732C27.1199 15.0801 27.5732 15.5334 27.5732 16.0801C27.5732 16.6267 27.1199 17.0801 26.5732 17.0801Z" fill="#EE4D4D"/>
+    <path d="M15.6799 27.6668C8.81318 27.6668 4.01318 22.8668 4.01318 16.0002C4.01318 9.1335 8.81318 4.3335 15.6799 4.3335C16.2265 4.3335 16.6799 4.78683 16.6799 5.3335C16.6799 5.88016 16.2265 6.3335 15.6799 6.3335C9.98652 6.3335 6.01318 10.3068 6.01318 16.0002C6.01318 21.6935 9.98652 25.6668 15.6799 25.6668C16.2265 25.6668 16.6799 26.1202 16.6799 26.6668C16.6799 27.2135 16.2265 27.6668 15.6799 27.6668Z" fill="#EE4D4D"/>
+    </svg>
+  )
+}
+
+export function BoxIcon() {
+  return (
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z" />
+      <polyline points="3.27 6.96 12 12.01 20.73 6.96" />
+      <line x1="12" y1="22.08" x2="12" y2="12" />
+    </svg>
+  )
+}
+
+export function ShieldIcon() {
+  return (
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+      <path d="M9 12l2 2 4-4" />
+    </svg>
+  )
+}
+
+export function DocumentIcon() {
+  return (
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+      <polyline points="14 2 14 8 20 8" />
+    </svg>
+  )
+}
+
+export function ChatIcon() {
+  return (
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z" />
+      <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3" />
+      <circle cx="12" cy="17" r="1" />
+    </svg>
+  )
+}
+
+export function LockIcon() {
+  return (
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+      <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
+      <path d="M7 11V7a5 5 0 0 1 10 0v4" />
+    </svg>
+  )
+}
+
+export function PhoneIcon() {
+  return (
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+      <rect x="5" y="2" width="14" height="20" rx="2" ry="2" />
+      <line x1="12" y1="18" x2="12.01" y2="18" />
+    </svg>
+  )
+}
+
+export function ReceiptIcon() {
+  return (
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+      <polyline points="14 2 14 8 20 8" />
+      <line x1="16" y1="13" x2="8" y2="13" />
+      <line x1="16" y1="17" x2="8" y2="17" />
+      <polyline points="10 9 9 9 8 9" />
     </svg>
   )
 }

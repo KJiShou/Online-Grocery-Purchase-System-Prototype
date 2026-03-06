@@ -47,8 +47,10 @@ function LocationPin() {
 
 function PlusIcon() {
   return (
-    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" strokeWidth="2.3" strokeLinecap="round">
-      <path d="M12 5v14M5 12h14" />
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M8 12H16" stroke="black" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+    <path d="M12 16V8" stroke="black" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+    <path d="M9 22H15C20 22 22 20 22 15V9C22 4 20 2 15 2H9C4 2 2 4 2 9V15C2 20 4 22 9 22Z" stroke="black" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
     </svg>
   )
 }
@@ -119,32 +121,21 @@ export default function SelectAddressPage() {
   const selectedAddress = addresses.find((item) => item.id === effectiveSelectedAddressId) || addresses[0]
 
   return (
-    <div className="min-h-screen w-full overflow-x-hidden bg-[#f4f4f5]">
-      <section className="relative h-screen w-full overflow-hidden bg-[#F4F5FD] max-[420px]:mx-auto max-[420px]:h-[min(800px,100dvh)] max-[420px]:w-[min(360px,100vw)] max-[420px]:rounded-[24px] max-[420px]:border max-[420px]:border-[#d4d4d8] max-[420px]:shadow-[0_12px_36px_rgba(15,23,42,0.14)]">
-        <div className="absolute inset-x-0 top-0 z-20 border-b border-[#F4F5FD] bg-white pt-3">
-          <div className="mx-auto w-full max-w-[360px] px-4">
-            <div className="mb-2 flex items-center justify-between text-[15px] font-normal tracking-[-0.24px] text-[#1C1B1B]">
-              <span className="leading-5">{currentTime}</span>
-              <StatusIcons />
-            </div>
-          </div>
-          <div className="mx-auto flex w-full max-w-[360px] items-center gap-2 px-4 pb-3">
-            <button
-              onClick={() => navigate(-1)}
-              className="grid h-10 w-10 place-items-center rounded-xl text-[#1f2937] transition duration-200 hover:bg-[#F4F5FD] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#1C1B1B]"
-              aria-label="Back"
-            >
+    <>
+        <div className="absolute inset-x-0 top-[44px] z-20 bg-white pb-3 min-h-[44px]">
+          <div className="mx-auto w-full max-w-[360px] px-5">
+            <header className="flex items-center gap-2">
+              <button onClick={() => navigate(-1)} className="text-[#1f2937] transition hover:scale-110">
                 <BackIcon />
-            </button>
-            <div className="min-w-0">
-              <h1 className="font-['Plus_Jakarta_Sans','Rubik',sans-serif] text-[25px] font-bold leading-[120%] text-[#1C1B1B]">
+              </button>
+              <h1 className="font-['Plus_Jakarta_Sans','Rubik',sans-serif] text-[25px] font-bold leading-[1.2] text-black">
                 Select Address
               </h1>
-            </div>
+            </header>
           </div>
         </div>
 
-        <div className="hide-scrollbar absolute inset-x-0 bottom-[128px] top-[112px] overflow-y-auto">
+        <div className="hide-scrollbar absolute inset-x-0 bottom-[128px] top-[109px] overflow-y-auto">
           <div className="mx-auto w-full max-w-[360px] px-3 pb-8 pt-4">
             <div className="mb-3 flex items-center justify-between rounded-2xl border border-[#F4F5FD] bg-white px-3 py-2.5">
               <h2 className="font-['Plus_Jakarta_Sans','Rubik',sans-serif] text-[14px] font-semibold tracking-[0.005em] text-[#1C1B1B]">
@@ -237,8 +228,8 @@ export default function SelectAddressPage() {
           </div>
         </div>
 
-        <div className="absolute inset-x-0 bottom-0 z-20 border-t border-[#F4F5FD] bg-[#F4F5FD] px-[15px] pb-8 pt-4">
-          <div className="mx-auto grid w-full max-w-[360px] grid-cols-2 gap-[12px]">
+        <div className="absolute bottom-[0px] left-0 z-20 w-full border-t border-[#e4e4e7] bg-[#f8fafc] pb-2 pt-3">
+          <div className="mx-auto flex w-full max-w-[360px] gap-3 px-5">
             <button
               onClick={() =>
                 navigate('/edit-address', {
@@ -250,12 +241,11 @@ export default function SelectAddressPage() {
                   },
                 })
               }
-              className="flex h-[60px] items-center justify-center gap-2 rounded-xl border border-[#1C1B1B] bg-white text-[16px] font-bold text-[#1C1B1B] transition duration-200 hover:bg-[#F4F5FD] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#1C1B1B]"
+              className="flex flex-1 gap-2 justify-center rounded-xl border-2 border-[#1C1B1B] bg-white py-3.5 text-[16px] font-bold text-[#1C1B1B] transition hover:bg-[#fff5f5] active:scale-95"
+              // className="flex h-[60px] items-center justify-center gap-2 rounded-xl border border-[#1C1B1B] bg-white text-[16px] font-bold text-[#1C1B1B] transition duration-200 hover:bg-[#F4F5FD] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#1C1B1B]"
             >
-              <span>New Address</span>
-              <span className="grid h-6 w-6 place-items-center rounded-md border border-[#1C1B1B]">
-                <PlusIcon />
-              </span>
+              New Address
+              <PlusIcon />
             </button>
             <button
               onClick={() =>
@@ -268,13 +258,13 @@ export default function SelectAddressPage() {
                   replace: true,
                 })
               }
-              className="h-[60px] rounded-xl bg-[#1C1B1B] text-[17px] font-bold text-white shadow-[0_10px_18px_rgba(28,27,27,0.28)] transition duration-200 hover:bg-[#131313] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#1C1B1B]"
+              className="flex-1 rounded-xl bg-[#1C1B1B] py-3.5 text-[16px] font-bold text-white shadow-[0_10px_18px_rgba(28,27,27,0.28)] transition duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#1C1B1B]"
+              // className="h-[60px] rounded-xl bg-[#1C1B1B] text-[17px] font-bold text-white shadow-[0_10px_18px_rgba(28,27,27,0.28)] transition duration-200 hover:bg-[#131313] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#1C1B1B]"
             >
               Confirm
             </button>
           </div>
         </div>
-      </section>
-    </div>
+      </>
   )
 }
