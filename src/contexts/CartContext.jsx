@@ -78,6 +78,22 @@ export function CartProvider({ children }) {
     setCartItems((items) => items.filter((item) => item.id !== id))
   }
 
+  const removeMultiple = (idsToRemove) => {
+    setCartItems((prevItems) => 
+      // 过滤掉所有存在于 idsToRemove 数组里的商品
+      prevItems.filter((item) => !idsToRemove.includes(item.id))
+    )
+  }
+
+  const selectedItems = cartItems.filter((item) => item.selected)
+
+  const subtotal = selectedItems.reduce(
+    (sum, item) => sum + item.price * item.quantity,
+    0,
+  )
+
+  const totalSelectedQuantity = selectedItems.length
+
   // 将所有数据和操作方法打包提供出去
   return (
     <CartContext.Provider
@@ -88,6 +104,10 @@ export function CartProvider({ children }) {
         increment,
         decrement,
         remove,
+        removeMultiple,
+        selectedItems,
+        subtotal,
+        totalSelectedQuantity
       }}
     >
       {children}
