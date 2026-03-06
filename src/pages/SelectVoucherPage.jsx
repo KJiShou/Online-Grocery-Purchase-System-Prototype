@@ -1,41 +1,8 @@
 import { useEffect, useState } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
-import StatusIcons from '../components/layout/StatusBar'
 import { useCart } from '../contexts/CartContext'
-
-// --- 图标组件区 ---
-function BackIcon() {
-  return (
-    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#1C1B1B" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M19 12H5M12 19l-7-7 7-7" />
-    </svg>
-  )
-}
-
-function TruckIcon() {
-  return (
-    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#1C1B1B" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-      <rect x="1" y="3" width="15" height="13"></rect>
-      <polygon points="16 8 20 8 23 11 23 16 16 16 16 8"></polygon>
-      <circle cx="5.5" cy="18.5" r="2.5"></circle>
-      <circle cx="18.5" cy="18.5" r="2.5"></circle>
-      <path d="M1 8h3"></path>
-      <path d="M1 12h3"></path>
-    </svg>
-  )
-}
-
-// 格式化价格
-function formatPrice(value) {
-  return `RM ${Number(value).toFixed(2)}`
-}
-
-function formatCurrentTime() {
-  const now = new Date()
-  const hours = String(now.getHours()).padStart(2, '0')
-  const minutes = String(now.getMinutes()).padStart(2, '0')
-  return `${hours}:${minutes}`
-}
+import { BackIcon, TruckIcon } from '../components/Icons'
+import { formatPrice } from '../utils/helper'
 
 // 模拟的优惠券数据
 const itemVouchers = [
@@ -53,19 +20,10 @@ export default function SelectVoucherPage() {
   // 提取之前页面传过来的数据 (确保不丢失)
   const data = location.state || {}
   const { appliedVoucher = null, shippingDiscount = 0 } = data // 默认给个 15.25 方便你直接测试页面
-
-  const [currentTime, setCurrentTime] = useState(formatCurrentTime())
   
   // 状态管理：记录选中的免邮券和商品优惠券
   const [selectedShipping, setSelectedShipping] = useState(shippingDiscount === 0 ? false : true) // 默认选中免邮
   const [selectedItemVoucher, setSelectedItemVoucher] = useState(appliedVoucher?.id ? appliedVoucher.id : null) // 默认选中20%
-
-  useEffect(() => {
-    const timer = setInterval(() => {
-      setCurrentTime(formatCurrentTime())
-    }, 1000)
-    return () => clearInterval(timer)
-  }, [])
 
   // 动态计算折扣和总价
   const currentVoucherObj = itemVouchers.find(v => v.id === selectedItemVoucher)
@@ -91,22 +49,15 @@ export default function SelectVoucherPage() {
   }
 
   return (
-    <div className="min-h-screen w-full overflow-x-hidden bg-[#f4f4f5]">
-      <section className="relative h-screen w-full overflow-hidden bg-[#f4f4f5] max-[420px]:mx-auto max-[420px]:h-[min(800px,100dvh)] max-[420px]:w-[min(360px,100vw)] max-[420px]:rounded-[24px] max-[420px]:border max-[420px]:border-[#d4d4d8] max-[420px]:shadow-[0_12px_36px_rgba(0,0,0,0.12)]">
-        
+    <>
         {/* === 顶部 Header === */}
-        <div className="absolute inset-x-0 top-0 z-20 bg-white pb-5 pt-4">
-          <div className="mx-auto w-full max-w-[360px] px-4">
-            <div className="mb-2 flex items-center justify-between text-[15px] font-normal tracking-[-0.24px] text-[#1C1B1B]">
-              <span className="leading-5">{currentTime}</span>
-              <StatusIcons />
-            </div>
-
-            <header className="flex items-center gap-3">
+        <div className="absolute inset-x-0 top-[44px] z-20 bg-white pb-3 min-h-[44px]">
+          <div className="mx-auto w-full max-w-[360px] px-5">
+            <header className="flex items-center gap-2">
               <button onClick={() => navigate(-1)} className="text-[#1f2937] transition hover:scale-110">
                 <BackIcon />
               </button>
-              <h1 className="font-['Plus_Jakarta_Sans',sans-serif] text-[20px] font-bold leading-[1.2] text-black">
+              <h1 className="font-['Plus_Jakarta_Sans','Rubik',sans-serif] text-[20px] font-bold leading-[1.2] text-black">
                 Select Voucher / Discount
               </h1>
             </header>
@@ -211,7 +162,6 @@ export default function SelectVoucherPage() {
           </div>
         </div>
         
-      </section>
-    </div>
+      </>
   )
 }

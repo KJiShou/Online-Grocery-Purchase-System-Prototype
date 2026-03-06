@@ -1,4 +1,3 @@
-import BottomNav from '../components/navigation/BottomNav'
 import { useNavigate, useLocation } from 'react-router-dom'
 import { useCart } from '../contexts/CartContext'
 import { formatPrice } from '../utils/helper'
@@ -180,7 +179,6 @@ function CartPage() {
             </button>
           </div>
         </div>
-        <BottomNav />
       </>
   )
 }
