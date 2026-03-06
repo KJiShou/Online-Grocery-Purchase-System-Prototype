@@ -19,7 +19,6 @@ function BackIcon() {
 }
 
 function HeartIcon({ filled = false }) {
-  console.log("HeartIcon received filled prop:", filled)
   return (
     <svg viewBox="0 0 24 24" className="h-4 w-4" fill={filled ? 'currentColor' : 'none'} stroke="currentColor" strokeWidth="2">
       <path d="M20.8 8.6c0 5.5-8.8 11.1-8.8 11.1S3.2 14.1 3.2 8.6a5 5 0 0 1 8.8-3.2A5 5 0 0 1 20.8 8.6z"></path>
@@ -180,7 +179,6 @@ export default function ProductDetailPage() {
   const handleAddToCart = () => {
     // 这里可以放你实际加入购物车的逻辑 (比如更新 Context 或 Redux)
     addToCart(product, quantity)
-    console.log(`成功将 ${quantity} 件商品加入购物车`)
 
     // 触发动画显示
     setShowToast(true)
@@ -203,10 +201,10 @@ export default function ProductDetailPage() {
     }
   }, [])
 
-  useEffect(() => {
-    console.log("从 URL 接收到的商品 ID 是:", id)
-    console.log("Description Length:", product.description.length)
-  }, [id])
+  // useEffect(() => {
+  //   console.log("从 URL 接收到的商品 ID 是:", id)
+  //   console.log("Description Length:", product.description.length)
+  // }, [id])
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -249,7 +247,7 @@ export default function ProductDetailPage() {
 
             {/* === 顶部全局弹窗提示 (Toast) === */}
             <div 
-            className={`absolute left-1/2 top-[90px] z-50 flex w-[calc(100%-40px)] max-w-[320px] -translate-x-1/2 items-center justify-between rounded-2xl border border-[#f3f4f6] bg-white p-3 shadow-[0_12px_30px_rgba(0,0,0,0.08)] transition-all duration-300 ease-out 
+            className={`absolute left-1/2 top-[50px] z-50 flex w-[calc(100%-40px)] max-w-[320px] -translate-x-1/2 items-center justify-between rounded-2xl border border-[#f3f4f6] bg-white p-3 shadow-[0_12px_30px_rgba(0,0,0,0.08)] transition-all duration-300 ease-out 
             ${showToast ? 'translate-y-0 opacity-100 pointer-events-auto' : '-translate-y-6 opacity-0 pointer-events-none'}`}
             >
             <div className="flex items-center gap-3">
@@ -273,7 +271,7 @@ export default function ProductDetailPage() {
 
         {/* === 中间滚动内容区 === */}
         {/* 注意 bottom-[140px] 留出了底部操作栏和导航栏的空间 */}
-        <div className="hide-scrollbar absolute inset-x-0 bottom-[130px] top-[90px] overflow-y-auto">
+        <div className="hide-scrollbar absolute inset-x-0 bottom-[180px] top-[90px] overflow-y-auto">
           <div className="mx-auto w-full max-w-[360px] flex flex-col">
             
             {/* 1. 顶部商品图展示区 */}
