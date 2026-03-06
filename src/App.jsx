@@ -17,6 +17,7 @@ import EditAddressPage from './pages/EditAddressPage'
 import ProfilePage from './pages/ProfilePage'
 import OrderHistoryPage from './pages/OrderHistoryPage'
 import ProductDetailPage from './pages/ProductDetailsPage'
+import OrderDetailPage from './pages/OrderDetailPage'
 
 function App() {
   return (
@@ -39,6 +40,7 @@ function App() {
         <Route path="/address-details" element={<AddressDetailsPage title=""/>} />
         <Route path="/order-history" element={<OrderHistoryPage />} />
         <Route path="/product/:id" element={<ProductDetailPage />} />
+        <Route path="/order-detail/:orderId" element={<OrderDetailPage />} />
       </Route>
     </Routes>
   )

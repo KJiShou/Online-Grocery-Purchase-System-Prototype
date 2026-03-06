@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
 import StatusIcons from '../components/layout/StatusBar'
+import { useCart } from '../contexts/CartContext'
 
 // --- 图标组件区 ---
 function BackIcon() {
@@ -47,10 +48,11 @@ const itemVouchers = [
 export default function SelectVoucherPage() {
   const navigate = useNavigate()
   const location = useLocation()
-  
+  const { subtotal } = useCart()
+
   // 提取之前页面传过来的数据 (确保不丢失)
-  const data = location.state?.checkoutData || location.state || {}
-  const { subtotal = 0, appliedVoucher = null, shippingDiscount = 0 } = data // 默认给个 15.25 方便你直接测试页面
+  const data = location.state || {}
+  const { appliedVoucher = null, shippingDiscount = 0 } = data // 默认给个 15.25 方便你直接测试页面
 
   const [currentTime, setCurrentTime] = useState(formatCurrentTime())
   

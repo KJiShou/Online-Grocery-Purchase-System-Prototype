@@ -1,30 +1,8 @@
-import { useEffect, useState } from 'react'
 import BottomNav from '../components/navigation/BottomNav'
 import { useNavigate, useLocation } from 'react-router-dom'
 import { useCart } from '../contexts/CartContext'
-
-function formatPrice(value) {
-  return `RM${value.toFixed(2)}`
-}
-
-function formatCurrentTime() {
-  const now = new Date()
-  const hours = String(now.getHours()).padStart(2, '0')
-  const minutes = String(now.getMinutes()).padStart(2, '0')
-  return `${hours}:${minutes}`
-}
-
-function TrashIcon() {
-  return (
-    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <path d="M20.9997 6.73046C20.9797 6.73046 20.9497 6.73046 20.9197 6.73046C15.6297 6.20046 10.3497 6.00046 5.11967 6.53046L3.07967 6.73046C2.65967 6.77046 2.28967 6.47046 2.24967 6.05046C2.20967 5.63046 2.50967 5.27046 2.91967 5.23046L4.95967 5.03046C10.2797 4.49046 15.6697 4.70046 21.0697 5.23046C21.4797 5.27046 21.7797 5.64046 21.7397 6.05046C21.7097 6.44046 21.3797 6.73046 20.9997 6.73046Z" fill="#EE4D4D"/>
-        <path d="M8.49977 5.72C8.45977 5.72 8.41977 5.72 8.36977 5.71C7.96977 5.64 7.68977 5.25 7.75977 4.85L7.97977 3.54C8.13977 2.58 8.35977 1.25 10.6898 1.25H13.3098C15.6498 1.25 15.8698 2.63 16.0198 3.55L16.2398 4.85C16.3098 5.26 16.0298 5.65 15.6298 5.71C15.2198 5.78 14.8298 5.5 14.7698 5.1L14.5498 3.8C14.4098 2.93 14.3798 2.76 13.3198 2.76H10.6998C9.63977 2.76 9.61977 2.9 9.46977 3.79L9.23977 5.09C9.17977 5.46 8.85977 5.72 8.49977 5.72Z" fill="#EE4D4D"/>
-        <path d="M15.2104 22.7496H8.79039C5.30039 22.7496 5.16039 20.8196 5.05039 19.2596L4.40039 9.18959C4.37039 8.77959 4.69039 8.41959 5.10039 8.38959C5.52039 8.36959 5.87039 8.67959 5.90039 9.08959L6.55039 19.1596C6.66039 20.6796 6.70039 21.2496 8.79039 21.2496H15.2104C17.3104 21.2496 17.3504 20.6796 17.4504 19.1596L18.1004 9.08959C18.1304 8.67959 18.4904 8.36959 18.9004 8.38959C19.3104 8.41959 19.6304 8.76959 19.6004 9.18959L18.9504 19.2596C18.8404 20.8196 18.7004 22.7496 15.2104 22.7496Z" fill="#EE4D4D"/>
-        <path d="M13.6601 17.25H10.3301C9.92008 17.25 9.58008 16.91 9.58008 16.5C9.58008 16.09 9.92008 15.75 10.3301 15.75H13.6601C14.0701 15.75 14.4101 16.09 14.4101 16.5C14.4101 16.91 14.0701 17.25 13.6601 17.25Z" fill="#EE4D4D"/>
-        <path d="M14.5 13.25H9.5C9.09 13.25 8.75 12.91 8.75 12.5C8.75 12.09 9.09 11.75 9.5 11.75H14.5C14.91 11.75 15.25 12.09 15.25 12.5C15.25 12.91 14.91 13.25 14.5 13.25Z" fill="#EE4D4D"/>
-    </svg>
-  )
-}
+import { formatPrice } from '../utils/helper'
+import { BackIcon, TrashIcon } from '../components/Icons'
 
 function QuantityControl({ quantity, onIncrement, onDecrement }) {
   return (
@@ -46,145 +24,21 @@ function QuantityControl({ quantity, onIncrement, onDecrement }) {
   )
 }
 
-function BackIcon() {
-  return (
-    <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <path d="M12.7599 25.0935C12.5066 25.0935 12.2533 25.0002 12.0533 24.8002L3.95992 16.7068C3.57326 16.3202 3.57326 15.6802 3.95992 15.2935L12.0533 7.20016C12.4399 6.81349 13.0799 6.81349 13.4666 7.20016C13.8533 7.58682 13.8533 8.22682 13.4666 8.61349L6.07992 16.0002L13.4666 23.3868C13.8533 23.7735 13.8533 24.4135 13.4666 24.8002C13.2799 25.0002 13.0133 25.0935 12.7599 25.0935Z" fill="#1C1B1B"/>
-        <path d="M27.3336 17H4.89355C4.34689 17 3.89355 16.5467 3.89355 16C3.89355 15.4533 4.34689 15 4.89355 15H27.3336C27.8802 15 28.3336 15.4533 28.3336 16C28.3336 16.5467 27.8802 17 27.3336 17Z" fill="#1C1B1B"/>
-    </svg>
-  )
-}
-
-function StatusIcons() {
-  return (
-    <div className="flex items-center gap-2.5">
-      <svg viewBox="0 0 20 14" className="h-[14px] w-[20px]" fill="none">
-        <rect x="1" y="9" width="4" height="4" rx="1.1" fill="#1C1B1B" />
-        <rect x="6" y="6.5" width="4" height="6.5" rx="1.1" fill="#1C1B1B" />
-        <rect x="11" y="3.5" width="4" height="9.5" rx="1.1" fill="#1C1B1B" />
-        <rect x="16" y="1" width="3" height="12" rx="1" fill="#1C1B1B" />
-      </svg>
-
-      <svg viewBox="0 0 18 14" className="h-[14px] w-[18px]" fill="none">
-        <path d="M1 5.5C5.9 0.8 12.1 0.8 17 5.5" stroke="#1C1B1B" strokeWidth="2" strokeLinecap="round" />
-        <path d="M4 8.5C7.1 5.6 10.9 5.6 14 8.5" stroke="#1C1B1B" strokeWidth="2" strokeLinecap="round" />
-        <circle cx="9" cy="11.5" r="1.6" fill="#1C1B1B" />
-      </svg>
-
-      <svg viewBox="0 0 26 14" className="h-[14px] w-[26px]" fill="none">
-        <rect x="1" y="1" width="21" height="12" rx="3" stroke="#B3B3B3" strokeWidth="2" />
-        <rect x="23.5" y="4.5" width="1.8" height="5" rx="0.9" fill="#D9D9D9" />
-        <rect x="3.5" y="3.5" width="16" height="7" rx="1.6" fill="#1C1B1B" />
-      </svg>
-    </div>
-  )
-}
-
-function HeartIcon({ filled = false }) {
-  return (
-    <svg viewBox="0 0 24 24" className="h-4 w-4" fill={filled ? 'currentColor' : 'none'} stroke="currentColor" strokeWidth="2">
-      <path d="M20.8 8.6c0 5.5-8.8 11.1-8.8 11.1S3.2 14.1 3.2 8.6a5 5 0 0 1 8.8-3.2A5 5 0 0 1 20.8 8.6z"></path>
-    </svg>
-  )
-}
-
-function BottomIcon({ type, active = false }) {
-  if (type === 'cart' && active) {
-    return (
-        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M16.25 22.5C17.2165 22.5 18 21.7165 18 20.75C18 19.7835 17.2165 19 16.25 19C15.2835 19 14.5 19.7835 14.5 20.75C14.5 21.7165 15.2835 22.5 16.25 22.5Z" fill="#21D4B4"/>
-            <path d="M8.25 22.5C9.2165 22.5 10 21.7165 10 20.75C10 19.7835 9.2165 19 8.25 19C7.2835 19 6.5 19.7835 6.5 20.75C6.5 21.7165 7.2835 22.5 8.25 22.5Z" fill="#21D4B4"/>
-            <path d="M4.84 3.94L4.64 6.39C4.6 6.86 4.97 7.25 5.44 7.25H20.75C21.17 7.25 21.52 6.93 21.55 6.51C21.68 4.74 20.33 3.3 18.56 3.3H6.27C6.17 2.86 5.97 2.44 5.66 2.09C5.16 1.56 4.46 1.25 3.74 1.25H2C1.59 1.25 1.25 1.59 1.25 2C1.25 2.41 1.59 2.75 2 2.75H3.74C4.05 2.75 4.34 2.88 4.55 3.1C4.76 3.33 4.86 3.63 4.84 3.94Z" fill="#21D4B4"/>
-            <path d="M20.5101 8.75H5.17005C4.75005 8.75 4.41005 9.07 4.37005 9.48L4.01005 13.83C3.87005 15.54 5.21005 17 6.92005 17H18.0401C19.5401 17 20.8601 15.77 20.9701 14.27L21.3001 9.6C21.3401 9.14 20.9801 8.75 20.5101 8.75Z" fill="#21D4B4"/>
-        </svg>
-    )
-  }
-
-  if (type === 'home') {
-    return (
-      <svg viewBox="0 0 24 24" className="h-6 w-6" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <path
-          d="M17.79 22.75H6.21C3.47 22.75 1.25 20.52 1.25 17.78V10.37C1.25 9.00997 2.09 7.29997 3.17 6.45997L8.56 2.25997C10.18 0.999974 12.77 0.939974 14.45 2.11997L20.63 6.44997C21.82 7.27997 22.75 9.05997 22.75 10.51V17.79C22.75 20.52 20.53 22.75 17.79 22.75ZM9.48 3.43997L4.09 7.63997C3.38 8.19997 2.75 9.46997 2.75 10.37V17.78C2.75 19.69 4.3 21.25 6.21 21.25H17.79C19.7 21.25 21.25 19.7 21.25 17.79V10.51C21.25 9.54997 20.56 8.21997 19.77 7.67997L13.59 3.34997C12.45 2.54997 10.57 2.58997 9.48 3.43997Z"
-          fill="#6F7384"
-        />
-        <path
-          d="M12 18.75C11.59 18.75 11.25 18.41 11.25 18V15C11.25 14.59 11.59 14.25 12 14.25C12.41 14.25 12.75 14.59 12.75 15V18C12.75 18.41 12.41 18.75 12 18.75Z"
-          fill="#6F7384"
-        />
-      </svg>
-    )
-  }
-
-  if (type === 'grid') {
-    return (
-      <svg viewBox="0 0 24 24" className="h-5 w-5" fill="none" stroke="currentColor" strokeWidth="2">
-        <rect x="3" y="3" width="7" height="7" rx="1.5"></rect>
-        <rect x="14" y="3" width="7" height="7" rx="1.5"></rect>
-        <rect x="3" y="14" width="7" height="7" rx="1.5"></rect>
-        <rect x="14" y="14" width="7" height="7" rx="1.5"></rect>
-      </svg>
-    )
-  }
-
-  if (type === 'cart') {
-    return (
-        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" xmlns="http://www.w3.org/2000/svg">
-            <path d="M16.25 22.5C17.2165 22.5 18 21.7165 18 20.75C18 19.7835 17.2165 19 16.25 19C15.2835 19 14.5 19.7835 14.5 20.75C14.5 21.7165 15.2835 22.5 16.25 22.5Z"/>
-            <path d="M8.25 22.5C9.2165 22.5 10 21.7165 10 20.75C10 19.7835 9.2165 19 8.25 19C7.2835 19 6.5 19.7835 6.5 20.75C6.5 21.7165 7.2835 22.5 8.25 22.5Z"/>
-            <path d="M4.84 3.94L4.64 6.39C4.6 6.86 4.97 7.25 5.44 7.25H20.75C21.17 7.25 21.52 6.93 21.55 6.51C21.68 4.74 20.33 3.3 18.56 3.3H6.27C6.17 2.86 5.97 2.44 5.66 2.09C5.16 1.56 4.46 1.25 3.74 1.25H2C1.59 1.25 1.25 1.59 1.25 2C1.25 2.41 1.59 2.75 2 2.75H3.74C4.05 2.75 4.34 2.88 4.55 3.1C4.76 3.33 4.86 3.63 4.84 3.94Z"/>
-            <path d="M20.5101 8.75H5.17005C4.75005 8.75 4.41005 9.07 4.37005 9.48L4.01005 13.83C3.87005 15.54 5.21005 17 6.92005 17H18.0401C19.5401 17 20.8601 15.77 20.9701 14.27L21.3001 9.6C21.3401 9.14 20.9801 8.75 20.5101 8.75Z"/>
-        </svg>
-    )
-  }
-
-  if (type === 'wishlist') {
-    return <HeartIcon />
-  }
-
-  if (type === 'profile') {
-    return (
-      <svg viewBox="0 0 24 24" className="h-5 w-5" fill="none" stroke="currentColor" strokeWidth="2">
-        <circle cx="12" cy="8" r="4"></circle>
-        <path d="M4 20c2.2-3.8 13.8-3.8 16 0"></path>
-      </svg>
-    )
-  }
-
-  return null
-}
-
 function CartPage() {
-
-  const { cartItems, toggleSelected, increment, decrement, remove } = useCart()
-
-  // 1. 先过滤出所有被打勾 (selected: true) 的商品
-  const selectedItems = cartItems.filter((item) => item.selected)
-
-  // 2. 计算打勾商品的总价 (Subtotal)
-  const subtotal = selectedItems.reduce(
-    (sum, item) => sum + item.price * item.quantity,
-    0,
-  )
-
-  // 3. 计算打勾商品的总数量 (用于 Checkout 按钮)
-  // 注意：真实购物车通常显示商品件数相加，而不是种类数 (length)
-  const totalSelectedQuantity = selectedItems.reduce((sum, item) => sum + item.quantity, 0)
-
-  const [currentTime, setCurrentTime] = useState(formatCurrentTime())
-
   const navigate = useNavigate()
   const location = useLocation()
+  const { 
+    cartItems, 
+    toggleSelected, 
+    increment, 
+    decrement, 
+    remove,
+    subtotal,
+    totalSelectedQuantity
+   } = useCart()
 
   // 安全提取数据
   const { from } = location.state || {}
-
-  useEffect(() => {
-      const timer = setInterval(() => {
-        setCurrentTime(formatCurrentTime())
-      }, 1000)
-  
-      return () => clearInterval(timer)
-    }, [])
 
   return (
     <>
@@ -314,13 +168,7 @@ function CartPage() {
             <button 
               disabled={totalSelectedQuantity === 0}
               onClick={() => {
-                const checkoutData = {
-                  items: selectedItems, // 选中的商品数组
-                  subtotal: subtotal,   // 计算好的总价
-                  totalQuantity: totalSelectedQuantity // 总件数
-                };
-                console.log("发送到支付页面的数据：", checkoutData);
-                navigate('/payment', { state: checkoutData });
+                navigate('/payment');
               }}
               className={`mb-2 w-full rounded-xl py-3 text-[15px] font-semibold text-white transition 
                 ${totalSelectedQuantity === 0 
@@ -328,7 +176,7 @@ function CartPage() {
                   : 'bg-[#111827] hover:bg-[#1f2937] shadow-lg hover:-translate-y-0.5' // 有选中商品时的黑色状态
                 }`}
             >
-              Checkout ({totalSelectedQuantity})
+              Payment ({totalSelectedQuantity})
             </button>
           </div>
         </div>
