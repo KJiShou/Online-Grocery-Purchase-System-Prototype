@@ -2,6 +2,7 @@ import { useNavigate, useLocation } from 'react-router-dom'
 import { useOrder } from '../contexts/OrderContext'
 import { OrderStatusTag } from '../utils/orderStatus'
 import { BackIcon, ChevronRightIcon } from '../components/Icons'
+import cartIcon from '../assets/order-history/cart-icon.png'
 
 export default function OrderListPage() {
   const navigate = useNavigate()
@@ -32,13 +33,34 @@ export default function OrderListPage() {
           <div className="mx-auto flex w-full max-w-[360px] flex-col gap-4 px-5 pb-8 pt-4">
             
             {orders.length === 0 && (
-              <div className="flex flex-col items-center gap-3 rounded-[20px] bg-white p-5 shadow-sm">
-                <p className="text-[15px] font-bold text-[#1C1B1B]">
-                  No orders yet
+              // 严厉纠正：空状态不需要白色卡片！必须占据全部高度并完美居中！
+              <div className="mx-auto flex min-h-full w-full max-w-[360px] flex-col items-center justify-center px-5 pb-20 pt-10">
+                
+                <h2 className="mb-2 max-w-[280px] text-center text-[22px] font-bold leading-[1.3] text-[#1C1B1B]">
+                  Looks Like There Are No Orders Yet
+                </h2>
+                
+                <p className="mb-4 text-center text-[15px] font-medium text-[#6b7280]">
+                  Place an order when you're ready!
                 </p>
-                <p className="text-[13px] text-center text-[#6b7280]">
-                  Your past orders will appear here once you have made a purchase.
-                </p>
+
+                {/* 严厉提醒：去把设计图里的那个购物车图片切出来放进 public 文件夹，然后把路径填在这里！ */}
+                <div className="mb-8 mr-5 h-[120px] w-[120px]">
+                  <img
+                    src={cartIcon} 
+                    alt="Empty Cart"
+                    className="h-full w-full object-contain"
+                  />
+                </div>
+
+                <button
+                  // 必须配置路由跳转：用户没有订单，当然要引导他们去主页或者商品列表页买东西！
+                  onClick={() => navigate('/')} 
+                  className="w-[200px] rounded-[14px] bg-[#1C1B1B] py-3.5 text-[16px] font-bold text-white shadow-lg transition-all hover:bg-black active:scale-95"
+                >
+                  Order Now
+                </button>
+
               </div>
             )}
             {orders.map((order) => (

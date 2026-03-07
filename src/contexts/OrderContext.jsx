@@ -47,6 +47,17 @@ export function OrderProvider({ children }) {
       })
     })
   }
+
+  const cancelOrder = (id) => {
+    setOrders((prevOrders) => {
+      return prevOrders.map((order) => {
+        if (order.id === id) {
+          return { ...order, status: 'Cancelled' }
+        }
+        return order
+      })
+    })
+  }
   
   const updateOrder = (id, updatedData) => {
     setOrders((prevOrders) =>
@@ -82,6 +93,7 @@ export function OrderProvider({ children }) {
         completeOrder, // 完成订单的方法 (给 OrderDetailPage 用)
         resetOrders,   // 重置订单列表的方法
         updateOrderStatus, // 更新订单状态的方法
+        cancelOrder, // 取消订单的方法 (给 OrderDetailPage 用)
       }}
     >
       {children}
