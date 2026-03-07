@@ -3,7 +3,7 @@ import { useNavigate, useParams, useNavigationType , useLocation} from 'react-ro
 import { useOrder } from '../contexts/OrderContext'
 import { paymentMethods } from '../utils/helper'
 import { OrderStatusTag } from '../utils/orderStatus'
-import { ToastCartIcon, ToastCheckIcon } from '../components/Icons'
+import { SupportIcon, ToastCheckIcon } from '../components/Icons'
 
 function formatAddressDisplay(address, unitNo) {
   const trimmedAddress = (address || '').trim()
@@ -127,16 +127,14 @@ export default function OrderDetailPage() {
         </div>
 
         {/* === 中间滚动详情区 === */}
+        {/* 严厉提醒：确保包裹这段代码的最外层父级有 bg-[#f4f5f9] 这样的灰色底，否则白卡片显示不出来边缘！ */}
         <div className="hide-scrollbar absolute inset-x-0 bottom-[40px] top-[94px] overflow-y-auto">
-          <div className="mx-auto w-full max-w-[360px] px-5 pb-10 pt-4">
+          <div className="mx-auto flex w-full max-w-[360px] flex-col px-5 pb-10 pt-4">
             
-            {/* 1. 订单编号与日期区块 */}
-            <div className="border-b border-[#f3f4f6] pb-6">
+            {/* 1. 订单编号与日期区块 (纯白卡片) */}
+            <div className="mb-4 rounded-2xl bg-white p-5 shadow-sm">
               <div className="mb-4 flex items-center justify-between">
                 <span className="text-[18px] font-bold text-[#1C1B1B]">{orderData.id}</span>
-                {/* <span className={`rounded-lg px-3 py-1.5 text-[13px] font-semibold text-white ${orderData.status === 'Shipping' ? 'bg-[#7c8deb]' : orderData.status === 'Pending' ? 'bg-[#FFCB45]' : 'bg-[#4ade80]'}`}>
-                  {orderData.status}
-                </span> */}
                 <OrderStatusTag status={orderData.status} />
               </div>
               <div className="flex flex-col gap-2 text-[13px] font-medium">
@@ -147,11 +145,15 @@ export default function OrderDetailPage() {
               </div>
             </div>
 
-            {/* 2. 商品列表区块 */}
-            <div className="border-b border-[#f3f4f6] py-6">
-              {orderData.products.map((item) => (
-                <div key={item.id} className="flex items-center gap-4">
-                  <div className="h-[80px] w-[60px] flex-shrink-0 rounded-lg bg-[#f4f5f9] p-1">
+            {/* 2. 商品列表区块 (纯白卡片) */}
+            <div className="mb-4 flex flex-col rounded-2xl bg-white p-5 shadow-sm">
+              {orderData.products.map((item, index) => (
+                <div 
+                  key={item.id} 
+                  // 如果有多个商品，商品之间加浅色分割线
+                  className={`flex items-center gap-4 ${index !== orderData.products.length - 1 ? 'border-b border-[#f3f4f6] pb-4 mb-4' : ''}`}
+                >
+                  <div className="h-[80px] w-[60px] flex-shrink-0 rounded-lg bg-[#f8fafc] p-1">
                     <img src={item.image} alt={item.name} className="h-full w-full object-contain mix-blend-multiply" />
                   </div>
                   <div className="flex flex-1 flex-col justify-center">
@@ -170,15 +172,12 @@ export default function OrderDetailPage() {
               ))}
             </div>
 
-            {/* 3. 收货地址区块 */}
-            <div className="border-b border-[#f3f4f6] py-6">
-  
-            {/* 1. 引入 flex 布局：让标题和按钮在同一行，并分别推向左右两端 */}
+            {/* 3. 收货地址区块 (纯白卡片) */}
+            <div className="mb-4 rounded-2xl bg-white p-5 shadow-sm">
               <div className="mb-3 flex items-center justify-between">
-                {/* 注意：把原先 h3 上的 mb-3 移到了外层父级 div 上 */}
                 <h3 className="text-[16px] font-bold text-[#1C1B1B]">Shipping Address</h3>
                 
-                {/* 2. 严厉的业务逻辑拦截：只有订单状态还是 Pending 时才准许显示！ */}
+                {/* 严厉的业务逻辑拦截：Pending 状态才准许显示 */}
                 {orderData.status === 'Pending' && (
                   <button 
                     onClick={() => {
@@ -190,82 +189,73 @@ export default function OrderDetailPage() {
                   </button>
                 )}
               </div>
-
               <p className="text-[14px] leading-relaxed text-[#6b7280]">
                 {orderData.shippingInfo.address}
               </p>
-              
             </div>
 
-            {/* 4. 收件人信息区块 */}
-            <div className="border-b border-[#f3f4f6] py-6">
+            {/* 4. 收件人信息区块 (纯白卡片) */}
+            <div className="mb-4 rounded-2xl bg-white p-5 shadow-sm">
               <h3 className="mb-4 text-[16px] font-bold text-[#1C1B1B]">Recipient Info</h3>
               <div className="flex flex-col gap-3 text-[14px]">
-                <div className="flex items-center">
-                  <span className="w-[120px] text-[#1C1B1B]">Name:</span>
+                <div className="flex items-center justify-between">
+                  <span className="text-[#1C1B1B]">Name:</span>
                   <span className="text-[#6b7280]">{orderData.shippingInfo.name}</span>
                 </div>
-                <div className="flex items-center">
-                  <span className="w-[120px] text-[#1C1B1B]">Mobile Number :</span>
+                <div className="flex items-center justify-between">
+                  <span className="text-[#1C1B1B]">Mobile Number :</span>
                   <span className="text-[#6b7280]">{orderData.shippingInfo.phone}</span>
                 </div>
               </div>
             </div>
 
-            <div className="border-b border-[#f3f4f6] py-6">
+            {/* 5. 支付方式区块 (纯白卡片) */}
+            <div className="mb-4 rounded-2xl bg-white p-5 shadow-sm">
               <h3 className="mb-4 text-[16px] font-bold text-[#1C1B1B]">Payment Method</h3>
-              <div className="flex flex-col gap-3 text-[14px]">
-                <div className="flex items-center">
-                  {
-                    (() => {
-                      for (const methodKey in paymentMethods) {
-                        if (paymentMethods[methodKey].label === orderData.paymentMethod) {
-                          const IconComponent = paymentMethods[methodKey].icon
-                          return (
-                            <div className="flex items-center gap-2">
-                              <IconComponent />
-                              <span className="text-[#6b7280]">{orderData.paymentMethod}</span>
-                            </div>
-                          )
-                        }
-                    }})()
+              <div className="flex items-center gap-3 text-[14px]">
+                {(() => {
+                  for (const methodKey in paymentMethods) {
+                    if (paymentMethods[methodKey].label === orderData.paymentMethod) {
+                      const IconComponent = paymentMethods[methodKey].icon
+                      return (
+                        <div className="flex items-center gap-2">
+                          <IconComponent />
+                          <span className="text-[#1C1B1B] font-medium">{orderData.paymentMethod}</span>
+                        </div>
+                      )
+                    }
                   }
-                </div>
+                })()}
               </div>
             </div>
 
-            {/* 5. 订单金额明细区块 */}
-            <div className="py-5">
+            {/* 6. 订单金额明细区块 (纯白卡片 + 彻底修复排版) */}
+            <div className="mb-4 rounded-2xl bg-white p-5 shadow-sm">
               <h3 className="mb-4 text-[15px] font-bold text-[#1C1B1B]">Payment Details</h3>
-              <div className="flex flex-col gap-2.5 pl-0">
+              <div className="flex flex-col gap-3">
                 
-                {/* 把 flex 换成 grid grid-cols-3，分为均等的左、中、右三列 */}
+                {/* 再次警告：这里必须用 flex justify-between！ */}
                 <div className="grid grid-cols-3 items-center text-[14px]">
-                  <span className="text-left text-[#4b5563]">Subtotal:</span> {/* 第二列：居中对齐 */}
-                  <span className="text-left font-medium text-[#1C1B1B]">{formatPrice(orderData.summary.subtotal)}</span> {/* 第三列：靠右对齐 */}
-                  <div></div>
+                  <span className="text-left text-[#4b5563]">Subtotal:</span>
+                  <span className="pl-4 text-left font-medium text-[#1C1B1B]">{formatPrice(orderData.summary.subtotal)}</span>
                 </div>
 
                 <div className="grid grid-cols-3 items-center text-[14px]">
                   <span className="text-left text-[#4b5563]">Discount:</span>
-                  <span className="text-left -ml-1.5 font-medium text-[#ee4d4d]">-{formatPrice(orderData.summary.discount)}</span>
-                  <div></div>
+                  <span className="pl-4 text-left -ml-1.5 font-medium text-[#ee4d4d]">-{formatPrice(orderData.summary.discount)}</span>
                 </div>
 
                 <div className="grid grid-cols-3 items-center text-[14px]">
                   <span className="text-left text-[#4b5563]">Shipping Cost:</span>
-                  <span className="text-left font-medium text-[#1C1B1B]">{formatPrice(orderData.summary.shippingCost)}</span>
-                  <div></div>
+                  <span className="pl-4 text-left font-medium text-[#1C1B1B]">{formatPrice(orderData.summary.shippingCost)}</span>
                 </div>
 
-                <div className="grid grid-cols-3 items-center text-[14px]">
-                  <span className="text-left font-bold text-[#1C1B1B]">Total:</span>
-                  <span className="text-left font-bold text-[#1C1B1B]">{formatPrice(orderData.summary.total)}</span>
-                  <div></div>
+                <div className="mt-1 border-t border-[#f3f4f6] pt-4 grid grid-cols-3 items-center text-[14px]">
+                  <span className="text-left text-[15px] font-bold text-[#1C1B1B]">Total:</span>
+                  <span className="pl-4 text-left text-[18px] font-bold text-[#1C1B1B]">{formatPrice(orderData.summary.total)}</span>
                 </div>
               </div>
             </div>
-
           </div>
         </div>
 
@@ -286,6 +276,27 @@ export default function OrderDetailPage() {
               </div>
             </div>
               )}
+
+              <button
+                onClick={() => {
+                  // 这里填入唤起客服聊天窗口或跳转客服页面的逻辑
+                  console.log('触发：打开客服面板');
+                }}
+                // 严厉警告：如果一个按钮只有图标，必须加上 aria-label，这是底线！
+                aria-label="Contact Support"
+                className={`
+                  fixed bottom-6 right-6 z-[60] 
+                  flex h-14 w-14 items-center justify-center 
+                  rounded-full bg-[#1C1B1B] text-white 
+                  shadow-[0_8px_24px_rgba(0,0,0,0.2)] 
+                  transition-all duration-300 ease-out
+                  hover:scale-110 hover:bg-[#42c236] hover:shadow-[0_12px_32px_rgba(66,194,54,0.3)]
+                  active:scale-95
+                ${orderData.status === 'Out for Delivery' ? ' max-[420px]:bottom-[90px]' : ''}  max-[420px]:right-[35px]
+                `}
+              >
+                <SupportIcon />
+              </button>
 
           {/* {orderData.status === 'Pending' && (
           <div className="absolute bottom-[0px] left-0 z-20 w-full border-t border-[#e4e4e7] bg-[#f8fafc] pb-2 pt-3">
