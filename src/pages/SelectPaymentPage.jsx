@@ -1,13 +1,21 @@
 import { useState } from 'react'
 import { useNavigate, useLocation } from 'react-router-dom'
+import { usePreference } from '../contexts/PreferenceContext'
 import { BackIcon, CardIcon, ChevronUpIcon, MaybankIcon, PublicBankIcon, CimbIcon, GPayIcon, TngIcon, CashIcon, TruckIcon } from '../components/Icons'
+import { paymentMethods } from '../utils/helper'
 
 export default function SelectPaymentPage() {
   const navigate = useNavigate()
   const location = useLocation()
+  const { defaultPaymentMethod } = usePreference()
+  const incomingState = location.state?.checkoutData || location.state || {}
   
   // 核心状态：记录当前选中的支付方式 ID
-  const [selectedMethod, setSelectedMethod] = useState(location.state?.paymentMethod || '')
+  const [selectedMethod, setSelectedMethod] = useState(() => {
+    if (paymentMethods[incomingState.paymentMethod]) return incomingState.paymentMethod
+    if (paymentMethods[defaultPaymentMethod]) return defaultPaymentMethod
+    return 'maybank'
+  })
 
   // 确认按钮逻辑
   const handleSelect = () => {
@@ -18,9 +26,9 @@ export default function SelectPaymentPage() {
         
         // 严厉提醒：绝对不能用 navigate(-1) 传状态！
         // 我们必须明确跳回 /payment，并合并原来的购物车数据
-        navigate('/payment', { 
+        navigate(location.state?.from ?? '/payment', { 
             state: { 
-            ...location.state, // 展开所有原来购物车传来的数据（items, subtotal 等）
+            ...incomingState, // 展开所有原来购物车传来的数据（items, subtotal 等）
             paymentMethod: selectedMethod // 加上你新选的支付方式
             },
             replace: true // 极其重要：替换当前历史记录，防止用户按手机返回键时在两个页面间死循环
