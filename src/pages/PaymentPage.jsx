@@ -219,7 +219,7 @@ export default function CheckoutPage() {
           <div className="mx-auto flex w-full max-w-[360px] gap-3 px-5">
             <button 
               onClick={() => { 
-                //resetOrders(); 
+                // resetOrders(); 
                 navigate('/cart', { state: { from: location.pathname } })}}
               className="flex-1 rounded-xl border-2 border-[#ee4d4d] bg-white py-3.5 text-[16px] font-bold text-[#ee4d4d] transition hover:bg-[#fff5f5] active:scale-95"
             >

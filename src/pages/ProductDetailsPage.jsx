@@ -1,6 +1,5 @@
 import { useEffect, useState, useRef } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
-import BottomNav from '../components/navigation/BottomNav'
 import { products } from '../data/homeData'
 import { useCart } from '../contexts/CartContext'
 import { loadWishlistIds, saveWishlistIds, toggleWishlistId } from '../utils/wishlist'
@@ -148,21 +147,21 @@ export default function ProductDetailPage() {
             className={`absolute left-1/2 top-[50px] z-50 flex w-[calc(100%-40px)] max-w-[320px] -translate-x-1/2 items-center justify-between rounded-2xl border border-[#f3f4f6] bg-white p-3 shadow-[0_12px_30px_rgba(0,0,0,0.08)] transition-all duration-300 ease-out 
             ${showToast ? 'translate-y-0 opacity-100 pointer-events-auto' : '-translate-y-6 opacity-0 pointer-events-none'}`}
             >
-            <div className="flex items-center gap-3">
-                <ToastCheckIcon />
-                <p className="w-full text-[13px] font-semibold leading-tight text-[#1C1B1B]">
-                The product has been added to your cart !
-                </p>
-            </div>
-            
-            {/* 右侧跳转购物车的快捷按钮 */}
-            <button 
-                onClick={() => navigate('/cart')}
-                className="flex flex-col items-center min-w-[70px] justify-center border-l border-[#f3f4f6] pl-3 transition hover:opacity-70"
-            >
-                <ToastCartIcon />
-                <span className="mt-1 text-[11px] font-bold text-[#42c236]">View Cart</span>
-            </button>
+              <div className="flex items-center gap-3">
+                  <ToastCheckIcon />
+                  <p className="w-full text-[13px] font-semibold leading-tight text-[#1C1B1B]">
+                  The product has been added to your cart !
+                  </p>
+              </div>
+              
+              {/* 右侧跳转购物车的快捷按钮 */}
+              <button 
+                  onClick={() => navigate('/cart')}
+                  className="flex flex-col items-center min-w-[70px] justify-center border-l border-[#f3f4f6] pl-3 transition hover:opacity-70"
+              >
+                  <ToastCartIcon />
+                  <span className="mt-1 text-[11px] font-bold text-[#42c236]">View Cart</span>
+              </button>
             </div>
           </div>
         </div>
