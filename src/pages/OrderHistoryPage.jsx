@@ -1,44 +1,13 @@
-import { useEffect, useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useLocation } from 'react-router-dom'
 import { useOrder } from '../contexts/OrderContext'
 import { OrderStatusTag } from '../utils/orderStatus'
-
-// --- 图标组件 ---
-function BackIcon() {
-  return (
-    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#1C1B1B" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M19 12H5M12 19l-7-7 7-7"/>
-    </svg>
-  )
-}
-
-function ChevronRightIcon() {
-  return (
-    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#1C1B1B" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M9 18l6-6-6-6" />
-    </svg>
-  )
-}
-
-function formatCurrentTime() {
-  const now = new Date()
-  const hours = String(now.getHours()).padStart(2, '0')
-  const minutes = String(now.getMinutes()).padStart(2, '0')
-  return `${hours}:${minutes}`
-}
+import { BackIcon, ChevronRightIcon } from '../components/Icons'
 
 export default function OrderListPage() {
   const navigate = useNavigate()
-  const [currentTime, setCurrentTime] = useState(formatCurrentTime())
   const { orders } = useOrder();
-  console.log('Current orders in context:', orders) // 调试日志，确认订单数据正确传入
-
-  useEffect(() => {
-    const timer = setInterval(() => {
-      setCurrentTime(formatCurrentTime())
-    }, 1000)
-    return () => clearInterval(timer)
-  }, [])
+  const location = useLocation()
+   const data = { ...(location.state || {}) }
 
   return (
     <>  
@@ -47,7 +16,7 @@ export default function OrderListPage() {
           <div className="mx-auto w-full max-w-[360px] px-5">
             <header className="flex items-center justify-between">
               <div className="flex items-center gap-3">
-                <button onClick={() => navigate(-1)} className="text-[#1C1B1B] transition hover:scale-110">
+                <button onClick={() => navigate(data.from || '/profile')} className="text-[#1C1B1B] transition hover:scale-110">
                   <BackIcon />
                 </button>
                 <h1 className="font-['Plus_Jakarta_Sans','Rubik',sans-serif] text-[25px] font-bold leading-[1.2] text-black">
