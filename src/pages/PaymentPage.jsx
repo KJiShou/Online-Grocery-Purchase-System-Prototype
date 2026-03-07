@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
 import { useOrder } from '../contexts/OrderContext'
 import { useCart } from '../contexts/CartContext'
@@ -22,6 +22,8 @@ export default function CheckoutPage() {
   const { selectedItems, subtotal, removeMultiple } = useCart()
 
   const isPaymentSuccessful = useRef(false)
+  const [showConfirmPaymentModal, setShowConfirmPaymentModal] = useState(false)
+  const [showCancelPaymentModal, setShowCancelPaymentModal] = useState(false)
 
   // 2. 安全地提取数据。如果用户是直接在浏览器输入网址进来的（没有经过购物车），
   // location.state 会是 null，我们需要给它一个默认值防止页面崩溃。
@@ -58,7 +60,7 @@ export default function CheckoutPage() {
         <div className="absolute inset-x-0 top-[44px] z-20 bg-white min-h-[44px]">
           <div className="mx-auto w-full max-w-[360px] px-5">
             <header className="flex items-center gap-2">
-              <button onClick={() => navigate('/cart', { state: { from: location.pathname } })} className="text-[#1f2937] transition hover:scale-110 hover:text-[#42c236]">
+              <button onClick={() => setShowCancelPaymentModal(true)} className="text-[#1f2937] transition hover:scale-110 hover:text-[#42c236]">
                 <BackIcon />
               </button>
               <h1 className="font-['Plus_Jakarta_Sans','Rubik',sans-serif] text-[25px] font-bold leading-[1.2] text-black">
@@ -213,15 +215,42 @@ export default function CheckoutPage() {
           <div className="mx-auto flex w-full max-w-[360px] gap-3 px-5">
             <button 
               onClick={() => { 
-                // resetOrders(); 
-                navigate('/cart', { state: { from: location.pathname } })}}
+                resetOrders(); 
+                setShowCancelPaymentModal(true);
+                }}
               className="flex-1 rounded-xl border-2 border-[#ee4d4d] bg-white py-3.5 text-[16px] font-bold text-[#ee4d4d] transition hover:bg-[#fff5f5] active:scale-95"
             >
               Cancel
             </button>
             <button 
               onClick={() => {
-                const checkoutData = {
+                setShowConfirmPaymentModal(true)
+              }}
+              className="flex-1 rounded-xl bg-[#1C1B1B] py-3.5 text-[16px] font-bold text-white transition hover:bg-black hover:shadow-lg active:scale-95"
+            >
+              Confirm
+            </button>
+          </div>
+        </div>
+
+        {showConfirmPaymentModal ? (
+          <div className="absolute inset-0 z-30 flex items-center justify-center bg-black/35 px-4">
+            <div className="w-full max-w-[328px] rounded-2xl bg-white p-4 shadow-[0_16px_36px_rgba(0,0,0,0.22)]">
+              <h3 className="font-['Plus_Jakarta_Sans','Rubik',sans-serif] text-[18px] font-bold text-[#1C1B1B]">Confirm Payment</h3>
+              <p className="mt-2 text-[14px] leading-5 text-[#4B5563]">Confirm to place order?</p>
+              <div className="mt-4 grid grid-cols-2 gap-3">
+                <button
+                  type="button"
+                  onClick={() => setShowConfirmPaymentModal(false)}
+                  className="h-10 rounded-lg border border-[#D4D4D8] bg-white text-[14px] font-semibold text-[#1C1B1B] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#1C1B1B]"
+                >
+                    Cancel
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    // 这里填入取消订单的逻辑
+                    const checkoutData = {
                   ...data,
                   items: selectedItems,
                   subtotal,
@@ -271,14 +300,47 @@ export default function CheckoutPage() {
                 }, 30000);
 
                 removeMultiple(selectedItems.map(item => item.id))
+                setShowConfirmPaymentModal(false)
                 navigate('/order-placed', { state: { from: location.pathname, checkoutData: {...checkoutData, currentOrderId} }, replace: true  })
-              }}
-              className="flex-1 rounded-xl bg-[#1C1B1B] py-3.5 text-[16px] font-bold text-white transition hover:bg-black hover:shadow-lg active:scale-95"
-            >
-              Confirm
-            </button>
+                    
+                  }}
+                  className="h-10 rounded-lg bg-[#EE4D4D] text-[14px] font-semibold text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#EE4D4D]"
+                >
+                  Confirm
+                </button>
+              </div>
+            </div>
           </div>
-        </div>
+        ) : null}
+
+        {showCancelPaymentModal ? (
+          <div className="absolute inset-0 z-30 flex items-center justify-center bg-black/35 px-4">
+            <div className="w-full max-w-[328px] rounded-2xl bg-white p-4 shadow-[0_16px_36px_rgba(0,0,0,0.22)]">
+              <h3 className="font-['Plus_Jakarta_Sans','Rubik',sans-serif] text-[18px] font-bold text-[#1C1B1B]">Cancel Payment</h3>
+              <p className="mt-2 text-[14px] leading-5 text-[#4B5563]">Confirm to cancel payment?</p>
+              <div className="mt-4 grid grid-cols-2 gap-3">
+                <button
+                  type="button"
+                  onClick={() => setShowCancelPaymentModal(false)}
+                  className="h-10 rounded-lg border border-[#D4D4D8] bg-white text-[14px] font-semibold text-[#1C1B1B] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#1C1B1B]"
+                >
+                    Cancel
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setShowCancelPaymentModal(false)
+                    navigate('/cart', { state: { from: location.pathname }, replace: true })
+                  }}
+                  className="h-10 rounded-lg bg-[#EE4D4D] text-[14px] font-semibold text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#EE4D4D]"
+                >
+                  Confirm
+                </button>
+              </div>
+            </div>
+          </div>
+        ) : null}
+
      </>
   )
 }

@@ -39,11 +39,13 @@ export default function OrderDetailPage() {
   const navigate = useNavigate()
   const navigationType = useNavigationType()
   const location = useLocation()
+  const [showCancelOrderModal, setShowCancelOrderModal] = useState(false)
+  const [showCompleteOrderModal, setShowCompleteOrderModal] = useState(false)
   // 严厉提醒：必须通过 useParams 抓取上一个页面传过来的订单 ID
   // 你的路由配置必须是：<Route path="/order-detail/:orderId" element={<OrderDetailPage />} />
   const { orderId } = useParams()
 
-  const { getOrderById, completeOrder, updateOrder } = useOrder()
+  const { getOrderById, completeOrder, updateOrder, cancelOrder } = useOrder()
 
   // 模拟从后端根据 orderId 获取到的订单详情数据
   const orderData = getOrderById('#' + orderId)
@@ -265,12 +267,29 @@ export default function OrderDetailPage() {
                 <div className="border-b border-[#f3f4f6] py-0">
                   <button 
                   onClick={() => {
-                    completeOrder(orderData.id)
-                    alert('Order marked as Delivered!')
+                    setShowCompleteOrderModal(true) 
                   }}
                   className={`mb-2 w-full rounded-xl py-3 text-[15px] font-semibold text-white transition bg-[#111827] hover:bg-[#1f2937] shadow-lg hover:-translate-y-0.5
                   `}>
                   Complete Order
+                </button>
+                </div>
+              </div>
+            </div>
+              )}
+
+              {orderData.status === 'Pending' && (
+          <div className="absolute bottom-[0px] left-0 z-20 w-full border-t border-[#e4e4e7] bg-[#f8fafc] pb-2 pt-3">
+            <div className="mx-auto w-full max-w-[360px] px-5">
+                <div className="border-b border-[#f3f4f6] py-0">
+                  <button 
+                  onClick={() => {
+                    setShowCancelOrderModal(true)
+                    //navigate('/select-address', { state: {...data, from: location.pathname } })
+                  }}
+                  className={`mb-2 w-full rounded-xl py-3 text-[16px] font-bold text-[#ee4d4d] transition border-2 border-[#ee4d4d] ransition hover:bg-[#fff5f5] active:scale-95 shadow-lg hover:-translate-y-0.5
+                  `}>
+                  Cancel Order
                 </button>
                 </div>
               </div>
@@ -292,29 +311,71 @@ export default function OrderDetailPage() {
                   transition-all duration-300 ease-out
                   hover:scale-110 hover:bg-[#42c236] hover:shadow-[0_12px_32px_rgba(66,194,54,0.3)]
                   active:scale-95
-                ${orderData.status === 'Out for Delivery' ? ' max-[420px]:bottom-[90px]' : ''}  max-[420px]:right-[35px]
+                ${orderData.status === 'Out for Delivery' || orderData.status === 'Pending' ? ' max-[420px]:bottom-[90px]' : ''}  max-[420px]:right-[35px]
                 `}
               >
                 <SupportIcon />
               </button>
 
-          {/* {orderData.status === 'Pending' && (
-          <div className="absolute bottom-[0px] left-0 z-20 w-full border-t border-[#e4e4e7] bg-[#f8fafc] pb-2 pt-3">
-            <div className="mx-auto w-full max-w-[360px] px-5">
-                <div className="border-b border-[#f3f4f6] py-0">
-                  <button 
-                  onClick={() => {
-                    navigate('/select-address', { state: {...data, from: location.pathname } })
-                  }}
-                  className={`mb-2 w-full rounded-xl py-3 text-[15px] font-semibold text-white transition bg-[#111827] hover:bg-[#1f2937] shadow-lg hover:-translate-y-0.5
-                  `}>
-                  Change Address
+              {showCancelOrderModal ? (
+          <div className="absolute inset-0 z-30 flex items-center justify-center bg-black/35 px-4">
+            <div className="w-full max-w-[328px] rounded-2xl bg-white p-4 shadow-[0_16px_36px_rgba(0,0,0,0.22)]">
+              <h3 className="font-['Plus_Jakarta_Sans','Rubik',sans-serif] text-[18px] font-bold text-[#1C1B1B]">Cancel Order</h3>
+              <p className="mt-2 text-[14px] leading-5 text-[#4B5563]">Confirm to cancel this order?</p>
+              <div className="mt-4 grid grid-cols-2 gap-3">
+                <button
+                  type="button"
+                  onClick={() => setShowCancelOrderModal(false)}
+                  className="h-10 rounded-lg border border-[#D4D4D8] bg-white text-[14px] font-semibold text-[#1C1B1B] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#1C1B1B]"
+                >
+                    Cancel
                 </button>
-                </div>
+                <button
+                  type="button"
+                  onClick={() => {
+                    // 这里填入取消订单的逻辑
+                    console.log('触发：取消订单');
+                    setShowCancelOrderModal(false)
+                    cancelOrder(orderData.id)
+                  }}
+                  className="h-10 rounded-lg bg-[#EE4D4D] text-[14px] font-semibold text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#EE4D4D]"
+                >
+                  Confirm
+                </button>
               </div>
             </div>
-              )} */}
+          </div>
+        ) : null}
 
+        {showCompleteOrderModal ? (
+          <div className="absolute inset-0 z-30 flex items-center justify-center bg-black/35 px-4">
+            <div className="w-full max-w-[328px] rounded-2xl bg-white p-4 shadow-[0_16px_36px_rgba(0,0,0,0.22)]">
+              <h3 className="font-['Plus_Jakarta_Sans','Rubik',sans-serif] text-[18px] font-bold text-[#1C1B1B]">Complete Order</h3>
+              <p className="mt-2 text-[14px] leading-5 text-[#4B5563]">Confirm to complete this order?</p>
+              <div className="mt-4 grid grid-cols-2 gap-3">
+                <button
+                  type="button"
+                  onClick={() => setShowCompleteOrderModal(false)}
+                  className="h-10 rounded-lg border border-[#D4D4D8] bg-white text-[14px] font-semibold text-[#1C1B1B] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#1C1B1B]"
+                >
+                    Cancel
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    // 这里填入完成订单的逻辑
+                    console.log('触发：完成订单');
+                    setShowCompleteOrderModal(false)
+                    completeOrder(orderData.id)
+                  }}
+                  className="h-10 rounded-lg bg-[#111827] text-[14px] font-semibold text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#EE4D4D]"
+                >
+                  Confirm
+                </button>
+              </div>
+            </div>
+          </div>
+        ) : null}
       </>
   )
 }
