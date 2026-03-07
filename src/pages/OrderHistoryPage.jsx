@@ -12,7 +12,7 @@ export default function OrderListPage() {
   return (
     <>  
         {/* === 顶部 Header === */}
-        <div className="absolute inset-x-0 top-[44px] z-20 bg-white pb-3 min-h-[44px]">
+        <div className="absolute inset-x-0 top-[44px] z-20 bg-white min-h-[44px]">
           <div className="mx-auto w-full max-w-[360px] px-5">
             <header className="flex items-center justify-between">
               <div className="flex items-center gap-3">
@@ -28,8 +28,8 @@ export default function OrderListPage() {
         </div>
 
         {/* === 中间订单列表区 === */}
-        <div className="hide-scrollbar absolute inset-x-0 bottom-0 top-[100px] overflow-y-auto">
-          <div className="mx-auto flex w-full max-w-[360px] flex-col gap-4 px-5 pb-8 pt-0">
+        <div className="hide-scrollbar absolute inset-x-0 bottom-0 top-[88px] overflow-y-auto">
+          <div className="mx-auto flex w-full max-w-[360px] flex-col gap-4 px-5 pb-8 pt-4">
             
             {orders.length === 0 && (
               <div className="flex flex-col items-center gap-3 rounded-[20px] bg-white p-5 shadow-sm">

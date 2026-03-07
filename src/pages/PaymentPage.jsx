@@ -55,7 +55,7 @@ export default function CheckoutPage() {
   return (
     <>  
         {/* === 顶部 Header === */}
-        <div className="absolute inset-x-0 top-[44px] z-20 bg-white pb-3 min-h-[44px]">
+        <div className="absolute inset-x-0 top-[44px] z-20 bg-white min-h-[44px]">
           <div className="mx-auto w-full max-w-[360px] px-5">
             <header className="flex items-center gap-2">
               <button onClick={() => navigate('/cart', { state: { from: location.pathname } })} className="text-[#1f2937] transition hover:scale-110 hover:text-[#42c236]">
@@ -69,8 +69,8 @@ export default function CheckoutPage() {
         </div>
 
         {/* === 中间滚动内容区 === */}
-        <div className="hide-scrollbar absolute inset-x-0 bottom-[50px] top-[108px] overflow-y-auto">
-          <div className="mx-auto w-full max-w-[360px] px-5 pb-8">
+        <div className="hide-scrollbar absolute inset-x-0 bottom-[50px] top-[88px] overflow-y-auto">
+          <div className="mx-auto w-full max-w-[360px] px-5 pb-8 pt-4">
             
             {/* 1. 收货地址 */}
             <div

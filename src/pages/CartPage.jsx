@@ -39,7 +39,7 @@ function CartPage() {
 
   return (
     <>
-        <div className="absolute inset-x-0 top-[44px] z-20 bg-white pb-3">
+        <div className="absolute inset-x-0 top-[44px] z-20 bg-white min-h-[44px]">
           <div className="mx-auto w-full max-w-[360px] px-5">
             <header>
               <h1 className="font-['Plus_Jakarta_Sans','Rubik',sans-serif] text-[25px] font-bold leading-[1.2] text-black">
@@ -49,8 +49,8 @@ function CartPage() {
           </div>
         </div>
 
-        <div className="hide-scrollbar absolute inset-x-0 bottom-[170px] top-[108px] overflow-y-auto pb-6">
-            <div className="mx-auto w-full max-w-[360px] px-5">
+        <div className="hide-scrollbar absolute inset-x-0 bottom-[170px] top-[88px] overflow-y-auto pb-6">
+            <div className="mx-auto w-full max-w-[360px] px-5 pt-4">
                 {cartItems.map((item) => (
                 <div
                     key={item.id}
