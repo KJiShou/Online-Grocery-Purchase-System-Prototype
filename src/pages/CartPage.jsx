@@ -1,7 +1,7 @@
-import { useNavigate, useLocation } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 import { useCart } from '../contexts/CartContext'
 import { formatPrice } from '../utils/helper'
-import { BackIcon, TrashIcon } from '../components/Icons'
+import { TrashIcon } from '../components/Icons'
 
 function QuantityControl({ quantity, onIncrement, onDecrement }) {
   return (
@@ -25,7 +25,6 @@ function QuantityControl({ quantity, onIncrement, onDecrement }) {
 
 function CartPage() {
   const navigate = useNavigate()
-  const location = useLocation()
   const { 
     cartItems, 
     toggleSelected, 
@@ -37,25 +36,15 @@ function CartPage() {
    } = useCart()
 
   // 安全提取数据
-  const { from } = location.state || {}
 
   return (
     <>
         <div className="absolute inset-x-0 top-[44px] z-20 bg-white pb-3">
           <div className="mx-auto w-full max-w-[360px] px-5">
-            <header className="flex items-center gap-2">
-              <button onClick={() => {
-                if(from === '/payment') {
-                  navigate('/')
-                } else {
-                navigate(-1)}
-              }
-                } className="text-[#1f2937] transition hover:scale-110 hover:text-[#42c236]">
-                <BackIcon />
-              </button>
+            <header>
               <h1 className="font-['Plus_Jakarta_Sans','Rubik',sans-serif] text-[25px] font-bold leading-[1.2] text-black">
-              My Cart
-            </h1>
+                My Cart
+              </h1>
             </header>
           </div>
         </div>

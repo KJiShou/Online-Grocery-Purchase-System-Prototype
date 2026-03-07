@@ -35,6 +35,17 @@ function CarouselArrowIcon({ className = '' }) {
   )
 }
 
+function ProductImagePlaceholder({ name }) {
+  return (
+    <div className="flex h-full w-full flex-col items-center justify-center bg-gradient-to-br from-[#f4f4f5] to-[#e5e7eb] px-3 text-center">
+      <span className="mb-2 rounded-full bg-white px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.12em] text-[#42c236]">
+        Add Image
+      </span>
+      <span className="text-[13px] font-semibold leading-[1.4] text-[#1f2937]">{name}</span>
+    </div>
+  )
+}
+
 function HomePage() {
   const navigate = useNavigate()
   const [likedProducts, setLikedProducts] = useState(() => {
@@ -51,7 +62,7 @@ function HomePage() {
   const [recentSearches, setRecentSearches] = useState(['Milk', 'Oil', 'Broccoli', 'Orange', 'Apple', 'Sugar'])
   const searchInputRef = useRef(null)
 
-  const displayProducts = [...products, ...products]
+  const displayProducts = products
 
   useEffect(() => {
     if (searchOpen) {
@@ -110,18 +121,21 @@ function HomePage() {
         <div className="mx-auto w-full max-w-[360px] px-5">
           <section className="home-carousel relative mb-6 h-[155px] overflow-hidden rounded-[26px]">
             {bannerItems.map((item, index) => (
-              <div
+              <button
+                type="button"
                 key={item.id}
-                className={`absolute inset-0 transition-opacity duration-500 ${
+                onClick={() => navigate(`/product/${item.productId}`)}
+                className={`absolute inset-0 text-left transition-opacity duration-500 ${
                   activeBannerIndex === index ? 'opacity-100' : 'pointer-events-none opacity-0'
                 }`}
+                aria-label={`View ${item.title}`}
               >
                 <img src={item.image} alt={item.title} className="h-full w-full object-cover" />
                 <div className="absolute inset-0 bg-gradient-to-r from-black/55 via-black/20 to-transparent"></div>
                 <div className="absolute left-4 top-4 rounded-lg bg-black/70 px-[6px] py-[6px] text-[10px] font-semibold leading-[13px] tracking-[0.015em] text-white">
                   {item.discount}
                 </div>
-                <div className="absolute bottom-4 left-4 text-white">
+                <div className="absolute bottom-4 left-4 text-left text-white">
                   <p className="font-['Plus_Jakarta_Sans','Rubik',sans-serif] text-[14px] font-normal leading-[18px] tracking-[0.005em]">
                     {item.title}
                   </p>
@@ -129,19 +143,23 @@ function HomePage() {
                     {item.subtitle}
                   </p>
                 </div>
-              </div>
+              </button>
             ))}
             <button
-              onClick={() =>
+              onClick={(event) => {
+                event.stopPropagation()
                 setActiveBannerIndex((current) => (current - 1 + bannerItems.length) % bannerItems.length)
-              }
+              }}
               aria-label="Previous banner"
               className="absolute left-2 top-1/2 z-10 grid h-8 w-8 -translate-y-1/2 place-items-center rounded-full bg-white/80"
             >
               <CarouselArrowIcon className="rotate-180" />
             </button>
             <button
-              onClick={() => setActiveBannerIndex((current) => (current + 1) % bannerItems.length)}
+              onClick={(event) => {
+                event.stopPropagation()
+                setActiveBannerIndex((current) => (current + 1) % bannerItems.length)
+              }}
               aria-label="Next banner"
               className="absolute right-2 top-1/2 z-10 grid h-8 w-8 -translate-y-1/2 place-items-center rounded-full bg-white/80"
             >
@@ -204,7 +222,15 @@ function HomePage() {
                   key={`${product.id}-${index}`} 
                   className="group transform rounded-xl bg-white p-2.5 shadow-sm transition duration-300 ease-in-out hover:-translate-y-1 hover:shadow-md">
                     <div className="relative mb-2 h-32 overflow-hidden rounded-xl bg-gray-100">
-                      <img src={product.image} alt={product.name} className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105" />
+                      {product.image ? (
+                        <img
+                          src={product.image}
+                          alt={product.name}
+                          className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
+                        />
+                      ) : (
+                        <ProductImagePlaceholder name={product.name} />
+                      )}
                       <button
                         onClick={(e) => {
                           e.stopPropagation(); // 严厉警告：必须加上这一行，否则点击爱心会触发外层跳转！
