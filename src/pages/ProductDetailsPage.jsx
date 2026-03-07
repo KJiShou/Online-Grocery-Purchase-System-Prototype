@@ -6,6 +6,17 @@ import { loadWishlistIds, saveWishlistIds, toggleWishlistId } from '../utils/wis
 import { formatPrice } from '../utils/helper'
 import { BackIcon, HeartIcon, ChevronRightIcon, CartAddIcon, PlusIcon, MinusIcon, ChevronLeftIcon, ToastCheckIcon, ToastCartIcon } from '../components/Icons'
 
+function ProductImagePlaceholder({ name }) {
+  return (
+    <div className="flex h-[180px] w-[220px] flex-col items-center justify-center rounded-[28px] bg-gradient-to-br from-[#f4f4f5] to-[#e5e7eb] px-5 text-center text-[#1f2937]">
+      <span className="mb-3 rounded-full bg-white px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.12em] text-[#42c236]">
+        Add Image
+      </span>
+      <span className="text-[16px] font-semibold leading-[1.4]">{name}</span>
+    </div>
+  )
+}
+
 export default function ProductDetailPage() {
   const navigate = useNavigate()
   const { addToCart, cartItems } = useCart()
@@ -195,11 +206,15 @@ export default function ProductDetailPage() {
                     key={index} 
                     className="flex w-full flex-shrink-0 snap-center items-center justify-center"
                 >
-                    <img 
-                    src={imgUrl} 
-                    alt={`${product.name} - view ${index + 1}`} 
-                    className="h-[180px] w-auto object-contain drop-shadow-sm mix-blend-multiply pointer-events-none"
-                    />
+                    {imgUrl ? (
+                      <img 
+                        src={imgUrl} 
+                        alt={`${product.name} - view ${index + 1}`} 
+                        className="h-[180px] w-auto object-contain drop-shadow-sm mix-blend-multiply pointer-events-none"
+                      />
+                    ) : (
+                      <ProductImagePlaceholder name={product.name} />
+                    )}
                 </div>
                 ))}
             </div>

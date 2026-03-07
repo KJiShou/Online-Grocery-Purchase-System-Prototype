@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
+import { BackIcon } from '../components/Icons'
 import StatusIcons from '../components/layout/StatusBar'
 
 const defaultAddresses = [
@@ -28,14 +29,6 @@ function formatCurrentTime() {
   return `${hours}:${minutes}`
 }
 
-function BackIcon() {
-  return (
-    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#1C1B1B" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M19 12H5M12 19l-7-7 7-7" />
-    </svg>
-  )
-}
-
 function LocationPin() {
   return (
     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#1C1B1B" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
@@ -48,9 +41,9 @@ function LocationPin() {
 function PlusIcon() {
   return (
     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <path d="M8 12H16" stroke="black" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-    <path d="M12 16V8" stroke="black" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-    <path d="M9 22H15C20 22 22 20 22 15V9C22 4 20 2 15 2H9C4 2 2 4 2 9V15C2 20 4 22 9 22Z" stroke="black" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+      <path d="M8 12H16" stroke="black" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+      <path d="M12 16V8" stroke="black" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+      <path d="M9 22H15C20 22 22 20 22 15V9C22 4 20 2 15 2H9C4 2 2 4 2 9V15C2 20 4 22 9 22Z" stroke="black" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
     </svg>
   )
 }
