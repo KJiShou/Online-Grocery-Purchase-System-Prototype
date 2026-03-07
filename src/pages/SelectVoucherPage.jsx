@@ -51,7 +51,7 @@ export default function SelectVoucherPage() {
   return (
     <>
         {/* === 顶部 Header === */}
-        <div className="absolute inset-x-0 top-[44px] z-20 bg-white pb-3 min-h-[44px]">
+        <div className="absolute inset-x-0 top-[44px] z-20 bg-white min-h-[44px]">
           <div className="mx-auto w-full max-w-[360px] px-5">
             <header className="flex items-center gap-2">
               <button onClick={() => navigate(-1)} className="text-[#1f2937] transition hover:scale-110">
@@ -65,8 +65,8 @@ export default function SelectVoucherPage() {
         </div>
 
         {/* === 中间滚动内容区 === */}
-        <div className="hide-scrollbar absolute inset-x-0 bottom-[200px] top-[109px] overflow-y-auto">
-          <div className="mx-auto w-full max-w-[360px] px-5 pb-8 pt-2">
+        <div className="hide-scrollbar absolute inset-x-0 bottom-[200px] top-[88px] overflow-y-auto">
+          <div className="mx-auto w-full max-w-[360px] px-5 pb-8 pt-4">
             
             {/* 1. Shipping Vouchers 区块 */}
             <p className="mb-3 text-[14px] font-medium text-[#4b5563]">Shipping Vouchers</p>

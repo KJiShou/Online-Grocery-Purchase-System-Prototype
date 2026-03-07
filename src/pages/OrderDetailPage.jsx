@@ -98,7 +98,7 @@ export default function OrderDetailPage() {
   return (
     <>
         {/* === 顶部 Header === */}
-         <div className="absolute inset-x-0 top-[44px] z-20 bg-white pb-3 min-h-[44px]">
+         <div className="absolute inset-x-0 top-[44px] z-20 bg-white min-h-[44px]">
           <div className="mx-auto w-full max-w-[360px] px-5">
             <header className="flex items-center justify-between">
               <div className="flex items-center gap-3">
@@ -127,8 +127,8 @@ export default function OrderDetailPage() {
         </div>
 
         {/* === 中间滚动详情区 === */}
+        <div className="hide-scrollbar absolute inset-x-0 bottom-[40px] top-[88px] overflow-y-auto">
         {/* 严厉提醒：确保包裹这段代码的最外层父级有 bg-[#f4f5f9] 这样的灰色底，否则白卡片显示不出来边缘！ */}
-        <div className="hide-scrollbar absolute inset-x-0 bottom-[40px] top-[94px] overflow-y-auto">
           <div className="mx-auto flex w-full max-w-[360px] flex-col px-5 pb-10 pt-4">
             
             {/* 1. 订单编号与日期区块 (纯白卡片) */}

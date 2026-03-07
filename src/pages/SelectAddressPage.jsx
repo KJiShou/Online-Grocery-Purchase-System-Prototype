@@ -115,7 +115,7 @@ export default function SelectAddressPage() {
 
   return (
     <>
-        <div className="absolute inset-x-0 top-[44px] z-20 bg-white pb-3 min-h-[44px]">
+        <div className="absolute inset-x-0 top-[44px] z-20 bg-white min-h-[44px]">
           <div className="mx-auto w-full max-w-[360px] px-5">
             <header className="flex items-center gap-2">
               <button onClick={() => navigate(-1)} className="text-[#1f2937] transition hover:scale-110">
@@ -128,7 +128,7 @@ export default function SelectAddressPage() {
           </div>
         </div>
 
-        <div className="hide-scrollbar absolute inset-x-0 bottom-[128px] top-[109px] overflow-y-auto">
+        <div className="hide-scrollbar absolute inset-x-0 bottom-[128px] top-[88px] overflow-y-auto">
           <div className="mx-auto w-full max-w-[360px] px-3 pb-8 pt-4">
             <div className="mb-3 flex items-center justify-between rounded-2xl border border-[#F4F5FD] bg-white px-3 py-2.5">
               <h2 className="font-['Plus_Jakarta_Sans','Rubik',sans-serif] text-[14px] font-semibold tracking-[0.005em] text-[#1C1B1B]">

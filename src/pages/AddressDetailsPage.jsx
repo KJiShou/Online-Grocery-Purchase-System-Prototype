@@ -99,7 +99,7 @@ export default function AddressDetailsPage() {
 
   return (
     <>
-        <div className="absolute inset-x-0 top-[44px] z-20 bg-white pb-3 min-h-[44px]">
+        <div className="absolute inset-x-0 top-[44px] z-20 bg-white min-h-[44px]">
           <div className="mx-auto w-full max-w-[360px] px-5">
             <header className="flex items-center gap-2">
               <button onClick={() => navigate(-1)} className="text-[#1f2937] transition hover:scale-110">
@@ -112,7 +112,7 @@ export default function AddressDetailsPage() {
           </div>
         </div>
 
-        <div className="hide-scrollbar absolute inset-x-0 bottom-[128px] top-[109px] overflow-y-auto">
+        <div className="hide-scrollbar absolute inset-x-0 bottom-[128px] top-[88px] overflow-y-auto">
           <div className="mx-auto flex w-full max-w-[360px] flex-col gap-3 px-3 pb-8 pt-4">
             <div className="rounded-2xl border border-[#F4F5FD] bg-white p-3 shadow-[0_4px_14px_rgba(15,23,42,0.08)]">
               <div className="mb-2 flex items-center justify-between">

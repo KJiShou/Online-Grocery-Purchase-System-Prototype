@@ -127,7 +127,7 @@ export default function ProductDetailPage() {
   return (
     <>  
         {/* === 顶部 Header === */}
-        <div className="absolute inset-x-0 top-[44px] z-20 bg-white pb-3 min-h-[44px]">
+        <div className="absolute inset-x-0 top-[44px] z-20 bg-white min-h-[44px]">
           <div className="mx-auto w-full max-w-[360px] px-5">
             <header className="flex items-center justify-between">
               <div className="flex items-center gap-3">
@@ -179,8 +179,8 @@ export default function ProductDetailPage() {
 
         {/* === 中间滚动内容区 === */}
         {/* 注意 bottom-[140px] 留出了底部操作栏和导航栏的空间 */}
-        <div className="hide-scrollbar absolute inset-x-0 bottom-[180px] top-[90px] overflow-y-auto">
-          <div className="mx-auto w-full max-w-[360px] flex flex-col">
+        <div className="hide-scrollbar absolute inset-x-0 bottom-[180px] top-[88px] overflow-y-auto">
+          <div className="mx-auto w-full max-w-[360px] flex flex-col pt-4">
             
             {/* 1. 顶部商品图展示区 */}
             <div className="relative flex h-[240px] w-full flex-col items-center justify-center">
