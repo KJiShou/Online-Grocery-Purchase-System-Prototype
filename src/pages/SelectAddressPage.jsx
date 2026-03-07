@@ -249,7 +249,7 @@ export default function SelectAddressPage() {
             </button>
             <button
               onClick={() =>
-                navigate('/payment', {
+                navigate(data.from || '/payment', {
                   state: {
                     ...data,
                     selectedAddress,

@@ -227,6 +227,17 @@ export default function CheckoutPage() {
             </button>
             <button 
               onClick={() => {
+                const checkoutData = {
+                  ...data,
+                  items: selectedItems,
+                  subtotal,
+                  selectedAddress,
+                  paymentMethod,
+                  appliedVoucher,
+                  discountAmount,
+                  shippingDiscount,
+                  grandTotal,
+                }
                 isPaymentSuccessful.current = true
                 const currentOrderId = generateOrderID();
                 addOrder({
@@ -266,7 +277,7 @@ export default function CheckoutPage() {
                 }, 30000);
 
                 removeMultiple(selectedItems.map(item => item.id))
-                navigate('/cart', { state: { from: location.pathname }, replace: true })
+                navigate('/order-placed', { state: { from: location.pathname, checkoutData: {...checkoutData, currentOrderId} }, replace: true  })
               }}
               className="flex-1 rounded-xl bg-[#1C1B1B] py-3.5 text-[16px] font-bold text-white transition hover:bg-black hover:shadow-lg active:scale-95"
             >
