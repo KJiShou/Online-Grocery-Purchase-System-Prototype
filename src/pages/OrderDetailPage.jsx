@@ -103,7 +103,7 @@ export default function OrderDetailPage() {
             <header className="flex items-center justify-between">
               <div className="flex items-center gap-3">
                 <button onClick={() => {
-                  navigate('/order-history')
+                  navigate(-1)
                   }} className="text-[#1C1B1B] transition hover:scale-110">
                   <BackIcon />
                 </button>

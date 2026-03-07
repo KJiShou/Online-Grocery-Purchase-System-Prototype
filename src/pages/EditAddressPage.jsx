@@ -1,6 +1,5 @@
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
-import StatusIcons from '../components/layout/StatusBar'
 
 function BackIcon() {
   return (
@@ -17,13 +16,6 @@ function ChevronRight() {
       <path d="M9 6L15 12L9 18" stroke="#1C1B1B" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
     </svg>
   )
-}
-
-function formatCurrentTime() {
-  const now = new Date()
-  const hours = String(now.getHours()).padStart(2, '0')
-  const minutes = String(now.getMinutes()).padStart(2, '0')
-  return `${hours}:${minutes}`
 }
 
 function formatAddressDisplay(address, unitNo) {
@@ -43,7 +35,6 @@ export default function EditAddressPage() {
   const initialFormValues = formDraft || editAddress || {}
   const isNewAddress = !editAddress?.id
 
-  const [currentTime, setCurrentTime] = useState(formatCurrentTime())
   const addressLine = initialFormValues.address ?? ''
   const [name, setName] = useState(initialFormValues.name ?? '')
   const [phone, setPhone] = useState(initialFormValues.phone ?? '')
@@ -52,11 +43,6 @@ export default function EditAddressPage() {
   const [isDefault, setIsDefault] = useState(Boolean(initialFormValues.isDefault))
   const [showSubmitModal, setShowSubmitModal] = useState(false)
   const [showDeleteModal, setShowDeleteModal] = useState(false)
-
-  useEffect(() => {
-    const timer = setInterval(() => setCurrentTime(formatCurrentTime()), 1000)
-    return () => clearInterval(timer)
-  }, [])
 
   const goToAddressDetails = () => {
     navigate('/address-details', {
@@ -129,34 +115,23 @@ export default function EditAddressPage() {
   }
 
   return (
-    <div className="min-h-screen w-full overflow-x-hidden bg-[#F4F5FD]">
-      <section className="relative h-screen w-full overflow-hidden bg-[#F4F5FD] max-[420px]:mx-auto max-[420px]:h-[min(800px,100dvh)] max-[420px]:w-[min(360px,100vw)] max-[420px]:rounded-[24px] max-[420px]:border max-[420px]:border-[#d4d4d8] max-[420px]:shadow-[0_12px_36px_rgba(0,0,0,0.12)]">
-        <div className="absolute inset-x-0 top-0 z-20 border-b border-[#F4F5FD] bg-white pt-3">
-          <div className="mx-auto w-full max-w-[360px] px-4">
-            <div className="mb-2 flex items-center justify-between text-[15px] font-normal tracking-[-0.24px] text-[#1C1B1B]">
-              <span className="leading-5">{currentTime}</span>
-              <StatusIcons />
-            </div>
-          </div>
-          <div className="mx-auto flex w-full max-w-[360px] items-center gap-2 px-4 pb-3">
-            <button
-              onClick={() => navigate(-1)}
-              className="grid min-h-[44px] min-w-[44px] place-items-center rounded-xl text-[#1f2937] transition hover:bg-[#F4F5FD] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#1C1B1B]"
-              aria-label="Back"
-            >
+    <>
+        <div className="absolute inset-x-0 top-[44px] z-20 bg-white pb-3 min-h-[44px]">
+          <div className="mx-auto w-full max-w-[360px] px-5">
+            <header className="flex items-center gap-2">
+              <button onClick={() => navigate(-1)} className="text-[#1f2937] transition hover:scale-110">
                 <BackIcon />
-            </button>
-            <div className="min-w-0">
-              <h1 className="font-['Plus_Jakarta_Sans','Rubik',sans-serif] text-[25px] font-bold leading-[120%] text-[#1C1B1B]">
+              </button>
+              <h1 className="font-['Plus_Jakarta_Sans','Rubik',sans-serif] text-[25px] font-bold leading-[1.2] text-black">
                 {isNewAddress ? 'New Address' : 'Edit Address'}
               </h1>
-            </div>
+            </header>
           </div>
         </div>
 
-        <div className="hide-scrollbar absolute inset-x-0 bottom-0 top-[101px] overflow-y-auto px-[10px] pb-8 pt-[10px]">
-          <div className="mx-auto flex w-full max-w-[360px] flex-col gap-6">
-            <div className="rounded-2xl border border-[#F4F5FD] bg-white p-[12px] shadow-[0_8px_20px_rgba(28,27,27,0.08)]">
+        <div className="hide-scrollbar absolute inset-x-0 bottom-[128px] top-[109px] overflow-y-auto">
+          <div className="mx-auto flex w-full max-w-[360px] flex-col gap-3 px-3 pb-8 pt-4">
+            <div className="rounded-2xl border border-[#F4F5FD] bg-white p-3 shadow-[0_4px_14px_rgba(15,23,42,0.08)]">
               <div className="flex flex-col gap-2">
                 <label className="font-['Plus_Jakarta_Sans','Rubik',sans-serif] text-[18px] font-bold leading-[23px] tracking-[0.0025em] text-[#1C1B1B]">
                   Address <span className="text-[#F25555]">*</span>
@@ -178,7 +153,7 @@ export default function EditAddressPage() {
               </div>
             </div>
 
-            <div className="rounded-2xl border border-[#F4F5FD] bg-white p-[12px] shadow-[0_8px_20px_rgba(28,27,27,0.08)]">
+            <div className="rounded-2xl border border-[#F4F5FD] bg-white p-3 shadow-[0_4px_14px_rgba(15,23,42,0.08)]">
               <div className="flex flex-col gap-4">
                 <label htmlFor="name" className="text-[12px] font-semibold uppercase tracking-[0.04em] text-[#6F7384]">
                   Contact Details
@@ -202,7 +177,7 @@ export default function EditAddressPage() {
               </div>
             </div>
 
-            <div className="rounded-2xl border border-[#F4F5FD] bg-white p-[12px] shadow-[0_8px_20px_rgba(28,27,27,0.08)]">
+            <div className="rounded-2xl border border-[#F4F5FD] bg-white p-3 shadow-[0_4px_14px_rgba(15,23,42,0.08)]">
               <div className="flex min-h-[44px] items-center justify-between">
                 <span className="font-['Plus_Jakarta_Sans','Rubik',sans-serif] text-[15px] font-bold leading-[19px] tracking-[0.005em] text-[#000000]">
                   Set as Default Address
@@ -219,32 +194,45 @@ export default function EditAddressPage() {
                 </button>
               </div>
             </div>
+          </div>
+        </div>
 
+        <div className="absolute bottom-[0px] left-0 z-20 w-full border-t border-[#e4e4e7] bg-[#f8fafc] pb-2 pt-3">
+          <div className="mx-auto flex w-full max-w-[360px] gap-3 px-5">
             {isNewAddress ? (
-              <button
-                type="button"
-                onClick={handleOpenSubmit}
-                className="h-[60px] rounded-xl bg-[#1C1B1B] font-['Plus_Jakarta_Sans','Rubik',sans-serif] text-[17px] font-bold text-white transition hover:bg-[#131313] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#1C1B1B]"
-              >
-                Save
-              </button>
+              <>
+                <button
+                  type="button"
+                  onClick={() => navigate(-1)}
+                  className="flex-1 rounded-xl border-2 border-[#1C1B1B] bg-white py-3.5 text-[16px] font-bold text-[#1C1B1B] transition hover:bg-[#fff5f5] active:scale-95"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="button"
+                  onClick={handleOpenSubmit}
+                  className="flex-1 rounded-xl bg-[#1C1B1B] py-3.5 text-[16px] font-bold text-white shadow-[0_10px_18px_rgba(28,27,27,0.28)] transition duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#1C1B1B]"
+                >
+                  Save
+                </button>
+              </>
             ) : (
-              <div className="grid grid-cols-2 gap-6">
+              <>
                 <button
                   type="button"
                   onClick={() => setShowDeleteModal(true)}
-                  className="h-[60px] rounded-xl border border-[#EE4D4D] bg-transparent font-['Plus_Jakarta_Sans','Rubik',sans-serif] text-[17px] font-bold text-[#EE4D4D] transition hover:bg-[#FFF1F1] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#EE4D4D]"
+                  className="flex-1 rounded-xl border-2 border-[#1C1B1B] bg-white py-3.5 text-[16px] font-bold text-[#1C1B1B] transition hover:bg-[#fff5f5] active:scale-95"
                 >
                   Delete Address
                 </button>
                 <button
                   type="button"
                   onClick={handleOpenSubmit}
-                  className="h-[60px] rounded-xl bg-[#1C1B1B] font-['Plus_Jakarta_Sans','Rubik',sans-serif] text-[17px] font-bold text-white transition hover:bg-[#131313] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#1C1B1B]"
+                  className="flex-1 rounded-xl bg-[#1C1B1B] py-3.5 text-[16px] font-bold text-white shadow-[0_10px_18px_rgba(28,27,27,0.28)] transition duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#1C1B1B]"
                 >
                   Submit
                 </button>
-              </div>
+              </>
             )}
           </div>
         </div>
@@ -298,7 +286,6 @@ export default function EditAddressPage() {
             </div>
           </div>
         ) : null}
-      </section>
-    </div>
+      </>
   )
 }

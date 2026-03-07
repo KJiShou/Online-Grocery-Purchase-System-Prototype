@@ -1,18 +1,8 @@
 import { useMemo, useState } from 'react'
-import { useNavigate } from 'react-router-dom'
 import { products } from '../data/homeData'
 import { loadWishlistIds, toggleWishlistId } from '../utils/wishlist'
 import { addItemToCart } from '../utils/cart'
 import { Message } from '@arco-design/web-react'
-
-function BackIcon() {
-  return (
-    <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <path d="M12.7599 25.0935C12.5066 25.0935 12.2533 25.0002 12.0533 24.8002L3.95992 16.7068C3.57326 16.3202 3.57326 15.6802 3.95992 15.2935L12.0533 7.20016C12.4399 6.81349 13.0799 6.81349 13.4666 7.20016C13.8533 7.58682 13.8533 8.22682 13.4666 8.61349L6.07992 16.0002L13.4666 23.3868C13.8533 23.7735 13.8533 24.4135 13.4666 24.8002C13.2799 25.0002 13.0133 25.0935 12.7599 25.0935Z" fill="#1C1B1B"/>
-      <path d="M27.3336 17H4.89355C4.34689 17 3.89355 16.5467 3.89355 16C3.89355 15.4533 4.34689 15 4.89355 15H27.3336C27.8802 15 28.3336 15.4533 28.3336 16C28.3336 16.5467 27.8802 17 27.3336 17Z" fill="#1C1B1B"/>
-    </svg>
-  )
-}
 
 function CartActionIcon({ color = '#4CBF35' }) {
   return (
@@ -56,7 +46,6 @@ function formatPrice(value) {
 }
 
 export default function WishlistPage() {
-  const navigate = useNavigate()
   const [messageApi, messageContextHolder] = Message.useMessage()
   const [wishlistIds, setWishlistIds] = useState(() => loadWishlistIds())
   const [selectedItem, setSelectedItem] = useState(null)
@@ -129,12 +118,9 @@ export default function WishlistPage() {
   return (
     <>
       {messageContextHolder}
-      <div className="absolute inset-x-0 top-[44px] z-20 border-b border-[#F4F5FD] bg-white">
-        <div className="mx-auto flex h-14 w-full max-w-[360px] items-center px-4">
-          <button onClick={() => navigate('/home')} aria-label="Back" className="mr-1 shrink-0 text-[#1C1B1B] transition hover:scale-105">
-            <BackIcon />
-          </button>
-          <h1 className="w-full pr-[33px] text-center font-['Plus_Jakarta_Sans','Rubik',sans-serif] text-[20px] font-bold leading-6 text-[#1C1B1B]">
+      <div className="absolute inset-x-0 top-[44px] z-20 bg-white pb-3">
+        <div className="mx-auto w-full max-w-[360px] px-5">
+          <h1 className="font-['Plus_Jakarta_Sans','Rubik',sans-serif] text-[25px] font-bold leading-[1.2] text-black">
             Wishlist
           </h1>
         </div>
