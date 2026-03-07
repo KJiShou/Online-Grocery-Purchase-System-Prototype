@@ -1,6 +1,7 @@
 import { useEffect, useState, useRef } from 'react'
 import { useLocation, useNavigate, useNavigationType } from 'react-router-dom'
 import { useOrder } from '../contexts/OrderContext'
+import { ToastCheckIcon, ToastContactSupportIcon, ToastFailIcon } from '../components/Icons'
 import tickIcon from '../assets/order-placed/tick.png'
 import changeAddressIcon from '../assets/order-placed/change-address.png'
 import orderIcon from '../assets/order-placed/order.png'
@@ -67,17 +68,6 @@ function LocationIcon() {
 	)
 }
 
-function ToastCheckIcon() {
-	return (
-		<div className="flex h-7 w-7 flex-shrink-0 items-center justify-center rounded-md bg-[#42c236]">
-		<svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-			<path d="M10.0003 18.9577C5.05866 18.9577 1.04199 14.941 1.04199 9.99935C1.04199 5.05768 5.05866 1.04102 10.0003 1.04102C14.942 1.04102 18.9587 5.05768 18.9587 9.99935C18.9587 14.941 14.942 18.9577 10.0003 18.9577ZM10.0003 2.29102C5.75033 2.29102 2.29199 5.74935 2.29199 9.99935C2.29199 14.2493 5.75033 17.7077 10.0003 17.7077C14.2503 17.7077 17.7087 14.2493 17.7087 9.99935C17.7087 5.74935 14.2503 2.29102 10.0003 2.29102Z" fill="white"/>
-			<path d="M8.81621 12.9827C8.64954 12.9827 8.49121 12.916 8.37454 12.7993L6.01621 10.441C5.77454 10.1993 5.77454 9.79935 6.01621 9.55768C6.25788 9.31602 6.65788 9.31602 6.89954 9.55768L8.81621 11.4743L13.0995 7.19102C13.3412 6.94935 13.7412 6.94935 13.9829 7.19102C14.2245 7.43268 14.2245 7.83268 13.9829 8.07435L9.25788 12.7993C9.14121 12.916 8.98288 12.9827 8.81621 12.9827Z" fill="white"/>
-		</svg>  
-		</div>
-	)
-}
-
 export default function OrderPlacedPage() {
 	const navigate = useNavigate()
   	const navigationType = useNavigationType()
@@ -85,7 +75,8 @@ export default function OrderPlacedPage() {
 	const { updateOrder, getOrderById } = useOrder()
 	const data = { ...(location.state?.checkoutData || location.state || {}) }
 
-	const [showToast, setShowToast] = useState(false)
+	const [showToast, setShowToast] = useState(false);
+	const [showToastFail, setShowToastFail] = useState(false);
 
 	const defaultAddress = {
 		id: 'andrew',
@@ -103,24 +94,39 @@ export default function OrderPlacedPage() {
 		shippingDiscount = 0,
 		grandTotal = subtotal + 5,
 	} = data
+
+	const canChangeAddress = () => {
+		const order = getOrderById(data.currentOrderId);
+		return order && order.status === "Pending";
+	};
 	
 	useEffect(() => {
 		if (data.from && navigationType !== 'POP') {
-			const order = getOrderById(data.currentOrderId)
+			const order = getOrderById(data.currentOrderId);
 			if (!order) {
 				throw new Error('No order data found.')
 			}
-			const shippingInfo = order.shippingInfo;
-			shippingInfo.address = formatAddressDisplay(data.selectedAddress.address, data.selectedAddress.unitNo);
-			shippingInfo.name = data.selectedAddress.name;
-			shippingInfo.phone = data.selectedAddress.phone;
-			updateOrder(data.currentOrderId, { shippingInfo })
-			
-			// Show toast when shipping address is updated
-			setShowToast(true)
-			setTimeout(() => {
-				setShowToast(false)
-			}, 3000)
+			if (order.status !== "Pending") {
+				console.log('Order already shipped, cannot change address for order', data.currentOrderId)
+				// Show fail toast if order is already shipped
+				setShowToastFail(true)
+				setTimeout(() => {
+					setShowToastFail(false)
+				}, 5000)
+			} else {
+				console.log('Updating shipping address for order', data.currentOrderId)
+				const shippingInfo = order.shippingInfo;
+				shippingInfo.address = formatAddressDisplay(data.selectedAddress.address, data.selectedAddress.unitNo);
+				shippingInfo.name = data.selectedAddress.name;
+				shippingInfo.phone = data.selectedAddress.phone;
+				updateOrder(data.currentOrderId, { shippingInfo })
+				
+				// Show toast when shipping address is updated
+				setShowToast(true)
+				setTimeout(() => {
+					setShowToast(false)
+				}, 5000)
+			}
 		}
 	}, [data.currentOrderId, data.from])
 
@@ -164,6 +170,28 @@ export default function OrderPlacedPage() {
 								Shipping address updated successfully!
 							</p>
 						</div>
+
+						{/* Toast fail notification */}
+						<div 
+							className={`absolute left-1/2 top-[50px] z-50 flex w-[calc(100%-40px)] max-w-[320px] -translate-x-1/2 items-center justify-between rounded-2xl border border-[#f3f4f6] bg-white p-3 shadow-[0_12px_30px_rgba(0,0,0,0.08)] transition-all duration-300 ease-out 
+							${showToastFail ? 'translate-y-0 opacity-100 pointer-events-auto' : '-translate-y-6 opacity-0 pointer-events-none'}`}
+						>
+							<div className="flex items-center gap-3">
+								<ToastFailIcon />
+								<p className="w-full text-[13px] font-semibold leading-tight text-[#1C1B1B]">
+									Unable to change shipping address. Seller has already shipped the order, please contact support.
+								</p>
+							</div>
+						  
+							{/* 右侧跳转购物车的快捷按钮 */}
+							<button 
+							onClick={() => console.log('Contact support clicked')}
+							className="flex min-w-[70px] flex-col items-center justify-center gap-1 border-l border-[#f3f4f6] text-[11px] font-bold text-[#ef4444] transition hover:opacity-70"
+							>
+								<ToastContactSupportIcon/>
+								<span className="text-[11px] leading-[12px] font-bold text-[#EE4D4D]">Contact Support</span>
+							</button>
+						</div>
 					</div>
 				</div>
 
@@ -198,8 +226,19 @@ export default function OrderPlacedPage() {
 
 							<div className="mt-4 grid grid-cols-2 gap-2">
 								<button
-									onClick={() => navigate('/select-address', { state: {...data, from: location.pathname } })}
-									className="flex h-[46px] items-center justify-center gap-2 rounded-[12px] border border-[#e4e4e7] bg-white text-[15px] font-semibold text-[#1C1B1B]"
+									onClick={() => {
+										if (!canChangeAddress()) {
+											// Show fail toast if order is already shipped
+											setShowToastFail(true)
+											setTimeout(() => {
+												setShowToastFail(false)
+											}, 5000)
+											return;
+										} else {
+											navigate('/select-address', { state: { ...data, from: location.pathname } })
+										}
+									}}
+									className={`flex h-[46px] items-center justify-center gap-2 rounded-[12px] border border-[#e4e4e7] bg-white text-[15px] font-semibold text-[#1C1B1B] ${!canChangeAddress() ? 'opacity-50 cursor-not-allowed' : 'hover:bg-gray-100'}`}
 								>
 									<img src={changeAddressIcon} alt="Change Address" className="h-[20px] w-[20px] object-contain" />
 									<span>Change Address</span>
