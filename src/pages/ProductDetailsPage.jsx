@@ -33,10 +33,7 @@ export default function ProductDetailPage() {
 
   const [likedProducts, setLikedProducts] = useState(() => {
       const stored = loadWishlistIds()
-      if (stored.length > 0) return stored
-      const defaultIds = ['dutch-lady']
-      saveWishlistIds(defaultIds)
-      return defaultIds
+    return stored
     }) 
 
   const isLiked = likedProducts.includes(product.id);
@@ -135,7 +132,7 @@ export default function ProductDetailPage() {
                   <BackIcon />
                 </button>
                 <h1 className="font-['Plus_Jakarta_Sans','Rubik',sans-serif] text-[25px] font-bold leading-[1.2] text-black">
-              Grocerry
+              Grocery
             </h1>
               </div>
               <button

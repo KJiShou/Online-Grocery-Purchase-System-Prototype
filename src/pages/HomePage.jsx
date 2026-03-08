@@ -50,10 +50,7 @@ function HomePage() {
   const navigate = useNavigate()
   const [likedProducts, setLikedProducts] = useState(() => {
     const stored = loadWishlistIds()
-    if (stored.length > 0) return stored
-    const defaultIds = ['dutch-lady']
-    saveWishlistIds(defaultIds)
-    return defaultIds
+    return stored
   })
   const [activeBannerIndex, setActiveBannerIndex] = useState(0)
   const [searchOpen, setSearchOpen] = useState(false)
