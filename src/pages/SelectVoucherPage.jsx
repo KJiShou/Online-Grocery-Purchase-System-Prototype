@@ -19,7 +19,11 @@ export default function SelectVoucherPage() {
 
   // 提取之前页面传过来的数据 (确保不丢失)
   const data = location.state || {}
-  const { appliedVoucher = null, shippingDiscount = 0 } = data // 默认给个 15.25 方便你直接测试页面
+  const { 
+    appliedVoucher = null, 
+    shippingDiscount = 0,
+    directBuyProductSubtotal = 0,
+  } = data // 默认给个 15.25 方便你直接测试页面
   
   // 状态管理：记录选中的免邮券和商品优惠券
   const [selectedShipping, setSelectedShipping] = useState(shippingDiscount === 0 ? false : true) // 默认选中免邮
@@ -28,8 +32,8 @@ export default function SelectVoucherPage() {
   // 动态计算折扣和总价
   const currentVoucherObj = itemVouchers.find(v => v.id === selectedItemVoucher)
   const discountRate = currentVoucherObj ? currentVoucherObj.rate : 0
-  const discountAmount = subtotal * discountRate
-  const grandTotal = subtotal - discountAmount + (selectedShipping ? 0 : 5) // 如果免邮券被选中，运费为0，否则加上RM5
+  const discountAmount = directBuyProductSubtotal === 0 ? subtotal * discountRate : directBuyProductSubtotal * discountRate
+  const grandTotal = directBuyProductSubtotal === 0 ? subtotal - discountAmount + (selectedShipping ? 0 : 5) : directBuyProductSubtotal - discountAmount + (selectedShipping ? 0 : 5)// 如果免邮券被选中，运费为0，否则加上RM5
 
   // 计算选中了多少个券
   const selectedCount = (selectedShipping ? 1 : 0) + (selectedItemVoucher ? 1 : 0)
@@ -42,7 +46,8 @@ export default function SelectVoucherPage() {
         appliedVoucher: currentVoucherObj, // 将选中的优惠券对象传过去
         discountAmount: discountAmount,    // 传算好的折扣金额
         shippingDiscount: selectedShipping ? 5 : 0, // 传算好的运费折扣
-        grandTotal: grandTotal             // 传算好的总价
+        grandTotal: grandTotal,             // 传算好的总价
+        from: location.pathname
       },
       replace: true 
     })

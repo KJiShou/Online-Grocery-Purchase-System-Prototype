@@ -1,7 +1,7 @@
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useLocation } from 'react-router-dom'
 import { useCart } from '../contexts/CartContext'
 import { formatPrice } from '../utils/helper'
-import { TrashIcon } from '../components/Icons'
+import { TrashIcon, MinusIcon, PlusIcon } from '../components/Icons'
 
 function QuantityControl({ quantity, onIncrement, onDecrement }) {
   return (
@@ -25,6 +25,7 @@ function QuantityControl({ quantity, onIncrement, onDecrement }) {
 
 function CartPage() {
   const navigate = useNavigate()
+  const location = useLocation()
   const { 
     cartItems, 
     toggleSelected, 
@@ -32,7 +33,8 @@ function CartPage() {
     decrement, 
     remove,
     subtotal,
-    totalSelectedQuantity
+    totalSelectedQuantity,
+    updateQuantity
    } = useCart()
 
   // 安全提取数据
@@ -90,8 +92,9 @@ function CartPage() {
                 {cartItems.map((item) => (
                 <div
                     key={item.id}
+                    onClick={() => {navigate(`/product/${item.id}`)}}
                     // 外部容器：使用 flex items-stretch 确保左右两列等高
-                    className="mb-4 flex w-full items-stretch justify-between rounded-xl bg-white p-3 shadow-sm"
+                    className="mb-4 flex w-full cursor-pointer items-stretch justify-between rounded-xl bg-white p-3 shadow-sm transition-all hover:shadow-md active:scale-[0.98]"
                 >
                     {/* === 左侧：商品图片 === */}
                     <div className="mr-3 flex-shrink-0">
@@ -104,29 +107,96 @@ function CartPage() {
 
                     {/* === 中间：文字信息 + 数量控制 === */}
                     <div className="flex flex-1 flex-col justify-between py-1">
-                    <div>
-                        <p className="mb-1 text-[16px] font-medium leading-tight text-[#1C1B1B]">
-                        {item.name}
-                        </p>
-                        <div className="flex flex-col">
-                        <p className="text-[16px] font-bold text-[#1C1B1B]">
-                            {formatPrice(item.price)}
-                        </p>
-                        {item.oldPrice ? (
-                            <p className="text-[13px] text-[#9CA3AF] line-through">
-                            {formatPrice(item.oldPrice)}
-                            </p>
-                        ) : null}
-                        </div>
-                    </div>
+                      <div>
+                          <p className="mb-1 text-[16px] font-medium leading-tight text-[#1C1B1B]">
+                          {item.name}
+                          </p>
+                          <div className="flex flex-col">
+                          <p className="text-[16px] font-bold text-[#1C1B1B]">
+                              {formatPrice(item.price)}
+                          </p>
+                          {item.oldPrice ? (
+                              <p className="text-[13px] text-[#9CA3AF] line-through">
+                              {formatPrice(item.oldPrice)}
+                              </p>
+                          ) : null}
+                          </div>
+                      </div>
                     
-                    <div className="mt-2">
-                        <QuantityControl
-                        quantity={item.quantity}
-                        onIncrement={() => increment(item.id)}
-                        onDecrement={() => decrement(item.id)}
-                        />
-                    </div>
+                      {/* <div
+                      className="mt-2"
+                      onClick={(e) => e.stopPropagation()}
+                      >
+                          <QuantityControl
+                          quantity={item.quantity}
+                          onIncrement={() => increment(item.id)}
+                          onDecrement={() => decrement(item.id)}
+                          />
+                      </div> */}
+                      <div className="mt-2 w-fit">
+                        <h3 className="mb-1 text-[15px] font-bold text-[#1C1B1B]">Quantity</h3>
+                        <div
+                          onClick={(e) => e.stopPropagation()} 
+                          className="flex h-[42px] w-fit items-center justify-between rounded-xl border border-[#e4e4e7] px-2"
+                        >
+                          <button 
+                            onClick={() => decrement(item.id)}
+                            disabled={item.quantity <= 1}
+                            className="p-1.5 text-[#1C1B1B] transition hover:opacity-70 active:scale-90"
+                          >
+                            <MinusIcon active={item.quantity > 1} />
+                          </button>
+                          
+                          {/* 严厉纠正：这里必须是 input！ */}
+                          <input
+                            name="quantityForm"
+                            type="number"
+                            inputMode="numeric"
+                            pattern="[0-9]*"
+                            // 保证用户删空时输入框是空的，而不是显示难看的 0
+                            value={item.quantity === '' ? '' : item.quantity} 
+                            onChange={(e) => {
+                              // 1. 拦截输入时的冒泡
+                              e.stopPropagation();
+                              
+                              // 2. 拿到用户输入的值
+                              const val = e.target.value;
+                              
+                              // 3. 允许用户把输入框删空（临时状态，为了方便重新输入数字）
+                              if (val === '') {
+                                updateQuantity(item.id, ''); 
+                                return;
+                              }
+                              
+                              // 4. 解析为整数并更新
+                              const num = parseInt(val, 10);
+                              if (!isNaN(num)) {
+                                updateQuantity(item.id, num);
+                              }
+                            }}
+                            onBlur={(e) => {
+                              // 失去焦点时的终极防御：如果用户留空了，或者输入了 0，强制变回 1！
+                              if (item.quantity === '' || item.quantity < 1) {
+                                updateQuantity(item.id, 1);
+                              }
+                            }}
+                            // Tailwind 隐藏原生箭头魔法：
+                            // appearance-none 隐藏默认样式
+                            // [&::-webkit-inner-spin-button]:appearance-none 隐藏 Chrome/Safari 的上下小箭头
+                            // [&::-webkit-outer-spin-button]:appearance-none
+                            // -moz-appearance: textfield 隐藏 Firefox 的箭头
+                            className="w-10 appearance-none bg-transparent text-center text-[15px] font-semibold text-[#1C1B1B] outline-none [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
+                          />
+
+                          <button 
+                            onClick={() => increment(item.id)}
+                            disabled={item.quantity >= 99}
+                            className="p-1.5 text-[#1C1B1B] transition hover:opacity-70 active:scale-90"
+                          >
+                            <PlusIcon active={item.quantity < 99} />
+                          </button>
+                        </div>
+                      </div>
                     </div>
 
                     {/* === 右侧：复选框 (顶) + 垃圾桶 (底) === */}
@@ -134,7 +204,9 @@ function CartPage() {
                     
                     {/* 使用 Tailwind 'peer' 技巧制作的自定义 Checkbox */}
                     {/* 右侧：复选框容器 */}
-                    <label className="relative flex cursor-pointer items-center justify-center">
+                    <label 
+                    onClick={(e) => e.stopPropagation()}
+                    className="relative flex cursor-pointer items-center justify-center">
                         {/* 1. 隐藏的原生 input */}
                         <input
                             type="checkbox"
@@ -166,7 +238,10 @@ function CartPage() {
 
                     {/* 垃圾桶按钮 */}
                     <button
-                        onClick={() => remove(item.id)}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          remove(item.id)}
+                        }
                         className="text-[#ef4444] transition hover:scale-110 mb-1"
                     >
                         <TrashIcon />
@@ -192,7 +267,7 @@ function CartPage() {
             <button 
               disabled={totalSelectedQuantity === 0}
               onClick={() => {
-                navigate('/payment');
+                navigate('/payment', { state: { from: location.pathname }});
               }}
               className={`mb-2 w-full rounded-xl py-3 text-[15px] font-semibold text-white transition 
                 ${totalSelectedQuantity === 0 

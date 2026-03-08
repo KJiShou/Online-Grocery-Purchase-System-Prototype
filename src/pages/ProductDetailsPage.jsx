@@ -1,5 +1,5 @@
 import { useEffect, useState, useRef } from 'react'
-import { useNavigate, useParams } from 'react-router-dom'
+import { useNavigate, useParams, useLocation } from 'react-router-dom'
 import { products } from '../data/homeData'
 import { useCart } from '../contexts/CartContext'
 import { loadWishlistIds, saveWishlistIds, toggleWishlistId } from '../utils/wishlist'
@@ -19,6 +19,7 @@ function ProductImagePlaceholder({ name }) {
 
 export default function ProductDetailPage() {
   const navigate = useNavigate()
+  const location = useLocation()
   const { addToCart, cartItems } = useCart()
 
   // 数量状态管理
@@ -317,6 +318,14 @@ export default function ProductDetailPage() {
             </div>
             <div className="flex items-center gap-3">
             <button 
+              onClick={() => {
+                const data = {
+                  directBuyProduct: product,
+                  directBuyProductQuantity: quantity + productQuantityInCart,
+                  directBuyProductSubtotal: (quantity + productQuantityInCart) * product.price
+                }
+                navigate('/payment',  { state: {...data, from: location.pathname} })
+              }}
               className="flex-1 rounded-xl border-2 border-[#1C1B1B] bg-white py-3.5 text-[15px] font-bold text-[#1C1B1B] transition hover:bg-gray-50 active:scale-95"
             >
               Buy Now

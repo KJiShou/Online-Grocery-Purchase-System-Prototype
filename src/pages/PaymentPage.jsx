@@ -53,13 +53,22 @@ export default function CheckoutPage() {
     : fallbackAddress
 
   const {
+    directBuyProduct = null,
+    directBuyProductQuantity = 0,
+    directBuyProductSubtotal = 0,
     selectedAddress = defaultAddress,
     paymentMethod: incomingPaymentMethod,
     appliedVoucher = null, 
     discountAmount = 0, 
     shippingDiscount = 0, 
-    grandTotal = subtotal + 5,
+    grandTotal = directBuyProductSubtotal == 0 ? subtotal + 5 : directBuyProductSubtotal + 5,
+    from = ''
   } = data
+
+  const checkoutDirectBuyProduct = directBuyProduct ? {
+    ...directBuyProduct,
+    quantity: directBuyProductQuantity
+  } : null
 
   const paymentMethod = paymentMethods[incomingPaymentMethod]
     ? incomingPaymentMethod
@@ -69,8 +78,8 @@ export default function CheckoutPage() {
 
   const checkoutData = {
     ...data,
-    items: selectedItems,
-    subtotal,
+    items: checkoutDirectBuyProduct ? [checkoutDirectBuyProduct] : selectedItems,
+    subtotal: directBuyProductSubtotal == 0 ? subtotal : directBuyProductSubtotal,
     selectedAddress,
     paymentMethod,
     appliedVoucher,
@@ -79,8 +88,10 @@ export default function CheckoutPage() {
     grandTotal,
   }
 
+  //console.log(checkoutData)
+
   useEffect(() => {
-    if (selectedItems.length === 0 && !isPaymentSuccessful.current) {
+    if (selectedItems.length === 0 && !isPaymentSuccessful.current && !directBuyProduct) {
       alert('Your cart is empty or invalid. Returning to cart.')
       navigate('/cart')
     }
@@ -133,7 +144,8 @@ export default function CheckoutPage() {
             {/* 2. 商品清单 (统一包装在一个卡片内) */}
             <div className="mb-4 flex flex-col rounded-2xl bg-white p-5">
               <h3 className="mb-4 text-[15px] font-bold text-[#1C1B1B]">Order Items</h3>
-              {selectedItems.map((item, index) => (
+              { !directBuyProduct ?
+              (selectedItems.map((item, index) => (
                 <div 
                   key={item.id} 
                   // 严厉的排版细节：除了最后一个商品，其他的底部都要加一条极淡的分割线和间距
@@ -162,12 +174,42 @@ export default function CheckoutPage() {
                     <span className="text-[14px] font-bold text-[#6b7280]">x{item.quantity}</span>
                   </div>
                 </div>
-              ))}
+              ))) :
+               <div 
+                  className={`flex items-start gap-4`}
+                >
+                  {/* 左侧：图片 */}
+                  <div className="h-[72px] w-[72px] flex-shrink-0 rounded-xl bg-white p-1.5 shadow-sm">
+                    <img src={directBuyProduct.image} alt={directBuyProduct.name} className="h-full w-full object-contain mix-blend-multiply" />
+                  </div>
+
+                  {/* 中间：商品信息 */}
+                  <div className="flex flex-1 flex-col justify-between py-0.5">
+                    <p className="pr-2 text-[14px] font-medium leading-snug text-[#1C1B1B]">
+                      {directBuyProduct.name}
+                    </p>
+                    <div className="mt-2 flex items-center gap-2">
+                      <p className="text-[15px] font-bold text-[#1C1B1B]">
+                        RM {directBuyProduct.price.toFixed(2)}
+                      </p>
+                      <p className="text-[12px] text-[#9CA3AF] line-through">RM 20.00</p>
+                    </div>
+                  </div>
+
+                  {/* 右侧：数量 */}
+                  <div className="self-center">
+                    <span className="text-[14px] font-bold text-[#6b7280]">x{directBuyProductQuantity}</span>
+                  </div>
+                </div>
+            }
             </div>
 
             {/* 3. 优惠券 (卡片化) */}
             <div
-            onClick={() => navigate('/select-voucher', { state: checkoutData, from: location.pathname })}
+            onClick={() => navigate('/select-voucher', { state: { 
+              ...checkoutData, 
+              from: location.pathname 
+            } })}
               className="mb-4 flex cursor-pointer flex-col rounded-2xl bg-white p-5 transition hover:bg-[#f1f5f9] active:scale-[0.98]"
             >
               <div className="mb-3 flex items-center justify-between">
@@ -219,7 +261,7 @@ export default function CheckoutPage() {
                 {/* 严厉纠正：这是电商系统最标准的左右对齐写法，用 flex justify-between！ */}
                 <div className="grid grid-cols-3 items-center text-[14px]">
                   <span className="text-left text-[#4b5563]">Subtotal:</span>
-                  <span className="pl-4 text-left font-medium text-[#1C1B1B]">{formatPrice(subtotal)}</span>
+                  <span className="pl-4 text-left font-medium text-[#1C1B1B]">{directBuyProductSubtotal === 0 ? formatPrice(subtotal) : formatPrice(directBuyProductSubtotal)}</span>
                 </div>
 
                 <div className="grid grid-cols-3 items-center text-[14px]">
@@ -289,15 +331,15 @@ export default function CheckoutPage() {
                 status: 'Pending',
                 date: generateOrderDate(),
                 shippedDate: null,
-                products: selectedItems,
-                itemsCount: selectedItems.length,
+                products: checkoutDirectBuyProduct ? [checkoutDirectBuyProduct] : selectedItems,
+                itemsCount: checkoutDirectBuyProduct ? 1 : selectedItems.length,
                 shippingInfo: {
                   address: formatAddressDisplay(selectedAddress.address, selectedAddress.unitNo),
                   name: selectedAddress.name,
                   phone: selectedAddress.phone
                 },
                 summary: {
-                  subtotal: subtotal,
+                  subtotal: directBuyProductSubtotal === 0 ? subtotal : directBuyProductSubtotal,
                   shippingCost: 5 - shippingDiscount, // 假设免邮
                   discount: discountAmount,     // 假设没打折
                   total: grandTotal // 实际支付总额
@@ -351,7 +393,7 @@ export default function CheckoutPage() {
                   type="button"
                   onClick={() => {
                     setShowCancelPaymentModal(false)
-                    navigate('/cart', { state: { from: location.pathname }, replace: true })
+                    navigate(from === '/product' || from.startsWith('/product') ? -1 : '/cart', { state: { from: location.pathname }, replace: true })
                   }}
                   className="h-10 rounded-lg bg-[#EE4D4D] text-[14px] font-semibold text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#EE4D4D]"
                 >

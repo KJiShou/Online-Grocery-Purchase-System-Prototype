@@ -48,6 +48,10 @@ export default function SelectAddressPage() {
   const { addresses, defaultAddressId } = usePreference()
   const data = location.state?.checkoutData || location.state || {}
 
+  const {
+    from = ''
+  } = data
+
   const addressList = addresses.map(toFlatAddress)
 
   const initialAddressId =
@@ -69,7 +73,7 @@ export default function SelectAddressPage() {
       <div className="absolute inset-x-0 top-[44px] z-20 min-h-[44px] bg-white">
         <div className="mx-auto w-full max-w-[360px] px-5">
           <header className="flex items-center gap-2">
-            <button onClick={() => navigate(-1)} className="text-[#1f2937] transition hover:scale-110">
+            <button onClick={() => navigate(-1, { state: { from: location.pathname}})} className="text-[#1f2937] transition hover:scale-110">
               <BackIcon />
             </button>
             <h1 className="font-['Plus_Jakarta_Sans','Rubik',sans-serif] text-[25px] font-bold leading-[1.2] text-black">
@@ -194,11 +198,12 @@ export default function SelectAddressPage() {
           <button
             onClick={() =>
               selectedAddress
-                ? navigate(data.from || '/payment', {
+                ? navigate(from.startsWith('/select') ? '/payment' : from, {
                   state: {
                     ...data,
                     selectedAddress,
                     addresses: addressList,
+                    from: location.pathname
                   },
                   replace: true,
                 })
