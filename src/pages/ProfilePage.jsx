@@ -1,6 +1,8 @@
 import { useEffect, useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useLocation, useNavigationType } from 'react-router-dom'
 import { CardIcon, LogoutIcon, BoxIcon, ReceiptIcon, ChevronRightIcon, ShieldIcon, DocumentIcon, ChatIcon, LockIcon, PhoneIcon } from '../components/Icons'
+import { usePreference } from '../contexts/PreferenceContext'
+import { ToastCheckIcon } from '../components/Icons'
 
 function formatCurrentTime() {
   const now = new Date()
@@ -38,9 +40,32 @@ function MenuItem({ icon, label, hasToggle = false, isToggleOn = false, onToggle
 
 export default function ProfilePage() {
   const navigate = useNavigate()
+  const navigationType = useNavigationType()
+  const location = useLocation()
   
   // 记录 Dark Theme 的开关状态
   const [isDarkTheme, setIsDarkTheme] = useState(false)
+  const { changeDefaultPaymentMethod, defaultPaymentMethod, changeDefaultAddress } = usePreference()
+
+  const [showToast, setShowToast] = useState(false)
+  const [toastMessage, setToastMessage] = useState('')
+
+  const data = location.state || {}
+
+  useEffect(() => {
+    console.log('ProfilePage received state:', location.state)
+    if (data.paymentMethod && navigationType !== 'POP') {
+      changeDefaultPaymentMethod(data.paymentMethod)
+      setToastMessage('Default payment method updated successfully!')
+      setShowToast(true)
+      setTimeout(() => setShowToast(false), 3000)
+    } else if (data.selectedAddress && navigationType !== 'POP') {
+      changeDefaultAddress(data.selectedAddress.id)
+      setToastMessage('Default address updated successfully!')
+      setShowToast(true)
+      setTimeout(() => setShowToast(false), 3000)
+    }
+  }, [data.paymentMethod, defaultPaymentMethod])
 
   return (
     <>
@@ -74,6 +99,17 @@ export default function ProfilePage() {
                 <LogoutIcon />
               </button>
             </header>
+            <div 
+              className={`absolute left-1/2 top-[0px] z-50 flex w-[calc(100%-40px)] max-w-[320px] -translate-x-1/2 items-center justify-between rounded-2xl border border-[#f3f4f6] bg-white p-3 shadow-[0_12px_30px_rgba(0,0,0,0.08)] transition-all duration-300 ease-out 
+              ${showToast ? 'translate-y-0 opacity-100 pointer-events-auto' : '-translate-y-6 opacity-0 pointer-events-none'}`}
+            >
+                <div className="flex items-center gap-3">
+                  <ToastCheckIcon />
+                  <p className="w-full text-[13px] font-semibold leading-tight text-[#1C1B1B]">
+                    {toastMessage}
+                  </p>
+                </div>
+              </div>
           </div>
         </div>
 
@@ -82,13 +118,20 @@ export default function ProfilePage() {
         <div className="hide-scrollbar absolute inset-x-0 bottom-[72px] top-[120px] z-20 overflow-y-auto rounded-t-[24px] bg-white">
           <div className="mx-auto w-full max-w-[360px] px-5 py-6">
             
-            {/* --- Section 1: Personal Information --- */}
+          {/* --- Section 2: My Order --- */}
             <div className="mb-6">
-              <h3 className="mb-2 text-[14px] font-bold text-[#1C1B1B]">Personal Information</h3>
+            <h3 className="mb-2 text-[14px] font-bold text-[#1C1B1B]">My Order</h3>
+            <div className="flex flex-col">
+              <MenuItem icon={<ReceiptIcon />} label="Order History" onClick={() => navigate('/order-history')} />
+            </div>
+          </div>
+
+          {/* --- Section 1: Preferences --- */}
+          <div className="mb-6">
+            <h3 className="mb-2 text-[14px] font-bold text-[#1C1B1B]">My Preferences</h3>
               <div className="flex flex-col">
-                <MenuItem icon={<BoxIcon />} label="Shipping Address" onClick={() => console.log('Shipping')} />
-                <MenuItem icon={<CardIcon />} label="Payment Method" onClick={() => navigate('/select-payment')} />
-                <MenuItem icon={<ReceiptIcon />} label="Order History" onClick={() => navigate('/order-history')} />
+                <MenuItem icon={<BoxIcon />} label="Default Shipping Address" onClick={() => navigate('/select-address', { state: { from: '/profile' } })} />
+              <MenuItem icon={<CardIcon />} label="Default Payment Method" onClick={() => navigate('/select-payment', { state: { from: '/profile', paymentMethod: defaultPaymentMethod } })} />
               </div>
             </div>
 

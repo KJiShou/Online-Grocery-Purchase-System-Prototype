@@ -2,17 +2,15 @@ import { useEffect, useRef, useState } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
 import { useOrder } from '../contexts/OrderContext'
 import { useCart } from '../contexts/CartContext'
+import { usePreference } from '../contexts/PreferenceContext'
 import { formatPrice, generateOrderID, generateOrderDate, paymentMethods } from '../utils/helper'
 import { BackIcon, LocationIcon, ChevronRightIcon, TruckIcon } from '../components/Icons'
 
 function formatAddressDisplay(address, unitNo) {
   const trimmedAddress = (address || '').trim()
   const trimmedUnit = (unitNo || '').trim()
-  if (trimmedUnit && trimmedAddress) {
-    return `${trimmedUnit}, ${trimmedAddress}`
-  }
-  if (!trimmedUnit) return trimmedAddress
-  if (!trimmedAddress) return trimmedUnit
+  const line = [trimmedUnit, trimmedAddress].filter(Boolean).join(', ')
+  return line
 }
 
 export default function CheckoutPage() {
@@ -20,6 +18,7 @@ export default function CheckoutPage() {
   const location = useLocation()
   const { addOrder, updateOrderStatus, resetOrders } = useOrder()
   const { selectedItems, subtotal, removeMultiple } = useCart()
+  const { defaultAddressId, defaultPaymentMethod, getAddressById } = usePreference()
 
   const isPaymentSuccessful = useRef(false)
   const [showConfirmPaymentModal, setShowConfirmPaymentModal] = useState(false)
@@ -28,24 +27,57 @@ export default function CheckoutPage() {
   // 2. 安全地提取数据。如果用户是直接在浏览器输入网址进来的（没有经过购物车），
   // location.state 会是 null，我们需要给它一个默认值防止页面崩溃。
   const data = location.state || {}
-  
-  const defaultAddress = {
+
+  const fallbackAddress = {
     id: 'andrew',
     name: 'Andrew',
     phone: '(+60) 12-345 6789',
     address:
-      'Ground Floor, Bangunan Tan Sri Khaw Kai Boh (Block A), Jalan Genting Kelang, Setapak, 53300 Kuala Lumpur, Federal Territory of Kuala Lumpur',
-    unitNo: 'Unit 01-01'
+      'Ground Floor, Bangunan Tan Sri Khaw Kai Boh (Block A), Jalan Genting Kelang, Setapak, 53100 Kuala Lumpur, Federal Territory of Kuala Lumpur',
+    unitNo: 'Unit 01-01',
+    postalCode: '53100',
+    isDefault: true,
+  }
+
+  const preferredAddress = getAddressById(defaultAddressId)
+  const defaultAddress = preferredAddress
+    ? {
+      id: preferredAddress.id,
+      name: preferredAddress.shipping?.name || '',
+      phone: preferredAddress.shipping?.phone || '',
+      address: preferredAddress.shipping?.address || '',
+      unitNo: preferredAddress.shipping?.unitNo || '',
+      postalCode: preferredAddress.shipping?.postalCode || '',
+      isDefault: Boolean(preferredAddress.isDefault),
     }
+    : fallbackAddress
 
   const {
     selectedAddress = defaultAddress,
-    paymentMethod = 'maybank', 
+    paymentMethod: incomingPaymentMethod,
     appliedVoucher = null, 
     discountAmount = 0, 
     shippingDiscount = 0, 
     grandTotal = subtotal + 5,
-  } = data;
+  } = data
+
+  const paymentMethod = paymentMethods[incomingPaymentMethod]
+    ? incomingPaymentMethod
+    : paymentMethods[defaultPaymentMethod]
+      ? defaultPaymentMethod
+      : 'maybank'
+
+  const checkoutData = {
+    ...data,
+    items: selectedItems,
+    subtotal,
+    selectedAddress,
+    paymentMethod,
+    appliedVoucher,
+    discountAmount,
+    shippingDiscount,
+    grandTotal,
+  }
 
   useEffect(() => {
     if (selectedItems.length === 0 && !isPaymentSuccessful.current) {
@@ -76,7 +108,7 @@ export default function CheckoutPage() {
             
             {/* 1. 收货地址 (卡片化) */}
             <div
-              onClick={() => navigate('/select-address', { state: data })}
+            onClick={() => navigate('/select-address', { state: checkoutData })}
               className="mb-4 flex cursor-pointer items-start justify-between rounded-2xl bg-white p-5 transition hover:bg-[#f1f5f9] active:scale-[0.98]"
             >
               <div className="flex items-start gap-3">
@@ -89,7 +121,7 @@ export default function CheckoutPage() {
                     <span className="text-[#6b7280]">{selectedAddress.phone}</span>
                   </p>
                   <p className="pr-2 text-[13px] leading-relaxed text-[#4b5563]">
-                    {formatAddressDisplay(selectedAddress.address, selectedAddress.unitNo)}
+                  {formatAddressDisplay(selectedAddress.address, selectedAddress.unitNo)}
                   </p>
                 </div>
               </div>
@@ -135,7 +167,7 @@ export default function CheckoutPage() {
 
             {/* 3. 优惠券 (卡片化) */}
             <div
-              onClick={() => navigate('/select-voucher', { state: data, from: location.pathname })}
+            onClick={() => navigate('/select-voucher', { state: checkoutData, from: location.pathname })}
               className="mb-4 flex cursor-pointer flex-col rounded-2xl bg-white p-5 transition hover:bg-[#f1f5f9] active:scale-[0.98]"
             >
               <div className="mb-3 flex items-center justify-between">
@@ -161,7 +193,7 @@ export default function CheckoutPage() {
 
             {/* 4. 支付方式 (卡片化) */}
             <div
-              onClick={() => navigate('/select-payment', { state: data, from: location.pathname })}
+            onClick={() => navigate('/select-payment', { state: checkoutData, from: location.pathname })}
               className="mb-4 flex cursor-pointer items-center justify-between rounded-2xl bg-white p-5 transition hover:bg-[#f1f5f9] active:scale-[0.98]"
             >
               <div className="flex flex-col gap-3">
@@ -170,8 +202,8 @@ export default function CheckoutPage() {
               </div>
               <div className="flex items-center gap-2">
                 {(() => {
-                  const IconComponent = paymentMethods[paymentMethod].icon;
-                  return <IconComponent />;
+                  const IconComponent = paymentMethods[paymentMethod]?.icon
+                  return IconComponent ? <IconComponent /> : null
                 })()}
                 <span className="text-[14px] font-semibold text-[#1C1B1B]">{paymentMethods[paymentMethod]?.label}</span>
               </div>
@@ -250,17 +282,6 @@ export default function CheckoutPage() {
                   type="button"
                   onClick={() => {
                     // 这里填入取消订单的逻辑
-                    const checkoutData = {
-                  ...data,
-                  items: selectedItems,
-                  subtotal,
-                  selectedAddress,
-                  paymentMethod,
-                  appliedVoucher,
-                  discountAmount,
-                  shippingDiscount,
-                  grandTotal,
-                }
                 isPaymentSuccessful.current = true
                 const currentOrderId = generateOrderID();
                 addOrder({

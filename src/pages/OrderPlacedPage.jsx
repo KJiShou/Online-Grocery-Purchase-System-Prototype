@@ -83,7 +83,9 @@ export default function OrderPlacedPage() {
 		name: 'Andrew',
 		phone: '(+60) 12-345 6789',
 		address:
-			'Ground Floor, Bangunan Tan Sri Khaw Kai Boh (Block A), Jalan Genting Kelang, Setapak, 53300 Kuala Lumpur, Federal Territory of Kuala Lumpur',
+			'Ground Floor, Bangunan Tan Sri Khaw Kai Boh (Block A), Jalan Genting Kelang, Setapak, 53100 Kuala Lumpur, Federal Territory of Kuala Lumpur',
+		unitNo: 'Unit 01-01',
+		postalCode: '53100',
 	}
 
 	const {
