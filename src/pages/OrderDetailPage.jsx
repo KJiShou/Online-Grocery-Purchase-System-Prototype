@@ -254,7 +254,7 @@ export default function OrderDetailPage() {
 
                 <div className="mt-1 border-t border-[#f3f4f6] pt-4 grid grid-cols-3 items-center text-[14px]">
                   <span className="text-left text-[15px] font-bold text-[#1C1B1B]">Total:</span>
-                  <span className="pl-4 text-left text-[18px] font-bold text-[#1C1B1B]">{formatPrice(orderData.summary.total)}</span>
+                  <span className="pl-4 w-full min-w-[200px] text-left text-[18px] font-bold text-[#1C1B1B]">{formatPrice(orderData.summary.total)}</span>
                 </div>
               </div>
             </div>
