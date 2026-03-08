@@ -2,7 +2,6 @@ import { useEffect, useRef, useState } from 'react'
 import {
   CategoryIcon,
   CloseIcon,
-  FilterIcon,
   HeartIcon,
   RecentArrowIcon,
   SearchFieldIcon,
@@ -14,6 +13,13 @@ import { useNavigate } from 'react-router-dom'
 
 function formatPrice(value) {
   return `RM${value.toFixed(2)}`
+}
+
+const homeCategoryRouteMap = {
+  fresh: 'fresh-produce',
+  packaged: 'packaged-food',
+  dairy: 'dairy-frozen',
+  beverage: 'beverages',
 }
 
 function CarouselArrowIcon({ className = '' }) {
@@ -55,7 +61,6 @@ function HomePage() {
   const [activeBannerIndex, setActiveBannerIndex] = useState(0)
   const [searchOpen, setSearchOpen] = useState(false)
   const [searchText, setSearchText] = useState('')
-  const [filterMenuOpen, setFilterMenuOpen] = useState(false)
   const [recentSearches, setRecentSearches] = useState(['Milk', 'Oil', 'Broccoli', 'Orange', 'Apple', 'Sugar'])
   const searchInputRef = useRef(null)
 
@@ -80,14 +85,23 @@ function HomePage() {
     if (!term) return
 
     setSearchOpen(false)
-    setFilterMenuOpen(false)
     setRecentSearches((current) => [term, ...current.filter((item) => item.toLowerCase() !== term.toLowerCase())].slice(0, 8))
     navigate(`/grocery-list?search=${encodeURIComponent(term)}`)
   }
 
   const closeSearch = () => {
     setSearchOpen(false)
-    setFilterMenuOpen(false)
+  }
+
+  const handleCategoryClick = (categoryId) => {
+    const targetCategoryId = homeCategoryRouteMap[categoryId]
+
+    if (!targetCategoryId) {
+      navigate('/categories')
+      return
+    }
+
+    navigate(`/categories/${targetCategoryId}`)
   }
 
   return (
@@ -181,7 +195,10 @@ function HomePage() {
               {categories.map((category) => (
                 <button
                   key={category.id}
+                  type="button"
+                  onClick={() => handleCategoryClick(category.id)}
                   className="flex h-[86px] flex-col items-center justify-center rounded-2xl border border-gray-200/80 bg-white p-2 text-center transition duration-300 ease-in-out hover:-translate-y-1 hover:shadow-lg hover:shadow-green-100"
+                  aria-label={`Open ${category.label}`}
                 >
                   <span className="mb-1 grid place-items-center">
                     <CategoryIcon type={category.id} />
@@ -292,38 +309,14 @@ function HomePage() {
                     className="h-[18px] w-full border-none bg-transparent font-['Plus_Jakarta_Sans','Rubik',sans-serif] text-[14px] font-normal leading-[18px] tracking-[0.005em] text-[#1C1B1B] outline-none placeholder:text-[#6F7384]"
                   />
                 </div>
-                <button
-                  onClick={() => setFilterMenuOpen((current) => !current)}
-                  className="ml-2 grid h-10 w-10 place-items-center rounded-lg hover:bg-[#f7f8fc]"
-                  aria-label="Search filters"
-                >
-                  <FilterIcon />
-                </button>
-
-                {filterMenuOpen ? (
-                  <div className="absolute right-0 top-[62px] z-10 w-[168px] rounded-xl border border-[#e7eaf2] bg-white p-1.5 shadow-[0_8px_24px_rgba(28,27,27,0.12)]">
-                    <button
-                      onClick={() => setFilterMenuOpen(false)}
-                      className="block w-full rounded-md px-2 py-2 text-left text-[13px] text-[#1C1B1B] hover:bg-[#f7f8fc]"
-                    >
-                      Sort by relevance
-                    </button>
-                    <button
-                      onClick={() => setFilterMenuOpen(false)}
-                      className="block w-full rounded-md px-2 py-2 text-left text-[13px] text-[#1C1B1B] hover:bg-[#f7f8fc]"
-                    >
-                      Sort by latest
-                    </button>
-                    <button
-                      onClick={() => {
-                        setSearchText('')
-                        setFilterMenuOpen(false)
-                      }}
-                      className="block w-full rounded-md px-2 py-2 text-left text-[13px] text-[#1C1B1B] hover:bg-[#f7f8fc]"
-                    >
-                      Clear input
-                    </button>
-                  </div>
+                {searchText.trim() ? (
+                  <button
+                    onClick={() => setSearchText('')}
+                    className="ml-2 grid h-10 w-10 place-items-center rounded-lg text-[#6F7384] transition hover:bg-[#f7f8fc] hover:text-[#1C1B1B]"
+                    aria-label="Clear search"
+                  >
+                    <CloseIcon />
+                  </button>
                 ) : null}
               </div>
 

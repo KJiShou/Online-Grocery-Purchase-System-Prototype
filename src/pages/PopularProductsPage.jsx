@@ -1,8 +1,7 @@
-import { useDeferredValue, useEffect, useMemo, useRef, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import BottomNav from '../components/navigation/BottomNav'
-import { CloseIcon, SearchFieldIcon, SearchIcon } from '../components/Icons'
-import { products } from '../data/homeData'
+import { products, productCategories } from '../data/homeData'
 import { loadWishlistIds, toggleWishlistId } from '../utils/wishlist'
 
 function formatCurrentTime() {
@@ -69,55 +68,60 @@ function ProductImagePlaceholder({ name }) {
   )
 }
 
+const categories = productCategories.map((category) => category.label)
+
 export default function PopularProductsPage() {
   const navigate = useNavigate()
   const [currentTime, setCurrentTime] = useState(formatCurrentTime())
   const [sortBy, setSortBy] = useState('bestMatch')
   const [priceDirection, setPriceDirection] = useState('asc')
   const [likedProducts, setLikedProducts] = useState(() => loadWishlistIds())
-  const [searchText, setSearchText] = useState('')
-  const [searchOpen, setSearchOpen] = useState(false)
-  const [recentSearches, setRecentSearches] = useState(['Milk', 'Bread', 'Egg', 'Rice', 'Oil', 'Sugar'])
-  const deferredSearchText = useDeferredValue(searchText)
-  const searchInputRef = useRef(null)
+  const [filterOpen, setFilterOpen] = useState(false)
+  const [minPrice, setMinPrice] = useState('')
+  const [maxPrice, setMaxPrice] = useState('')
+  const [selectedCategories, setSelectedCategories] = useState([])
+  const [categorySearch, setCategorySearch] = useState('')
+  const [activeMinPrice, setActiveMinPrice] = useState('')
+  const [activeMaxPrice, setActiveMaxPrice] = useState('')
+  const [activeCategories, setActiveCategories] = useState([])
+
+  const categoryLabelToId = new Map(productCategories.map((category) => [category.label, category.id]))
 
   useEffect(() => {
     const timer = setInterval(() => setCurrentTime(formatCurrentTime()), 1000)
     return () => clearInterval(timer)
   }, [])
 
-  useEffect(() => {
-    if (searchOpen) {
-      searchInputRef.current?.focus()
-    }
-  }, [searchOpen])
-
-  const runSearch = (inputText = searchText) => {
-    const term = inputText.trim()
-    if (!term) return
-
-    setSearchText(term)
-    setRecentSearches((current) => [term, ...current.filter((item) => item.toLowerCase() !== term.toLowerCase())].slice(0, 8))
-    setSearchOpen(false)
-  }
-
-  const closeSearch = () => {
-    setSearchOpen(false)
-  }
-
   const displayProducts = useMemo(() => {
-    const term = deferredSearchText.trim().toLowerCase()
-    const items = products.filter((product) => {
-      if (!term) return true
-      return (
-        product.name.toLowerCase().includes(term) ||
-        product.description.toLowerCase().includes(term)
-      )
-    })
+    const items = products
+      .filter((product) => {
+        const min = activeMinPrice ? parseFloat(activeMinPrice) : null
+        const max = activeMaxPrice ? parseFloat(activeMaxPrice) : null
+        const productPrice = product.price ?? 0
 
-    if (sortBy !== 'price') return items
-    return items.sort((a, b) => (priceDirection === 'asc' ? a.price - b.price : b.price - a.price))
-  }, [deferredSearchText, sortBy, priceDirection])
+        if (min !== null && productPrice < min) return false
+        if (max !== null && productPrice > max) return false
+
+        if (activeCategories.length > 0) {
+          const activeCategoryIds = activeCategories
+            .map((label) => categoryLabelToId.get(label))
+            .filter(Boolean)
+
+          if (!activeCategoryIds.includes(product.categoryId)) {
+            return false
+          }
+        }
+
+        return true
+      })
+
+    return items.sort((a, b) => {
+      if (sortBy === 'price') {
+        return priceDirection === 'asc' ? a.price - b.price : b.price - a.price
+      }
+      return 0
+    })
+  }, [activeCategories, activeMaxPrice, activeMinPrice, categoryLabelToId, priceDirection, sortBy])
 
   return (
     <div className="min-h-screen w-full overflow-x-hidden bg-[#f4f4f5]">
@@ -129,22 +133,18 @@ export default function PopularProductsPage() {
               <StatusIcons />
             </div>
 
-            <header className="flex items-center gap-2">
-              <button onClick={() => navigate('/home')} className="text-[#1f2937] transition hover:scale-110 hover:text-[#42c236]" aria-label="Back to home">
-                <BackIcon />
-              </button>
-              <div className="flex flex-1 items-center justify-between gap-2">
+            <header className="flex items-center justify-between gap-2">
+              <div className="flex min-w-0 items-center gap-2">
+                <button onClick={() => navigate('/home')} className="shrink-0 text-[#1f2937] transition hover:scale-110 hover:text-[#42c236]" aria-label="Back to home">
+                  <BackIcon />
+                </button>
                 <h1 className="font-['Plus_Jakarta_Sans','Rubik',sans-serif] text-[25px] font-bold leading-[1.2] text-black">
                   Popular Products
                 </h1>
-                <button
-                  onClick={() => setSearchOpen(true)}
-                  className="text-[#1f2937] transition hover:scale-110 hover:text-[#42c236]"
-                  aria-label="Open search"
-                >
-                  <SearchIcon />
-                </button>
               </div>
+              <button onClick={() => setFilterOpen(true)} className="shrink-0 text-[#1f2937] transition hover:scale-110 hover:text-[#42c236]" aria-label="Open filter">
+                <img src="/src/assets/grocery-list/filter-toggle.png" alt="Filter" className="h-6 w-6" />
+              </button>
             </header>
           </div>
         </div>
@@ -160,6 +160,7 @@ export default function PopularProductsPage() {
               >
                 Best Match
               </button>
+
               <button
                 onClick={() => {
                   if (sortBy === 'price') {
@@ -168,11 +169,24 @@ export default function PopularProductsPage() {
                     setSortBy('price')
                   }
                 }}
-                className={`flex-1 rounded-[12px] px-4 py-2 font-['Plus_Jakarta_Sans','Rubik',sans-serif] text-[14px] font-semibold leading-[18px] transition ${
+                className={`flex flex-1 items-center justify-center gap-2 rounded-[12px] px-4 py-2 font-['Plus_Jakarta_Sans','Rubik',sans-serif] text-[14px] font-semibold leading-[18px] transition ${
                   sortBy === 'price' ? 'bg-[#1C1B1B] text-white' : 'bg-white text-[#1C1B1B]'
                 }`}
               >
-                Price {sortBy === 'price' ? (priceDirection === 'asc' ? '↑' : '↓') : ''}
+                <span>Price</span>
+                <img
+                  src={
+                    sortBy === 'price'
+                      ? priceDirection === 'asc'
+                        ? '/src/assets/grocery-list/arrow-up-white.png'
+                        : '/src/assets/grocery-list/arrow-down-white.png'
+                      : priceDirection === 'asc'
+                        ? '/src/assets/grocery-list/arrow-up-dark.png'
+                        : '/src/assets/grocery-list/arrow-down-dark.png'
+                  }
+                  alt="Sort arrow"
+                  className="h-5 w-5"
+                />
               </button>
             </div>
           </div>
@@ -180,15 +194,19 @@ export default function PopularProductsPage() {
 
         <div className="hide-scrollbar absolute inset-x-0 bottom-[86px] top-[130px] overflow-y-auto pb-6">
           <div className="mx-auto w-full max-w-[360px] px-5 pt-4">
-            <p className="mb-4 font-['Plus_Jakarta_Sans','Rubik',sans-serif] text-[14px] font-medium leading-[18px] tracking-[0.005em] text-[#6F7384]">
+            <p className="mb-2 font-['Plus_Jakarta_Sans','Rubik',sans-serif] text-[14px] font-medium leading-[18px] tracking-[0.005em] text-[#6F7384]">
               Showing <b>{displayProducts.length}</b> popular products
-              {searchText.trim() ? <> for <b>"{searchText.trim()}"</b></> : null}
             </p>
+            {(activeMinPrice || activeMaxPrice || activeCategories.length > 0) && (
+              <p className="mb-4 font-['Plus_Jakarta_Sans','Rubik',sans-serif] text-[12px] font-normal leading-[16px] tracking-[0.005em] text-[#6F7384]">
+                Filters are applied.
+              </p>
+            )}
 
             {displayProducts.length === 0 ? (
               <div className="flex h-[280px] items-center justify-center rounded-[20px] bg-white px-6 text-center shadow-sm">
                 <p className="font-['Plus_Jakarta_Sans','Rubik',sans-serif] text-[14px] font-medium leading-[22px] tracking-[0.005em] text-[#6F7384]">
-                  No popular products match <b>"{searchText.trim()}"</b>.
+                  No products found. Try another filter?
                 </p>
               </div>
             ) : (
@@ -242,75 +260,130 @@ export default function PopularProductsPage() {
           </div>
         </div>
 
-        {searchOpen ? (
-          <div className="absolute inset-x-0 bottom-0 top-0 z-30 bg-white">
-            <div className="mx-auto h-full w-full max-w-[360px]">
-              <div className="bg-white px-5 pb-3 pt-4">
-                <div className="mb-2 flex items-center justify-between text-[15px] font-normal tracking-[-0.24px] text-[#1C1B1B]">
-                  <span className="leading-5">{currentTime}</span>
-                  <StatusIcons />
+        {filterOpen ? (
+          <div className="absolute inset-0 z-50 flex items-center justify-center bg-black/30" onClick={() => setFilterOpen(false)}>
+            <div className="mx-4 w-full max-w-[360px] rounded-[12px] bg-white" onClick={(event) => event.stopPropagation()}>
+              <div className="p-5 pb-0">
+                <div className="mb-5 flex items-center justify-between">
+                  <h2 className="font-['Plus_Jakarta_Sans','Rubik',sans-serif] text-[20px] font-bold leading-[25px] text-[#1C1B1B]">
+                    Filter Products
+                  </h2>
+                  <button onClick={() => setFilterOpen(false)} className="text-[#6F7384] transition hover:text-[#1C1B1B]">
+                    <img src="/src/assets/grocery-list/close.png" alt="Close" className="h-6 w-6" />
+                  </button>
                 </div>
 
-                <header className="flex items-center justify-between">
-                  <h2 className="font-['Plus_Jakarta_Sans','Rubik',sans-serif] text-[25px] font-bold leading-[120%] text-black">
-                    Search
-                  </h2>
-                  <button
-                    onClick={closeSearch}
-                    className="grid h-8 w-8 place-items-center text-[#1C1B1B]"
-                    aria-label="Close search"
-                  >
-                    <CloseIcon />
-                  </button>
-                </header>
-              </div>
-
-              <div className="mt-4 flex flex-col items-center gap-4">
-                <div className="relative flex h-[56px] w-[328px] items-center justify-between rounded-xl border border-[#F4F5FD] px-3 py-4">
-                  <div className="flex min-w-0 flex-1 items-center gap-1">
-                    <button
-                      onClick={() => runSearch()}
-                      className="grid h-8 w-8 place-items-center rounded-md hover:bg-[#f7f8fc]"
-                      aria-label="Search"
-                    >
-                      <SearchFieldIcon />
-                    </button>
+                <div className="mb-4 rounded-[12px] border border-[#F4F5FD] p-4">
+                  <h3 className="mb-3 font-['Plus_Jakarta_Sans','Rubik',sans-serif] text-[16px] font-semibold leading-[20px] text-[#1C1B1B]">
+                    Price Range
+                  </h3>
+                  <div className="flex items-center gap-2">
+                    <span className="font-['Plus_Jakarta_Sans','Rubik',sans-serif] text-[14px] font-medium text-[#1C1B1B]">
+                      From RM
+                    </span>
                     <input
-                      ref={searchInputRef}
                       type="text"
-                      value={searchText}
-                      onChange={(event) => setSearchText(event.target.value)}
-                      onKeyDown={(event) => {
-                        if (event.key === 'Enter') {
-                          runSearch()
+                      value={minPrice}
+                      onChange={(event) => {
+                        const value = event.target.value
+                        if (value === '' || /^\d+\.?\d{0,2}$/.test(value)) {
+                          setMinPrice(value)
                         }
                       }}
-                      placeholder="Search"
-                      className="h-[18px] w-full border-none bg-transparent font-['Plus_Jakarta_Sans','Rubik',sans-serif] text-[14px] font-normal leading-[18px] tracking-[0.005em] text-[#1C1B1B] outline-none placeholder:text-[#6F7384]"
+                      placeholder="min"
+                      className="w-16 rounded-[12px] border border-[#E4E4E7] bg-[#F9FAFB] px-2 py-1 text-center font-['Plus_Jakarta_Sans','Rubik',sans-serif] text-[12px] placeholder:text-center placeholder:text-black/50"
+                    />
+                    <span className="font-['Plus_Jakarta_Sans','Rubik',sans-serif] text-[14px] font-medium text-[#1C1B1B]">
+                      to RM
+                    </span>
+                    <input
+                      type="text"
+                      value={maxPrice}
+                      onChange={(event) => {
+                        const value = event.target.value
+                        if (value === '' || /^\d+\.?\d{0,2}$/.test(value)) {
+                          setMaxPrice(value)
+                        }
+                      }}
+                      placeholder="max"
+                      className="w-16 rounded-[12px] border border-[#E4E4E7] bg-[#F9FAFB] px-2 py-1 text-center font-['Plus_Jakarta_Sans','Rubik',sans-serif] text-[12px] placeholder:text-center placeholder:text-black/50"
                     />
                   </div>
                 </div>
 
-                <div className="w-full">
-                  <div className="px-4">
-                    <h3 className="font-['Plus_Jakarta_Sans','Rubik',sans-serif] text-[18px] font-bold leading-[23px] tracking-[0.0025em] text-[#1C1B1B]">
-                      RECENT SEARCH
-                    </h3>
+                <div className="mb-5 rounded-[12px] border border-[#F4F5FD] p-4">
+                  <h3 className="mb-3 font-['Plus_Jakarta_Sans','Rubik',sans-serif] text-[16px] font-semibold leading-[20px] text-[#1C1B1B]">
+                    Category
+                  </h3>
+                  <div className="mb-3 text-[14px] font-medium text-[#1C1B1B]">
+                    {selectedCategories.length > 0 ? selectedCategories.join(', ') : 'No category selected'}
                   </div>
 
-                  <div className="mt-1 flex flex-col">
-                    {recentSearches.map((item) => (
-                      <button
-                        key={item}
-                        onClick={() => runSearch(item)}
-                        className="flex h-12 w-full items-end justify-between border-b border-[#F4F5FD] bg-white px-4 pb-1 text-left"
-                      >
-                        <span className="font-['Plus_Jakarta_Sans','Rubik',sans-serif] text-[14px] font-medium leading-[150%] tracking-[0.005em] text-[#1C1B1B]">
-                          {item}
-                        </span>
-                      </button>
-                    ))}
+                  <input
+                    type="text"
+                    value={categorySearch}
+                    onChange={(event) => setCategorySearch(event.target.value)}
+                    placeholder="Search Category..."
+                    className="mb-3 w-full rounded-[12px] border border-[#E4E4E7] bg-[#F9FAFB] px-3 py-2.5 font-['Plus_Jakarta_Sans','Rubik',sans-serif] text-[14px] placeholder:text-black/50"
+                  />
+
+                  <div className="max-h-[200px] overflow-y-auto rounded-[12px] border border-[#E4E4E7] bg-white">
+                    {categories
+                      .filter((category) => category.toLowerCase().includes(categorySearch.toLowerCase()))
+                      .map((category) => (
+                        <label
+                          key={category}
+                          className="flex cursor-pointer items-center gap-2 border-b border-[#F4F5FD] px-3 py-2.5 font-['Plus_Jakarta_Sans','Rubik',sans-serif] text-[14px] text-[#1C1B1B] last:border-b-0 hover:bg-[#F9FAFB]"
+                        >
+                          <input
+                            type="checkbox"
+                            checked={selectedCategories.includes(category)}
+                            onChange={(event) => {
+                              if (event.target.checked) {
+                                setSelectedCategories([...selectedCategories, category])
+                              } else {
+                                setSelectedCategories(selectedCategories.filter((item) => item !== category))
+                              }
+                            }}
+                            className="h-4 w-4 cursor-pointer"
+                          />
+                          {category}
+                        </label>
+                      ))}
                   </div>
+                </div>
+              </div>
+
+              <div className="border-t border-[#F4F5FD] px-5 py-4">
+                <div className="flex items-center gap-3">
+                  <button
+                    onClick={() => {
+                      setMinPrice('')
+                      setMaxPrice('')
+                      setSelectedCategories([])
+                      setCategorySearch('')
+                      setActiveMinPrice('')
+                      setActiveMaxPrice('')
+                      setActiveCategories([])
+                      setFilterOpen(false)
+                    }}
+                    className="flex flex-1 items-center justify-center gap-2 rounded-[12px] border border-[#E4E4E7] px-4 py-2.5 font-['Plus_Jakarta_Sans','Rubik',sans-serif] text-[14px] font-semibold text-[#1C1B1B] transition hover:bg-[#F9FAFB]"
+                  >
+                    <img src="/src/assets/grocery-list/reset.png" alt="Reset" className="h-4 w-4" />
+                    Reset
+                  </button>
+                  <button
+                    onClick={() => {
+                      setActiveMinPrice(minPrice)
+                      setActiveMaxPrice(maxPrice)
+                      setActiveCategories(selectedCategories)
+                      setFilterOpen(false)
+                    }}
+                    className="flex flex-1 items-center justify-center gap-2 rounded-[12px] bg-[#1C1B1B] px-4 py-2.5 font-['Plus_Jakarta_Sans','Rubik',sans-serif] text-[14px] font-semibold text-white transition hover:bg-[#333]"
+                  >
+                    <img src="/src/assets/grocery-list/filter-apply.png" alt="Apply" className="h-4 w-4" />
+                    Apply
+                  </button>
                 </div>
               </div>
             </div>

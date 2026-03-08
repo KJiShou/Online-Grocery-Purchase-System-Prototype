@@ -27,14 +27,14 @@ function CategoryPage() {
                 <button
                   key={category.id}
                   onClick={() => navigate(`/categories/${category.id}`)}
-                  className="flex h-[100px] w-[155px] flex-col items-center justify-center rounded-[16px] bg-white shadow-sm transition hover:shadow-md active:scale-95"
+                  className="flex h-[108px] w-[155px] flex-col items-center justify-center rounded-[16px] bg-white px-3 shadow-sm transition hover:shadow-md active:scale-95"
                 >
                   <img
                     src={category.icon}
                     alt={category.label}
                     className="mb-2 h-[32px] w-[32px] object-contain"
                   />
-                  <p className="text-center text-[13px] font-medium text-[#1C1B1B]">
+                  <p className="min-h-[32px] max-w-full break-words text-center text-[13px] font-medium leading-4 text-[#1C1B1B]">
                     {category.label}
                   </p>
                 </button>

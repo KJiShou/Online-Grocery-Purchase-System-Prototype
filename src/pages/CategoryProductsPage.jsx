@@ -64,6 +64,11 @@ export default function CategoryProductsPage() {
   const [sortBy, setSortBy] = useState('bestMatch')
   const [priceDirection, setPriceDirection] = useState('asc')
   const [likedProducts, setLikedProducts] = useState(() => loadWishlistIds())
+  const [filterOpen, setFilterOpen] = useState(false)
+  const [minPrice, setMinPrice] = useState('')
+  const [maxPrice, setMaxPrice] = useState('')
+  const [activeMinPrice, setActiveMinPrice] = useState('')
+  const [activeMaxPrice, setActiveMaxPrice] = useState('')
 
   const selectedCategory = productCategories.find((category) => category.id === categoryId)
 
@@ -73,10 +78,26 @@ export default function CategoryProductsPage() {
   }, [])
 
   const displayProducts = useMemo(() => {
-    const items = products.filter((product) => product.categoryId === categoryId)
-    if (sortBy !== 'price') return items
-    return items.sort((a, b) => (priceDirection === 'asc' ? a.price - b.price : b.price - a.price))
-  }, [categoryId, priceDirection, sortBy])
+    const items = products
+      .filter((product) => product.categoryId === categoryId)
+      .filter((product) => {
+        const min = activeMinPrice ? parseFloat(activeMinPrice) : null
+        const max = activeMaxPrice ? parseFloat(activeMaxPrice) : null
+        const productPrice = product.price ?? 0
+
+        if (min !== null && productPrice < min) return false
+        if (max !== null && productPrice > max) return false
+
+        return true
+      })
+
+    return items.sort((a, b) => {
+      if (sortBy === 'price') {
+        return priceDirection === 'asc' ? a.price - b.price : b.price - a.price
+      }
+      return 0
+    })
+  }, [activeMaxPrice, activeMinPrice, categoryId, priceDirection, sortBy])
 
   if (!selectedCategory) {
     return null
@@ -84,29 +105,42 @@ export default function CategoryProductsPage() {
 
   return (
     <div className="min-h-screen w-full overflow-x-hidden bg-[#f4f4f5]">
-      <section className="relative h-screen w-full overflow-hidden bg-[#f4f4f5] max-[420px]:mx-auto max-[420px]:h-[min(800px,100dvh)] max-[420px]:w-[min(360px,100vw)] max-[420px]:rounded-[24px] max-[420px]:border max-[420px]:border-[#d4d4d8] max-[420px]:shadow-[0_12px_36px_rgba(0,0,0,0.12)]">
-        <div className="absolute inset-x-0 top-0 z-20 bg-white pb-3 pt-4">
+      <section className="relative flex h-screen w-full flex-col overflow-hidden bg-[#f4f4f5] max-[420px]:mx-auto max-[420px]:h-[min(800px,100dvh)] max-[420px]:w-[min(360px,100vw)] max-[420px]:rounded-[24px] max-[420px]:border max-[420px]:border-[#d4d4d8] max-[420px]:shadow-[0_12px_36px_rgba(0,0,0,0.12)]">
+        <div className="z-20 bg-white pb-3 pt-4">
           <div className="mx-auto w-full max-w-[360px] px-5">
             <div className="mb-2 flex items-center justify-between text-[15px] font-normal tracking-[-0.24px] text-[#1C1B1B]">
               <span className="leading-5">{currentTime}</span>
               <StatusIcons />
             </div>
 
-            <header className="flex items-center gap-2">
-              <button onClick={() => navigate('/categories')} className="text-[#1f2937] transition hover:scale-110 hover:text-[#42c236]" aria-label="Back to categories">
-                <BackIcon />
+            <header className="flex items-center justify-between gap-2">
+              <div className="flex min-w-0 items-center gap-2">
+                <button onClick={() => navigate('/categories')} className="shrink-0 text-[#1f2937] transition hover:scale-110 hover:text-[#42c236]" aria-label="Back to categories">
+                  <BackIcon />
+                </button>
+                <h1 className="break-words font-['Plus_Jakarta_Sans','Rubik',sans-serif] text-[25px] font-bold leading-[1.1] text-black">
+                  {selectedCategory.label}
+                </h1>
+              </div>
+              <button onClick={() => setFilterOpen(true)} className="shrink-0 text-[#1f2937] transition hover:scale-110 hover:text-[#42c236]" aria-label="Open filter">
+                <img src="/src/assets/grocery-list/filter-toggle.png" alt="Filter" className="h-6 w-6" />
               </button>
-              <h1 className="font-['Plus_Jakarta_Sans','Rubik',sans-serif] text-[25px] font-bold leading-[1.2] text-black">
-                {selectedCategory.label}
-              </h1>
             </header>
           </div>
         </div>
 
-        <div className="absolute inset-x-0 top-[87px] z-20 bg-white pb-2 pt-2">
+        <div className="z-20 bg-white pb-2 pt-2">
           <div className="mx-auto w-full max-w-[360px] px-5">
             <div className="flex items-center gap-3">
-              
+              <button
+                onClick={() => setSortBy('bestMatch')}
+                className={`flex-1 rounded-[12px] px-4 py-2 font-['Plus_Jakarta_Sans','Rubik',sans-serif] text-[14px] font-semibold leading-[18px] transition ${
+                  sortBy === 'bestMatch' ? 'bg-[#1C1B1B] text-white' : 'bg-white text-[#1C1B1B]'
+                }`}
+              >
+                Best Match
+              </button>
+
               <button
                 onClick={() => {
                   if (sortBy === 'price') {
@@ -115,26 +149,44 @@ export default function CategoryProductsPage() {
                     setSortBy('price')
                   }
                 }}
-                className={`flex-1 rounded-[12px] border px-4 py-2 font-['Plus_Jakarta_Sans','Rubik',sans-serif] text-[14px] font-semibold leading-[18px] transition ${
-                  sortBy === 'price' ? 'border-[#1C1B1B] bg-[#1C1B1B] text-white' : 'border-2 border-[#1C1B1B] bg-white text-[#1C1B1B]'
+                className={`flex flex-1 items-center justify-center gap-2 rounded-[12px] px-4 py-2 font-['Plus_Jakarta_Sans','Rubik',sans-serif] text-[14px] font-semibold leading-[18px] transition ${
+                  sortBy === 'price' ? 'bg-[#1C1B1B] text-white' : 'bg-white text-[#1C1B1B]'
                 }`}
               >
-                Price {sortBy === 'price' ? (priceDirection === 'asc' ? '(Low-High)' : '(High-Low)') : ''}
+                <span>Price</span>
+                <img
+                  src={
+                    sortBy === 'price'
+                      ? priceDirection === 'asc'
+                        ? '/src/assets/grocery-list/arrow-up-white.png'
+                        : '/src/assets/grocery-list/arrow-down-white.png'
+                      : priceDirection === 'asc'
+                        ? '/src/assets/grocery-list/arrow-up-dark.png'
+                        : '/src/assets/grocery-list/arrow-down-dark.png'
+                  }
+                  alt="Sort arrow"
+                  className="h-5 w-5"
+                />
               </button>
             </div>
           </div>
         </div>
 
-        <div className="hide-scrollbar absolute inset-x-0 bottom-[86px] top-[130px] overflow-y-auto pb-6">
+        <div className="hide-scrollbar flex-1 overflow-y-auto pb-[96px]">
           <div className="mx-auto w-full max-w-[360px] px-5 pt-4">
-            <p className="mb-4 font-['Plus_Jakarta_Sans','Rubik',sans-serif] text-[14px] font-medium leading-[18px] tracking-[0.005em] text-[#6F7384]">
+            <p className="mb-2 font-['Plus_Jakarta_Sans','Rubik',sans-serif] text-[14px] font-medium leading-[18px] tracking-[0.005em] text-[#6F7384]">
               Showing <b>{displayProducts.length}</b> items in <b>{selectedCategory.label}</b>
             </p>
+            {(activeMinPrice || activeMaxPrice) && (
+              <p className="mb-4 font-['Plus_Jakarta_Sans','Rubik',sans-serif] text-[12px] font-normal leading-[16px] tracking-[0.005em] text-[#6F7384]">
+                Filters are applied.
+              </p>
+            )}
 
             {displayProducts.length === 0 ? (
               <div className="flex h-[280px] items-center justify-center rounded-[20px] bg-white px-6 text-center shadow-sm">
                 <p className="font-['Plus_Jakarta_Sans','Rubik',sans-serif] text-[14px] font-medium leading-[22px] tracking-[0.005em] text-[#6F7384]">
-                  No products in this category yet.
+                  {activeMinPrice || activeMaxPrice ? 'No products found. Try another filter?' : 'No products in this category yet.'}
                 </p>
               </div>
             ) : (
@@ -183,6 +235,90 @@ export default function CategoryProductsPage() {
             )}
           </div>
         </div>
+
+        {filterOpen ? (
+          <div className="absolute inset-0 z-50 flex items-center justify-center bg-black/30" onClick={() => setFilterOpen(false)}>
+            <div className="mx-4 w-full max-w-[360px] rounded-[12px] bg-white" onClick={(event) => event.stopPropagation()}>
+              <div className="p-5 pb-0">
+                <div className="mb-5 flex items-center justify-between">
+                  <h2 className="font-['Plus_Jakarta_Sans','Rubik',sans-serif] text-[20px] font-bold leading-[25px] text-[#1C1B1B]">
+                    Filter Products
+                  </h2>
+                  <button onClick={() => setFilterOpen(false)} className="text-[#6F7384] transition hover:text-[#1C1B1B]">
+                    <img src="/src/assets/grocery-list/close.png" alt="Close" className="h-6 w-6" />
+                  </button>
+                </div>
+
+                <div className="mb-5 rounded-[12px] border border-[#F4F5FD] p-4">
+                  <h3 className="mb-3 font-['Plus_Jakarta_Sans','Rubik',sans-serif] text-[16px] font-semibold leading-[20px] text-[#1C1B1B]">
+                    Price Range
+                  </h3>
+                  <div className="flex items-center gap-2">
+                    <span className="font-['Plus_Jakarta_Sans','Rubik',sans-serif] text-[14px] font-medium text-[#1C1B1B]">
+                      From RM
+                    </span>
+                    <input
+                      type="text"
+                      value={minPrice}
+                      onChange={(event) => {
+                        const value = event.target.value
+                        if (value === '' || /^\d+\.?\d{0,2}$/.test(value)) {
+                          setMinPrice(value)
+                        }
+                      }}
+                      placeholder="min"
+                      className="w-16 rounded-[12px] border border-[#E4E4E7] bg-[#F9FAFB] px-2 py-1 text-center font-['Plus_Jakarta_Sans','Rubik',sans-serif] text-[12px] placeholder:text-center placeholder:text-black/50"
+                    />
+                    <span className="font-['Plus_Jakarta_Sans','Rubik',sans-serif] text-[14px] font-medium text-[#1C1B1B]">
+                      to RM
+                    </span>
+                    <input
+                      type="text"
+                      value={maxPrice}
+                      onChange={(event) => {
+                        const value = event.target.value
+                        if (value === '' || /^\d+\.?\d{0,2}$/.test(value)) {
+                          setMaxPrice(value)
+                        }
+                      }}
+                      placeholder="max"
+                      className="w-16 rounded-[12px] border border-[#E4E4E7] bg-[#F9FAFB] px-2 py-1 text-center font-['Plus_Jakarta_Sans','Rubik',sans-serif] text-[12px] placeholder:text-center placeholder:text-black/50"
+                    />
+                  </div>
+                </div>
+              </div>
+
+              <div className="border-t border-[#F4F5FD] px-5 py-4">
+                <div className="flex items-center gap-3">
+                  <button
+                    onClick={() => {
+                      setMinPrice('')
+                      setMaxPrice('')
+                      setActiveMinPrice('')
+                      setActiveMaxPrice('')
+                      setFilterOpen(false)
+                    }}
+                    className="flex flex-1 items-center justify-center gap-2 rounded-[12px] border border-[#E4E4E7] px-4 py-2.5 font-['Plus_Jakarta_Sans','Rubik',sans-serif] text-[14px] font-semibold text-[#1C1B1B] transition hover:bg-[#F9FAFB]"
+                  >
+                    <img src="/src/assets/grocery-list/reset.png" alt="Reset" className="h-4 w-4" />
+                    Reset
+                  </button>
+                  <button
+                    onClick={() => {
+                      setActiveMinPrice(minPrice)
+                      setActiveMaxPrice(maxPrice)
+                      setFilterOpen(false)
+                    }}
+                    className="flex flex-1 items-center justify-center gap-2 rounded-[12px] bg-[#1C1B1B] px-4 py-2.5 font-['Plus_Jakarta_Sans','Rubik',sans-serif] text-[14px] font-semibold text-white transition hover:bg-[#333]"
+                  >
+                    <img src="/src/assets/grocery-list/filter-apply.png" alt="Apply" className="h-4 w-4" />
+                    Apply
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        ) : null}
 
         <BottomNav />
       </section>
