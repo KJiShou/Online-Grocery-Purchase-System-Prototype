@@ -1,6 +1,8 @@
 import { useState, useEffect } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useSearchParams } from 'react-router-dom'
+import { products, productCategories } from '../data/homeData'
 import BottomNav from '../components/navigation/BottomNav'
+import { loadWishlistIds, toggleWishlistId } from '../utils/wishlist'
 
 function formatCurrentTime() {
   const now = new Date()
@@ -55,76 +57,19 @@ function HeartIcon({ filled = false }) {
   )
 }
 
-const categories = [
-  'Beverages',
-  'Dairy & Frozen',
-  'Fresh Produce',
-  'Packaged Food',
-  'Meat, Seafood & Deli',
-  'Bakery & Breakfast',
-  'Rice, Noodles & Pasta',
-  'Biscuits & Crackers',
-  'Ice Cream',
-  'Cooking & Condiments',
-]
-
-const groceryProducts = [
-  {
-    id: 'gula-prai',
-    name: 'Gula Prai Coarse Grain Sugar 1kg',
-    price: 2.85,
-    oldPrice: 3.0,
-    image: '/src/assets/grocery-list/gula-prai.png',
-    category: 'Cooking & Condiments',
-  },
-  {
-    id: 'csr-white-sugar',
-    name: 'CSR White Sugar Sachets 3g x 250pk...',
-    price: 46.0,
-    oldPrice: null,
-    image: '/src/assets/grocery-list/csr-white-sugar.png',
-    category: 'Cooking & Condiments',
-  },
-  {
-    id: 'better-brown',
-    name: 'CSR Better Brown Low Glycemic Sugar...',
-    price: 6.5,
-    oldPrice: null,
-    image: '/src/assets/grocery-list/better-brown.png',
-    category: 'Cooking & Condiments',
-  },
-  {
-    id: 'rock-sugar',
-    name: 'Sweet Home Fine Rock Sugar 300g',
-    price: 3.0,
-    oldPrice: 5.0,
-    image: '/src/assets/grocery-list/rock-sugar.png',
-    category: 'Cooking & Condiments',
-  },
-  {
-    id: 'csr-soft-brown',
-    name: 'CSR Soft Brown Sugar 1KG',
-    price: 3.0,
-    oldPrice: null,
-    image: '/src/assets/grocery-list/csr-soft-brown-sugar.png',
-    category: 'Cooking & Condiments',
-  },
-  {
-    id: 'soft-brown-2',
-    name: 'Soft Brown Sugar 500G',
-    price: 3.0,
-    oldPrice: 5.0,
-    image: '/src/assets/grocery-list/soft-brown-sugar-2.png',
-    category: 'Cooking & Condiments',
-  },
-]
+const categories = productCategories.map(cat => cat.label)
 
 function GroceryListPage() {
   const navigate = useNavigate()
+  const [searchParams] = useSearchParams()
+  const searchTerm = searchParams.get('search') || ''
   const [currentTime, setCurrentTime] = useState(formatCurrentTime())
   const [sortBy, setSortBy] = useState('bestMatch')
   const [priceDirection, setPriceDirection] = useState('asc')
-  const [likedProducts, setLikedProducts] = useState([])
+  const [likedProducts, setLikedProducts] = useState(() => {
+    const stored = loadWishlistIds()
+    return stored
+  })
   const [filterOpen, setFilterOpen] = useState(false)
   const [minPrice, setMinPrice] = useState('')
   const [maxPrice, setMaxPrice] = useState('')
@@ -136,8 +81,16 @@ function GroceryListPage() {
   const [activeMaxPrice, setActiveMaxPrice] = useState('')
   const [activeCategories, setActiveCategories] = useState([])
 
+  // Create a mapping from category label to categoryId
+  const categoryLabelToId = new Map(productCategories.map(cat => [cat.label, cat.id]))
+
   // Filter and sort products based on selected options
-  const filteredAndSortedProducts = groceryProducts
+  const filteredAndSortedProducts = products
+    .filter((product) => {
+      // Search term filter
+      return product.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        product.description.toLowerCase().includes(searchTerm.toLowerCase())
+    })
     .filter((product) => {
       // Price range filter
       const min = activeMinPrice ? parseFloat(activeMinPrice) : null
@@ -147,9 +100,12 @@ function GroceryListPage() {
       if (min !== null && productPrice < min) return false
       if (max !== null && productPrice > max) return false
       
-      // Category filter
-      if (activeCategories.length > 0 && !activeCategories.includes(product.category)) {
-        return false
+      // Category filter - map labels to categoryIds
+      if (activeCategories.length > 0) {
+        const activeCategoryIds = activeCategories.map(label => categoryLabelToId.get(label)).filter(Boolean)
+        if (!activeCategoryIds.includes(product.categoryId)) {
+          return false
+        }
       }
       
       return true
@@ -252,7 +208,7 @@ function GroceryListPage() {
         <div className="hide-scrollbar absolute inset-x-0 bottom-[86px] top-[130px] overflow-y-auto pb-6">
           <div className="mx-auto w-full max-w-[360px] px-5 pt-4">
             <p className="mb-2 font-['Plus_Jakarta_Sans','Rubik',sans-serif] text-[14px] font-medium leading-[18px] tracking-[0.005em] text-[#6F7384]">
-              Showing results for <b>"Sugar"</b>
+              Showing results for <b>"{searchTerm}"</b>
             </p>
             {(activeMinPrice || activeMaxPrice || activeCategories.length > 0) && (
               <p className="mb-4 font-['Plus_Jakarta_Sans','Rubik',sans-serif] text-[12px] font-normal leading-[16px] tracking-[0.005em] text-[#6F7384]">
@@ -275,7 +231,8 @@ function GroceryListPage() {
                 return (
                   <article
                     key={`${product.id}-${index}`}
-                    className="group transform rounded-xl bg-white p-2.5 shadow-sm transition duration-300 ease-in-out hover:-translate-y-1 hover:shadow-md"
+                    onClick={() => navigate(`/product/${product.id}`)}
+                    className="group transform rounded-xl bg-white p-2.5 shadow-sm transition duration-300 ease-in-out hover:-translate-y-1 hover:shadow-md cursor-pointer"
                   >
                     <div className="relative mb-2 h-32 overflow-hidden rounded-xl bg-gray-100">
                       <img
@@ -284,13 +241,10 @@ function GroceryListPage() {
                         className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
                       />
                       <button
-                        onClick={() =>
-                          setLikedProducts((current) =>
-                            current.includes(product.id)
-                              ? current.filter((id) => id !== product.id)
-                              : [...current, product.id],
-                          )
-                        }
+                        onClick={(e) => {
+                          e.stopPropagation()
+                          setLikedProducts(toggleWishlistId(product.id))
+                        }}
                         className="absolute right-2 top-2 grid h-7 w-7 place-items-center rounded-full bg-black/50 text-white transition hover:scale-110 hover:bg-[#42c236]"
                       >
                         <HeartIcon filled={isLiked} />

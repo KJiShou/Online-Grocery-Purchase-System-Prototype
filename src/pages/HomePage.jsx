@@ -50,10 +50,7 @@ function HomePage() {
   const navigate = useNavigate()
   const [likedProducts, setLikedProducts] = useState(() => {
     const stored = loadWishlistIds()
-    if (stored.length > 0) return stored
-    const defaultIds = ['dutch-lady']
-    saveWishlistIds(defaultIds)
-    return defaultIds
+    return stored
   })
   const [activeBannerIndex, setActiveBannerIndex] = useState(0)
   const [searchOpen, setSearchOpen] = useState(false)
@@ -82,15 +79,10 @@ function HomePage() {
     const term = inputText.trim()
     if (!term) return
 
-    if (term.toLowerCase() === 'sugar') {
-      setSearchOpen(false)
-      setFilterMenuOpen(false)
-      navigate('/grocery-list')
-      return
-    }
-
-    setRecentSearches((current) => [term, ...current.filter((item) => item.toLowerCase() !== term.toLowerCase())].slice(0, 8))
+    setSearchOpen(false)
     setFilterMenuOpen(false)
+    setRecentSearches((current) => [term, ...current.filter((item) => item.toLowerCase() !== term.toLowerCase())].slice(0, 8))
+    navigate(`/grocery-list?search=${encodeURIComponent(term)}`)
   }
 
   const closeSearch = () => {
