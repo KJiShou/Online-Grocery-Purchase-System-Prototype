@@ -97,6 +97,8 @@ export default function OrderPlacedPage() {
 		grandTotal = subtotal + 5,
 	} = data
 
+	// console.log(data)
+
 	const canChangeAddress = () => {
 		const order = getOrderById(data.currentOrderId);
 		return order && order.status === "Pending";

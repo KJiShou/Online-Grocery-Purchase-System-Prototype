@@ -265,17 +265,18 @@ export function CardIcon() {
   )
 }
 
-export function MinusIcon() {
+export function MinusIcon({ active = true }) {
   return (
-    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#9ca3af" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke={active ? "#1C1B1B" : "#9ca3af"} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
       <line x1="5" y1="12" x2="19" y2="12"></line>
     </svg>
   )
 }
 
-export function PlusIcon() {
+export function PlusIcon({ active = true }) {
+  
   return (
-    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#1C1B1B" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke={active ? "#1C1B1B" : "#9ca3af"} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
       <line x1="12" y1="5" x2="12" y2="19"></line>
       <line x1="5" y1="12" x2="19" y2="12"></line>
     </svg>

@@ -57,7 +57,7 @@ export function CartProvider({ children }) {
   const increment = (id) => {
     setCartItems((items) =>
       items.map((item) =>
-        item.id === id ? { ...item, quantity: item.quantity + 1 } : item
+        item.id === id && item.quantity < 99 ? { ...item, quantity: item.quantity + 1 } : item
       )
     )
   }
@@ -72,6 +72,25 @@ export function CartProvider({ children }) {
       )
     )
   }
+
+  // === 新增方法：直接修改特定商品的数量 ===
+  const updateQuantity = (id, newQuantity) => {
+    setCartItems((items) =>
+      items.map((item) => {
+        if (item.id === id) {
+          // 允许临时空字符串
+          if (newQuantity === '') return { ...item, quantity: '' };
+          
+          // 严厉的防御性编程：数量绝对不能小于 1！
+          // 如果用户输入了 0、负数或者乱码，强制重置为 1
+          let validQuantity = newQuantity < 1 ? 1 : newQuantity;
+          validQuantity = validQuantity > 99 ? 99 : validQuantity;
+          return { ...item, quantity: validQuantity };
+        }
+        return item;
+      })
+    );
+  };
 
   // 删除商品
   const remove = (id) => {
@@ -103,6 +122,7 @@ export function CartProvider({ children }) {
         toggleSelected,
         increment,
         decrement,
+        updateQuantity,
         remove,
         removeMultiple,
         selectedItems,

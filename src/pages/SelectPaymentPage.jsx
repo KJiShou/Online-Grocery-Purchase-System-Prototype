@@ -17,6 +17,10 @@ export default function SelectPaymentPage() {
     return 'maybank'
   })
 
+  const {
+    from = ''
+  } = incomingState
+
   // 确认按钮逻辑
   const handleSelect = () => {
         if (!selectedMethod) {
@@ -26,10 +30,11 @@ export default function SelectPaymentPage() {
         
         // 严厉提醒：绝对不能用 navigate(-1) 传状态！
         // 我们必须明确跳回 /payment，并合并原来的购物车数据
-        navigate(location.state?.from ?? '/payment', { 
+        navigate(from.startsWith('/product') || from.startsWith('/select') ? '/payment' : from, { 
             state: { 
             ...incomingState, // 展开所有原来购物车传来的数据（items, subtotal 等）
-            paymentMethod: selectedMethod // 加上你新选的支付方式
+            paymentMethod: selectedMethod, // 加上你新选的支付方式
+            from: location.pathname
             },
             replace: true // 极其重要：替换当前历史记录，防止用户按手机返回键时在两个页面间死循环
         }) 
@@ -43,7 +48,7 @@ export default function SelectPaymentPage() {
         <div className="absolute inset-x-0 top-[44px] z-20 bg-white min-h-[44px]">
           <div className="mx-auto w-full max-w-[360px] px-5">
             <header className="flex items-center gap-2">
-              <button onClick={() => navigate(-1)} className="text-[#1f2937] transition hover:scale-110">
+              <button onClick={() => navigate(-1, { state: { from: location.pathname}})} className="text-[#1f2937] transition hover:scale-110">
                 <BackIcon />
               </button>
              <h1 className="font-['Plus_Jakarta_Sans','Rubik',sans-serif] text-[20px] font-bold leading-[1.2] text-black">
