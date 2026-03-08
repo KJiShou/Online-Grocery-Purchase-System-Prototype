@@ -1,5 +1,6 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
+import { usePreference } from '../contexts/PreferenceContext'
 
 function BackIcon() {
   return (
@@ -40,6 +41,7 @@ function getAddressPreview(name, address, unitNo) {
 export default function EditAddressPage() {
   const navigate = useNavigate()
   const location = useLocation()
+  const { createAddress, updateAddress, deleteAddress } = usePreference()
   const data = location.state || {}
   const editAddress = data.editAddress || null
   const formDraft = data.formDraft || null
@@ -55,6 +57,12 @@ export default function EditAddressPage() {
   const [showSubmitModal, setShowSubmitModal] = useState(false)
   const [showDeleteModal, setShowDeleteModal] = useState(false)
   const deleteTargetLabel = getAddressPreview(name, addressLine, unitNo)
+
+  useEffect(() => {
+    console.log('EditAddressPage received data:', data)
+    console.log('Used data in this page - editAddress:', editAddress, 'formDraft:', formDraft)
+    console.log('Initial form values - addressLine:', addressLine, 'name:', name, 'phone:', phone, 'unitNo:', unitNo, 'postalCode:', postalCode, 'isDefault:', isDefault)
+  })
 
   const goToAddressDetails = () => {
     navigate('/address-details', {
@@ -74,6 +82,11 @@ export default function EditAddressPage() {
     })
   }
 
+  const getDataWithoutFormDraft = () => {
+    const { formDraft, ...restData } = data
+    return restData
+  }
+
   const handleOpenSubmit = () => {
     if (!addressLine.trim()) {
       alert('Address is required.')
@@ -91,9 +104,9 @@ export default function EditAddressPage() {
   }
 
   const handleSave = () => {
+    const addressId = editAddress?.id || `addr-${Date.now()}`
     const savedAddress = {
-      ...(editAddress || {}),
-      id: editAddress?.id || `addr-${Date.now()}`,
+      id: addressId,
       name: name.trim(),
       phone: phone.trim(),
       address: addressLine.trim(),
@@ -102,112 +115,120 @@ export default function EditAddressPage() {
       isDefault,
     }
 
+    if (isNewAddress) {
+      console.log('Creating new address with data:', savedAddress)
+      createAddress(savedAddress)
+    } else {
+      console.log('Updating address with ID:', addressId, 'Data:', savedAddress)
+      updateAddress(addressId, savedAddress)
+    }
+
     navigate('/select-address', {
       replace: true,
       state: {
-        ...data,
-        savedAddress,
+        ...getDataWithoutFormDraft(),
+        selectedAddress: savedAddress,
       },
     })
   }
 
   const handleDelete = () => {
     if (!editAddress?.id) {
-      navigate('/select-address', { replace: true, state: { ...data } })
+      navigate('/select-address', { replace: true, state: { ...getDataWithoutFormDraft() } })
       return
     }
+
+    deleteAddress(editAddress.id)
 
     navigate('/select-address', {
       replace: true,
       state: {
-        ...data,
-        deletedAddressId: editAddress.id,
+        ...getDataWithoutFormDraft(),
       },
     })
   }
 
   return (
     <>
-        <div className="absolute inset-x-0 top-[44px] z-20 bg-white min-h-[44px]">
-          <div className="mx-auto w-full max-w-[360px] px-5">
-            <header className="flex items-center gap-2">
-              <button onClick={() => navigate(-1)} className="text-[#1f2937] transition hover:scale-110">
-                <BackIcon />
-              </button>
-              <h1 className="font-['Plus_Jakarta_Sans','Rubik',sans-serif] text-[25px] font-bold leading-[1.2] text-black">
-                {isNewAddress ? 'New Address' : 'Edit Address'}
-              </h1>
-            </header>
-          </div>
+      <div className="absolute inset-x-0 top-[44px] z-20 min-h-[44px] bg-white">
+        <div className="mx-auto w-full max-w-[360px] px-5">
+          <header className="flex items-center gap-2">
+            <button onClick={() => navigate(-1)} className="text-[#1f2937] transition hover:scale-110">
+              <BackIcon />
+            </button>
+            <h1 className="font-['Plus_Jakarta_Sans','Rubik',sans-serif] text-[25px] font-bold leading-[1.2] text-black">
+              {isNewAddress ? 'New Address' : 'Edit Address'}
+            </h1>
+          </header>
         </div>
+      </div>
 
-        <div className="hide-scrollbar absolute inset-x-0 bottom-[128px] top-[88px] overflow-y-auto">
-          <div className="mx-auto flex w-full max-w-[360px] flex-col gap-3 px-3 pb-8 pt-4">
-            <div className="rounded-2xl border border-[#F4F5FD] bg-white p-3 shadow-[0_4px_14px_rgba(15,23,42,0.08)]">
-              <div className="flex flex-col gap-2">
-                <label className="font-['Plus_Jakarta_Sans','Rubik',sans-serif] text-[18px] font-bold leading-[23px] tracking-[0.0025em] text-[#1C1B1B]">
-                  Address <span className="text-[#F25555]">*</span>
-                </label>
-                <button
-                  type="button"
-                  onClick={goToAddressDetails}
-                  className="flex min-h-[60px] items-center justify-between rounded-xl border border-[#F4F5FD] bg-white px-4 py-3 text-left transition hover:shadow-[0_6px_14px_rgba(28,27,27,0.08)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#1C1B1B]"
-                >
-                  <span
-                    className={`font-['Plus_Jakarta_Sans','Rubik',sans-serif] text-[14px] leading-[150%] tracking-[0.005em] ${
-                      addressLine ? 'text-[#1C1B1B]' : 'text-[#C0C0C0]'
+      <div className="hide-scrollbar absolute inset-x-0 bottom-[128px] top-[88px] overflow-y-auto">
+        <div className="mx-auto flex w-full max-w-[360px] flex-col gap-3 px-3 pb-8 pt-4">
+          <div className="rounded-2xl border border-[#F4F5FD] bg-white p-3 shadow-[0_4px_14px_rgba(15,23,42,0.08)]">
+            <div className="flex flex-col gap-2">
+              <label className="font-['Plus_Jakarta_Sans','Rubik',sans-serif] text-[18px] font-bold leading-[23px] tracking-[0.0025em] text-[#1C1B1B]">
+                Address <span className="text-[#F25555]">*</span>
+              </label>
+              <button
+                type="button"
+                onClick={goToAddressDetails}
+                className="flex min-h-[60px] items-center justify-between rounded-xl border border-[#F4F5FD] bg-white px-4 py-3 text-left transition hover:shadow-[0_6px_14px_rgba(28,27,27,0.08)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#1C1B1B]"
+              >
+                <span
+                  className={`font-['Plus_Jakarta_Sans','Rubik',sans-serif] text-[14px] leading-[150%] tracking-[0.005em] ${addressLine ? 'text-[#1C1B1B]' : 'text-[#C0C0C0]'
                     }`}
-                  >
-                    {formatAddressDisplay(addressLine, unitNo) || 'House No., Building, Street Name'}
-                  </span>
-                  <ChevronRight />
-                </button>
-              </div>
-            </div>
-
-            <div className="rounded-2xl border border-[#F4F5FD] bg-white p-3 shadow-[0_4px_14px_rgba(15,23,42,0.08)]">
-              <div className="flex flex-col gap-4">
-                <label htmlFor="name" className="text-[12px] font-semibold uppercase tracking-[0.04em] text-[#6F7384]">
-                  Contact Details
-                </label>
-                <input
-                  id="name"
-                  type="text"
-                  value={name}
-                  onChange={(e) => setName(e.target.value)}
-                  placeholder="Full Name"
-                  className="h-[60px] rounded-xl border border-[#F4F5FD] bg-white px-4 font-['Plus_Jakarta_Sans','Rubik',sans-serif] text-[14px] leading-[18px] tracking-[0.005em] text-[#1C1B1B] placeholder:text-[#C0C0C0] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#1C1B1B]"
-                />
-                <input
-                  id="phone"
-                  type="text"
-                  value={phone}
-                  onChange={(e) => setPhone(e.target.value)}
-                  placeholder="Phone Number"
-                  className="h-[60px] rounded-xl border border-[#F4F5FD] bg-white px-4 font-['Plus_Jakarta_Sans','Rubik',sans-serif] text-[14px] leading-[18px] tracking-[0.005em] text-[#1C1B1B] placeholder:text-[#C0C0C0] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#1C1B1B]"
-                />
-              </div>
-            </div>
-
-            <div className="rounded-2xl border border-[#F4F5FD] bg-white p-3 shadow-[0_4px_14px_rgba(15,23,42,0.08)]">
-              <div className="flex min-h-[44px] items-center justify-between">
-                <span className="font-['Plus_Jakarta_Sans','Rubik',sans-serif] text-[15px] font-bold leading-[19px] tracking-[0.005em] text-[#000000]">
-                  Set as Default Address
-                </span>
-                <button
-                  type="button"
-                  onClick={() => setIsDefault((prev) => !prev)}
-                  className={`relative h-8 w-14 rounded-full transition ${isDefault ? 'bg-[#4CBF35]' : 'bg-[#C0C0C0]'} focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#1C1B1B]`}
-                  aria-label="Toggle default address"
                 >
-                  <span
-                    className={`absolute top-1 h-6 w-6 rounded-full bg-white transition ${isDefault ? 'left-7' : 'left-1'}`}
-                  ></span>
-                </button>
-              </div>
+                  {formatAddressDisplay(addressLine, unitNo) || 'House No., Building, Street Name'}
+                </span>
+                <ChevronRight />
+              </button>
+            </div>
+          </div>
+
+          <div className="rounded-2xl border border-[#F4F5FD] bg-white p-3 shadow-[0_4px_14px_rgba(15,23,42,0.08)]">
+            <div className="flex flex-col gap-4">
+              <label htmlFor="name" className="text-[12px] font-semibold uppercase tracking-[0.04em] text-[#6F7384]">
+                Contact Details
+              </label>
+              <input
+                id="name"
+                type="text"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                placeholder="Full Name"
+                className="h-[60px] rounded-xl border border-[#F4F5FD] bg-white px-4 font-['Plus_Jakarta_Sans','Rubik',sans-serif] text-[14px] leading-[18px] tracking-[0.005em] text-[#1C1B1B] placeholder:text-[#C0C0C0] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#1C1B1B]"
+              />
+              <input
+                id="phone"
+                type="text"
+                value={phone}
+                onChange={(e) => setPhone(e.target.value)}
+                placeholder="Phone Number"
+                className="h-[60px] rounded-xl border border-[#F4F5FD] bg-white px-4 font-['Plus_Jakarta_Sans','Rubik',sans-serif] text-[14px] leading-[18px] tracking-[0.005em] text-[#1C1B1B] placeholder:text-[#C0C0C0] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#1C1B1B]"
+              />
+            </div>
+          </div>
+
+          <div className="rounded-2xl border border-[#F4F5FD] bg-white p-3 shadow-[0_4px_14px_rgba(15,23,42,0.08)]">
+            <div className="flex min-h-[44px] items-center justify-between">
+              <span className="font-['Plus_Jakarta_Sans','Rubik',sans-serif] text-[15px] font-bold leading-[19px] tracking-[0.005em] text-[#000000]">
+                Set as Default Address
+              </span>
+              <button
+                type="button"
+                onClick={() => setIsDefault((prev) => !prev)}
+                className={`relative h-8 w-14 rounded-full transition ${isDefault ? 'bg-[#4CBF35]' : 'bg-[#C0C0C0]'} focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#1C1B1B]`}
+                aria-label="Toggle default address"
+              >
+                <span
+                  className={`absolute top-1 h-6 w-6 rounded-full bg-white transition ${isDefault ? 'left-7' : 'left-1'}`}
+                ></span>
+              </button>
             </div>
           </div>
         </div>
+      </div>
 
         <div className="absolute bottom-[0px] left-0 z-20 w-full border-t border-[#e4e4e7] bg-[#f8fafc] pb-2 pt-3">
           <div className="mx-auto flex w-full max-w-[360px] gap-3 px-5">

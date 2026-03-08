@@ -20,6 +20,11 @@ export const ORDER_STATUS_CONFIG = {
     label: 'Delivered',
     // 绿色：代表成功、完成、安全
     className: 'bg-emerald-500 text-white'
+  },
+  'Cancelled': {
+    label: 'Cancelled',
+    // 红色：代表失败、取消、中止
+    className: 'bg-red-500 text-white'
   }
 };
 

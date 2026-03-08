@@ -1,18 +1,16 @@
-import { useEffect, useRef } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
 import { useOrder } from '../contexts/OrderContext'
 import { useCart } from '../contexts/CartContext'
+import { usePreference } from '../contexts/PreferenceContext'
 import { formatPrice, generateOrderID, generateOrderDate, paymentMethods } from '../utils/helper'
 import { BackIcon, LocationIcon, ChevronRightIcon, TruckIcon } from '../components/Icons'
 
 function formatAddressDisplay(address, unitNo) {
   const trimmedAddress = (address || '').trim()
   const trimmedUnit = (unitNo || '').trim()
-  if (trimmedUnit && trimmedAddress) {
-    return `${trimmedUnit}, ${trimmedAddress}`
-  }
-  if (!trimmedUnit) return trimmedAddress
-  if (!trimmedAddress) return trimmedUnit
+  const line = [trimmedUnit, trimmedAddress].filter(Boolean).join(', ')
+  return line
 }
 
 export default function CheckoutPage() {
@@ -20,30 +18,66 @@ export default function CheckoutPage() {
   const location = useLocation()
   const { addOrder, updateOrderStatus, resetOrders } = useOrder()
   const { selectedItems, subtotal, removeMultiple } = useCart()
+  const { defaultAddressId, defaultPaymentMethod, getAddressById } = usePreference()
 
   const isPaymentSuccessful = useRef(false)
+  const [showConfirmPaymentModal, setShowConfirmPaymentModal] = useState(false)
+  const [showCancelPaymentModal, setShowCancelPaymentModal] = useState(false)
 
   // 2. 安全地提取数据。如果用户是直接在浏览器输入网址进来的（没有经过购物车），
   // location.state 会是 null，我们需要给它一个默认值防止页面崩溃。
   const data = location.state || {}
-  
-  const defaultAddress = {
+
+  const fallbackAddress = {
     id: 'andrew',
     name: 'Andrew',
     phone: '(+60) 12-345 6789',
     address:
-      'Ground Floor, Bangunan Tan Sri Khaw Kai Boh (Block A), Jalan Genting Kelang, Setapak, 53300 Kuala Lumpur, Federal Territory of Kuala Lumpur',
-    unitNo: 'Unit 01-01'
+      'Ground Floor, Bangunan Tan Sri Khaw Kai Boh (Block A), Jalan Genting Kelang, Setapak, 53100 Kuala Lumpur, Federal Territory of Kuala Lumpur',
+    unitNo: 'Unit 01-01',
+    postalCode: '53100',
+    isDefault: true,
+  }
+
+  const preferredAddress = getAddressById(defaultAddressId)
+  const defaultAddress = preferredAddress
+    ? {
+      id: preferredAddress.id,
+      name: preferredAddress.shipping?.name || '',
+      phone: preferredAddress.shipping?.phone || '',
+      address: preferredAddress.shipping?.address || '',
+      unitNo: preferredAddress.shipping?.unitNo || '',
+      postalCode: preferredAddress.shipping?.postalCode || '',
+      isDefault: Boolean(preferredAddress.isDefault),
     }
+    : fallbackAddress
 
   const {
     selectedAddress = defaultAddress,
-    paymentMethod = 'maybank', 
+    paymentMethod: incomingPaymentMethod,
     appliedVoucher = null, 
     discountAmount = 0, 
     shippingDiscount = 0, 
     grandTotal = subtotal + 5,
-  } = data;
+  } = data
+
+  const paymentMethod = paymentMethods[incomingPaymentMethod]
+    ? incomingPaymentMethod
+    : paymentMethods[defaultPaymentMethod]
+      ? defaultPaymentMethod
+      : 'maybank'
+
+  const checkoutData = {
+    ...data,
+    items: selectedItems,
+    subtotal,
+    selectedAddress,
+    paymentMethod,
+    appliedVoucher,
+    discountAmount,
+    shippingDiscount,
+    grandTotal,
+  }
 
   useEffect(() => {
     if (selectedItems.length === 0 && !isPaymentSuccessful.current) {
@@ -58,7 +92,7 @@ export default function CheckoutPage() {
         <div className="absolute inset-x-0 top-[44px] z-20 bg-white min-h-[44px]">
           <div className="mx-auto w-full max-w-[360px] px-5">
             <header className="flex items-center gap-2">
-              <button onClick={() => navigate('/cart', { state: { from: location.pathname } })} className="text-[#1f2937] transition hover:scale-110 hover:text-[#42c236]">
+              <button onClick={() => setShowCancelPaymentModal(true)} className="text-[#1f2937] transition hover:scale-110 hover:text-[#42c236]">
                 <BackIcon />
               </button>
               <h1 className="font-['Plus_Jakarta_Sans','Rubik',sans-serif] text-[25px] font-bold leading-[1.2] text-black">
@@ -74,7 +108,7 @@ export default function CheckoutPage() {
             
             {/* 1. 收货地址 (卡片化) */}
             <div
-              onClick={() => navigate('/select-address', { state: data })}
+            onClick={() => navigate('/select-address', { state: checkoutData })}
               className="mb-4 flex cursor-pointer items-start justify-between rounded-2xl bg-white p-5 transition hover:bg-[#f1f5f9] active:scale-[0.98]"
             >
               <div className="flex items-start gap-3">
@@ -87,7 +121,7 @@ export default function CheckoutPage() {
                     <span className="text-[#6b7280]">{selectedAddress.phone}</span>
                   </p>
                   <p className="pr-2 text-[13px] leading-relaxed text-[#4b5563]">
-                    {formatAddressDisplay(selectedAddress.address, selectedAddress.unitNo)}
+                  {formatAddressDisplay(selectedAddress.address, selectedAddress.unitNo)}
                   </p>
                 </div>
               </div>
@@ -133,7 +167,7 @@ export default function CheckoutPage() {
 
             {/* 3. 优惠券 (卡片化) */}
             <div
-              onClick={() => navigate('/select-voucher', { state: data, from: location.pathname })}
+            onClick={() => navigate('/select-voucher', { state: checkoutData, from: location.pathname })}
               className="mb-4 flex cursor-pointer flex-col rounded-2xl bg-white p-5 transition hover:bg-[#f1f5f9] active:scale-[0.98]"
             >
               <div className="mb-3 flex items-center justify-between">
@@ -159,7 +193,7 @@ export default function CheckoutPage() {
 
             {/* 4. 支付方式 (卡片化) */}
             <div
-              onClick={() => navigate('/select-payment', { state: data, from: location.pathname })}
+            onClick={() => navigate('/select-payment', { state: checkoutData, from: location.pathname })}
               className="mb-4 flex cursor-pointer items-center justify-between rounded-2xl bg-white p-5 transition hover:bg-[#f1f5f9] active:scale-[0.98]"
             >
               <div className="flex flex-col gap-3">
@@ -168,8 +202,8 @@ export default function CheckoutPage() {
               </div>
               <div className="flex items-center gap-2">
                 {(() => {
-                  const IconComponent = paymentMethods[paymentMethod].icon;
-                  return <IconComponent />;
+                  const IconComponent = paymentMethods[paymentMethod]?.icon
+                  return IconComponent ? <IconComponent /> : null
                 })()}
                 <span className="text-[14px] font-semibold text-[#1C1B1B]">{paymentMethods[paymentMethod]?.label}</span>
               </div>
@@ -213,25 +247,41 @@ export default function CheckoutPage() {
           <div className="mx-auto flex w-full max-w-[360px] gap-3 px-5">
             <button 
               onClick={() => { 
-                // resetOrders(); 
-                navigate('/cart', { state: { from: location.pathname } })}}
+                resetOrders(); 
+                setShowCancelPaymentModal(true);
+                }}
               className="flex-1 rounded-xl border-2 border-[#ee4d4d] bg-white py-3.5 text-[16px] font-bold text-[#ee4d4d] transition hover:bg-[#fff5f5] active:scale-95"
             >
               Cancel
             </button>
             <button 
               onClick={() => {
-                const checkoutData = {
-                  ...data,
-                  items: selectedItems,
-                  subtotal,
-                  selectedAddress,
-                  paymentMethod,
-                  appliedVoucher,
-                  discountAmount,
-                  shippingDiscount,
-                  grandTotal,
-                }
+                setShowConfirmPaymentModal(true)
+              }}
+              className="flex-1 rounded-xl bg-[#1C1B1B] py-3.5 text-[16px] font-bold text-white transition hover:bg-black hover:shadow-lg active:scale-95"
+            >
+              Confirm
+            </button>
+          </div>
+        </div>
+
+        {showConfirmPaymentModal ? (
+          <div className="absolute inset-0 z-30 flex items-center justify-center bg-black/35 px-4">
+            <div className="w-full max-w-[328px] rounded-2xl bg-white p-4 shadow-[0_16px_36px_rgba(0,0,0,0.22)]">
+              <h3 className="font-['Plus_Jakarta_Sans','Rubik',sans-serif] text-[18px] font-bold text-[#1C1B1B]">Confirm Payment</h3>
+              <p className="mt-2 text-[14px] leading-5 text-[#4B5563]">Confirm to place order?</p>
+              <div className="mt-4 grid grid-cols-2 gap-3">
+                <button
+                  type="button"
+                  onClick={() => setShowConfirmPaymentModal(false)}
+                  className="h-10 rounded-lg border border-[#D4D4D8] bg-white text-[14px] font-semibold text-[#1C1B1B] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#1C1B1B]"
+                >
+                    Cancel
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    // 这里填入取消订单的逻辑
                 isPaymentSuccessful.current = true
                 const currentOrderId = generateOrderID();
                 addOrder({
@@ -271,14 +321,47 @@ export default function CheckoutPage() {
                 }, 30000);
 
                 removeMultiple(selectedItems.map(item => item.id))
+                setShowConfirmPaymentModal(false)
                 navigate('/order-placed', { state: { from: location.pathname, checkoutData: {...checkoutData, currentOrderId} }, replace: true  })
-              }}
-              className="flex-1 rounded-xl bg-[#1C1B1B] py-3.5 text-[16px] font-bold text-white transition hover:bg-black hover:shadow-lg active:scale-95"
-            >
-              Confirm
-            </button>
+                    
+                  }}
+                  className="h-10 rounded-lg bg-[#EE4D4D] text-[14px] font-semibold text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#EE4D4D]"
+                >
+                  Confirm
+                </button>
+              </div>
+            </div>
           </div>
-        </div>
+        ) : null}
+
+        {showCancelPaymentModal ? (
+          <div className="absolute inset-0 z-30 flex items-center justify-center bg-black/35 px-4">
+            <div className="w-full max-w-[328px] rounded-2xl bg-white p-4 shadow-[0_16px_36px_rgba(0,0,0,0.22)]">
+              <h3 className="font-['Plus_Jakarta_Sans','Rubik',sans-serif] text-[18px] font-bold text-[#1C1B1B]">Cancel Payment</h3>
+              <p className="mt-2 text-[14px] leading-5 text-[#4B5563]">Confirm to cancel payment?</p>
+              <div className="mt-4 grid grid-cols-2 gap-3">
+                <button
+                  type="button"
+                  onClick={() => setShowCancelPaymentModal(false)}
+                  className="h-10 rounded-lg border border-[#D4D4D8] bg-white text-[14px] font-semibold text-[#1C1B1B] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#1C1B1B]"
+                >
+                    Cancel
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setShowCancelPaymentModal(false)
+                    navigate('/cart', { state: { from: location.pathname }, replace: true })
+                  }}
+                  className="h-10 rounded-lg bg-[#EE4D4D] text-[14px] font-semibold text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#EE4D4D]"
+                >
+                  Confirm
+                </button>
+              </div>
+            </div>
+          </div>
+        ) : null}
+
      </>
   )
 }
