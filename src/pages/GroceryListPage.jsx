@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import { useNavigate, useSearchParams } from 'react-router-dom'
 import { products, productCategories } from '../data/homeData'
 import BottomNav from '../components/navigation/BottomNav'
+import { loadWishlistIds, toggleWishlistId } from '../utils/wishlist'
 
 function formatCurrentTime() {
   const now = new Date()
@@ -65,7 +66,10 @@ function GroceryListPage() {
   const [currentTime, setCurrentTime] = useState(formatCurrentTime())
   const [sortBy, setSortBy] = useState('bestMatch')
   const [priceDirection, setPriceDirection] = useState('asc')
-  const [likedProducts, setLikedProducts] = useState([])
+  const [likedProducts, setLikedProducts] = useState(() => {
+    const stored = loadWishlistIds()
+    return stored
+  })
   const [filterOpen, setFilterOpen] = useState(false)
   const [minPrice, setMinPrice] = useState('')
   const [maxPrice, setMaxPrice] = useState('')
@@ -239,11 +243,7 @@ function GroceryListPage() {
                       <button
                         onClick={(e) => {
                           e.stopPropagation()
-                          setLikedProducts((current) =>
-                            current.includes(product.id)
-                              ? current.filter((id) => id !== product.id)
-                              : [...current, product.id],
-                          )
+                          setLikedProducts(toggleWishlistId(product.id))
                         }}
                         className="absolute right-2 top-2 grid h-7 w-7 place-items-center rounded-full bg-black/50 text-white transition hover:scale-110 hover:bg-[#42c236]"
                       >
