@@ -26,6 +26,17 @@ function formatAddressDisplay(address, unitNo) {
   return `${trimmedUnit}, ${trimmedAddress}`
 }
 
+function getAddressPreview(name, address, unitNo) {
+  const preview = formatAddressDisplay(address, unitNo)
+  if (name?.trim()) {
+    return `${name.trim()}'s saved address`
+  }
+  if (!preview) {
+    return 'this saved address'
+  }
+  return preview.length > 60 ? `${preview.slice(0, 57)}...` : preview
+}
+
 export default function EditAddressPage() {
   const navigate = useNavigate()
   const location = useLocation()
@@ -43,6 +54,7 @@ export default function EditAddressPage() {
   const [isDefault, setIsDefault] = useState(Boolean(initialFormValues.isDefault))
   const [showSubmitModal, setShowSubmitModal] = useState(false)
   const [showDeleteModal, setShowDeleteModal] = useState(false)
+  const deleteTargetLabel = getAddressPreview(name, addressLine, unitNo)
 
   const goToAddressDetails = () => {
     navigate('/address-details', {
@@ -221,7 +233,7 @@ export default function EditAddressPage() {
                 <button
                   type="button"
                   onClick={() => setShowDeleteModal(true)}
-                  className="flex-1 rounded-xl border-2 border-[#1C1B1B] bg-white py-3.5 text-[16px] font-bold text-[#1C1B1B] transition hover:bg-[#fff5f5] active:scale-95"
+                  className="flex-1 rounded-xl border-2 border-[#EE4D4D] bg-white py-3.5 text-[16px] font-bold text-[#EE4D4D] transition hover:bg-[#FFF1F1] active:scale-95"
                 >
                   Delete Address
                 </button>
@@ -240,8 +252,10 @@ export default function EditAddressPage() {
         {showSubmitModal ? (
           <div className="absolute inset-0 z-30 flex items-center justify-center bg-black/35 px-4">
             <div className="w-full max-w-[328px] rounded-2xl bg-white p-4 shadow-[0_16px_36px_rgba(0,0,0,0.22)]">
-              <h3 className="font-['Plus_Jakarta_Sans','Rubik',sans-serif] text-[18px] font-bold text-[#1C1B1B]">Confirm Address Update</h3>
-              <p className="mt-2 text-[14px] leading-5 text-[#4B5563]">Save changes to this address?</p>
+              <h3 className="font-['Plus_Jakarta_Sans','Rubik',sans-serif] text-[18px] font-bold text-[#1C1B1B]">Save address changes?</h3>
+              <p className="mt-2 text-[14px] leading-5 text-[#4B5563]">
+                Your updated address details will be saved and used the next time you choose a delivery address.
+              </p>
               <div className="mt-4 grid grid-cols-2 gap-3">
                 <button
                   type="button"
@@ -255,7 +269,7 @@ export default function EditAddressPage() {
                   onClick={handleSave}
                   className="h-10 rounded-lg bg-[#1C1B1B] text-[14px] font-semibold text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#1C1B1B]"
                 >
-                  Confirm
+                  Save Changes
                 </button>
               </div>
             </div>
@@ -265,22 +279,24 @@ export default function EditAddressPage() {
         {showDeleteModal ? (
           <div className="absolute inset-0 z-30 flex items-center justify-center bg-black/35 px-4">
             <div className="w-full max-w-[328px] rounded-2xl bg-white p-4 shadow-[0_16px_36px_rgba(0,0,0,0.22)]">
-              <h3 className="font-['Plus_Jakarta_Sans','Rubik',sans-serif] text-[18px] font-bold text-[#1C1B1B]">Delete Address</h3>
-              <p className="mt-2 text-[14px] leading-5 text-[#4B5563]">Delete this address?</p>
+              <h3 className="font-['Plus_Jakarta_Sans','Rubik',sans-serif] text-[18px] font-bold text-[#1C1B1B]">Delete this address?</h3>
+              <p className="mt-2 text-[14px] leading-5 text-[#4B5563]">
+                This will remove {deleteTargetLabel}. This action cannot be undone.
+              </p>
               <div className="mt-4 grid grid-cols-2 gap-3">
                 <button
                   type="button"
                   onClick={() => setShowDeleteModal(false)}
                   className="h-10 rounded-lg border border-[#D4D4D8] bg-white text-[14px] font-semibold text-[#1C1B1B] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#1C1B1B]"
                 >
-                  Cancel
+                  Keep Address
                 </button>
                 <button
                   type="button"
                   onClick={handleDelete}
                   className="h-10 rounded-lg bg-[#EE4D4D] text-[14px] font-semibold text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#EE4D4D]"
                 >
-                  Delete
+                  Delete Address
                 </button>
               </div>
             </div>
