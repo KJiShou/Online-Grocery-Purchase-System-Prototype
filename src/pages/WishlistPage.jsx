@@ -206,9 +206,26 @@ export default function WishlistPage() {
               >
                 -
               </button>
-              <span className="w-10 text-center font-['Plus_Jakarta_Sans','Rubik',sans-serif] text-[16px] font-semibold text-[#1C1B1B]">
-                {modalQuantity}
-              </span>
+              <input
+                type="number"
+                min="1"
+                max="99"
+                value={modalQuantity}
+                onChange={(e) => {
+                  const value = parseInt(e.target.value, 10)
+                  if (!isNaN(value)) {
+                    updateModalQuantity(value)
+                  } else if (e.target.value === '') {
+                    setModalQuantity('')
+                  }
+                }}
+                onBlur={(e) => {
+                  if (e.target.value === '' || parseInt(e.target.value, 10) < 1) {
+                    setModalQuantity(1)
+                  }
+                }}
+                className="w-[60px] text-center font-['Plus_Jakarta_Sans','Rubik',sans-serif] text-[16px] font-semibold text-[#1C1B1B] bg-transparent border-0 focus:outline-none focus:ring-0 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+              />
               <button
                 onClick={() => updateModalQuantity(modalQuantity + 1)}
                 aria-label="Increase quantity"
