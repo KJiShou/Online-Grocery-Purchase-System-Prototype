@@ -82,15 +82,10 @@ function HomePage() {
     const term = inputText.trim()
     if (!term) return
 
-    if (term.toLowerCase() === 'sugar') {
-      setSearchOpen(false)
-      setFilterMenuOpen(false)
-      navigate('/grocery-list')
-      return
-    }
-
-    setRecentSearches((current) => [term, ...current.filter((item) => item.toLowerCase() !== term.toLowerCase())].slice(0, 8))
+    setSearchOpen(false)
     setFilterMenuOpen(false)
+    setRecentSearches((current) => [term, ...current.filter((item) => item.toLowerCase() !== term.toLowerCase())].slice(0, 8))
+    navigate(`/grocery-list?search=${encodeURIComponent(term)}`)
   }
 
   const closeSearch = () => {
