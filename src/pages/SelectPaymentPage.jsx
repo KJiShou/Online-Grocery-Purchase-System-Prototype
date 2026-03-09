@@ -30,7 +30,7 @@ export default function SelectPaymentPage() {
         
         // 严厉提醒：绝对不能用 navigate(-1) 传状态！
         // 我们必须明确跳回 /payment，并合并原来的购物车数据
-        navigate(from.startsWith('/product') || from.startsWith('/select') ? '/payment' : from, { 
+        navigate(from.startsWith('/product') || from.startsWith('/select') || from === '/cart' ? '/payment' : from, { 
             state: { 
             ...incomingState, // 展开所有原来购物车传来的数据（items, subtotal 等）
             paymentMethod: selectedMethod, // 加上你新选的支付方式
