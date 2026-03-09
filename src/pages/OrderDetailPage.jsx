@@ -41,6 +41,7 @@ export default function OrderDetailPage() {
   const location = useLocation()
   const [showCancelOrderModal, setShowCancelOrderModal] = useState(false)
   const [showCompleteOrderModal, setShowCompleteOrderModal] = useState(false)
+  const [toastMessage, setToastMessage] = useState('')
   // 严厉提醒：必须通过 useParams 抓取上一个页面传过来的订单 ID
   // 你的路由配置必须是：<Route path="/order-detail/:orderId" element={<OrderDetailPage />} />
   const { orderId } = useParams()
@@ -77,6 +78,7 @@ export default function OrderDetailPage() {
         
         // Show toast when shipping address is updated
         setShowToast(true)
+        setToastMessage('Shipping address updated successfully!')
 
         // 严厉警告：必须先清除上一个定时器！
         if (toastTimerRef.current) {
@@ -90,6 +92,17 @@ export default function OrderDetailPage() {
     }
     }, [orderData.id, data.from])
 
+  function resetToastMessageTimer() {
+      if (toastTimerRef.current) {
+          clearTimeout(toastTimerRef.current)
+        }
+
+        // 设定 3 秒后自动隐藏
+        toastTimerRef.current = setTimeout(() => {
+          setShowToast(false)
+        }, 3000)
+  }
+  
   useEffect(() => {
     if (!orderData) {
       alert('Order not found. Returning to order history.')
@@ -121,7 +134,7 @@ export default function OrderDetailPage() {
                 <div className="flex items-center gap-3">
                     <ToastCheckIcon />
                     <p className="w-full text-[13px] font-semibold leading-tight text-[#1C1B1B]">
-                    Shipping address updated successfully!
+                    {toastMessage}
                     </p>
                 </div>
               </div>
@@ -167,7 +180,7 @@ export default function OrderDetailPage() {
                     <div className="flex items-center gap-2">
                       <span className="text-[14px] font-bold text-[#1C1B1B]">{formatPrice(item.price)}</span>
                       {item.oldPrice && (
-                        <span className="text-[12px] text-[#9ca3af] line-through">{formatPrice(item.oldPrice)}</span>
+                        <span className="text-[12px] text-[#EE4D4D] line-through">{formatPrice(item.oldPrice)}</span>
                       )}
                     </div>
                   </div>
@@ -339,6 +352,9 @@ export default function OrderDetailPage() {
                   onClick={() => {
                     // 这里填入取消订单的逻辑
                     console.log('触发：取消订单');
+                    setShowToast(true)
+                    setToastMessage('Order cancel successfully!')
+                    resetToastMessageTimer()
                     setShowCancelOrderModal(false)
                     cancelOrder(orderData.id)
                   }}

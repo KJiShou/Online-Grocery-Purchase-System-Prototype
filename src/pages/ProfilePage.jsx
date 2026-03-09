@@ -99,10 +99,10 @@ export default function ProfilePage() {
                 <LogoutIcon />
               </button>
             </header>
-            <div 
+           <div 
               className={`absolute left-1/2 top-[0px] z-50 flex w-[calc(100%-40px)] max-w-[320px] -translate-x-1/2 items-center justify-between rounded-2xl border border-[#f3f4f6] bg-white p-3 shadow-[0_12px_30px_rgba(0,0,0,0.08)] transition-all duration-300 ease-out 
               ${showToast ? 'translate-y-0 opacity-100 pointer-events-auto' : '-translate-y-6 opacity-0 pointer-events-none'}`}
-            >
+              >
                 <div className="flex items-center gap-3">
                   <ToastCheckIcon />
                   <p className="w-full text-[13px] font-semibold leading-tight text-[#1C1B1B]">

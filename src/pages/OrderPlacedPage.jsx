@@ -146,14 +146,13 @@ export default function OrderPlacedPage() {
 	}, [])
 
 	return (
-		<div className="min-h-screen w-full overflow-x-hidden bg-[#F4F5FD]">
-			<section className="relative h-screen w-full overflow-hidden bg-[#F4F5FD] max-[420px]:mx-auto max-[420px]:h-[min(800px,100dvh)] max-[420px]:w-[min(360px,100vw)] max-[420px]:rounded-[24px] max-[420px]:border max-[420px]:border-[#d4d4d8] max-[420px]:shadow-[0_12px_36px_rgba(0,0,0,0.12)]">
-				<div className="absolute inset-x-0 top-0 z-20 bg-white pb-5 pt-4">
-					<div className="mx-auto w-full max-w-[360px] px-5">
-						<div className="mb-2 flex items-center justify-between text-[15px] font-normal tracking-[-0.24px] text-[#1C1B1B]">
+		<>
+				<div className="absolute inset-x-0 top-[44px] z-20 bg-white min-h-[44px]">
+          <div className="mx-auto w-full max-w-[360px] px-5">
+						{/* <div className="mb-2 flex items-center justify-between text-[15px] font-normal tracking-[-0.24px] text-[#1C1B1B]">
 							<span className="leading-5">{currentTime}</span>
 							<StatusIcons />
-						</div>
+						</div> */}
 
 						<header className="flex items-center gap-2">
 							<button onClick={() => navigate("/home")} className="text-[#1f2937] transition hover:scale-110 hover:text-[#42c236]">
@@ -165,7 +164,7 @@ export default function OrderPlacedPage() {
 						</header>
 
 						{/* Toast notification */}
-						<div 
+						{/* <div 
 							className={`absolute left-1/2 top-[50px] z-50 flex w-[calc(100%-40px)] max-w-[320px] -translate-x-1/2 items-center gap-3 rounded-2xl border border-[#f3f4f6] bg-white p-3 shadow-[0_12px_30px_rgba(0,0,0,0.08)] transition-all duration-300 ease-out 
 							${showToast ? 'translate-y-0 opacity-100 pointer-events-auto' : '-translate-y-6 opacity-0 pointer-events-none'}`}
 						>
@@ -173,6 +172,17 @@ export default function OrderPlacedPage() {
 							<p className="w-full text-[13px] font-semibold leading-tight text-[#1C1B1B]">
 								Shipping address updated successfully!
 							</p>
+						</div> */}
+						<div 
+						className={`absolute left-1/2 top-[50px] z-50 flex w-[calc(100%-40px)] max-w-[320px] -translate-x-1/2 items-center justify-between rounded-2xl border border-[#f3f4f6] bg-white p-3 shadow-[0_12px_30px_rgba(0,0,0,0.08)] transition-all duration-300 ease-out 
+						${showToast ? 'translate-y-0 opacity-100 pointer-events-auto' : '-translate-y-6 opacity-0 pointer-events-none'}`}
+						>
+							<div className="flex items-center gap-3">
+								<ToastCheckIcon />
+								<p className="w-full text-[13px] font-semibold leading-tight text-[#1C1B1B]">
+								Shipping address updated successfully!
+								</p>
+							</div>
 						</div>
 
 						{/* Toast fail notification */}
@@ -325,7 +335,6 @@ export default function OrderPlacedPage() {
 						</div>
 					</div>
 				</div>
-			</section>
-		</div>
+			</>
 	)
 }

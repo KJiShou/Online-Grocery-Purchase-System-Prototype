@@ -16,7 +16,7 @@ function formatAddressDisplay(address, unitNo) {
 export default function CheckoutPage() {
   const navigate = useNavigate()
   const location = useLocation()
-  const { addOrder, updateOrderStatus, resetOrders } = useOrder()
+  const { addOrder, updateOrderStatus, resetOrders, updateShippedDate, getOrderById } = useOrder()
   const { selectedItems, subtotal, removeMultiple } = useCart()
   const { defaultAddressId, defaultPaymentMethod, getAddressById } = usePreference()
 
@@ -172,7 +172,7 @@ export default function CheckoutPage() {
                       <p className="text-[15px] font-bold text-[#1C1B1B]">
                         RM {item.price.toFixed(2)}
                       </p>
-                      <p className="text-[12px] text-[#9CA3AF] line-through">RM 20.00</p>
+                      {item.oldPrice ? (<p className="text-[12px] text-[#EE4D4D] line-through">{formatPrice(item.oldPrice)}</p>) : null }
                     </div>
                   </div>
 
@@ -361,6 +361,8 @@ export default function CheckoutPage() {
 
                   // 2. 模拟第二阶段：在变成 Shipped 之后，再开启一个新的 30 秒定时器
                   setTimeout(() => {
+                    const shippedDate = generateOrderDate()
+                    updateShippedDate(currentOrderId, shippedDate)
                     updateOrderStatus(currentOrderId, 'Out for Delivery');
                     console.log(`后台模拟推送：订单 ${currentOrderId} 第二阶段 -> Out for Delivery`);
                     

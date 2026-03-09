@@ -116,7 +116,7 @@ function CartPage() {
                               {formatPrice(item.price)}
                           </p>
                           {item.oldPrice ? (
-                              <p className="text-[13px] text-[#9CA3AF] line-through">
+                              <p className="text-[13px] text-[#EE4D4D] line-through">
                               {formatPrice(item.oldPrice)}
                               </p>
                           ) : null}

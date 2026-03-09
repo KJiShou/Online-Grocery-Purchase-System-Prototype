@@ -75,8 +75,18 @@ export function OrderProvider({ children }) {
   const updateOrderStatus = (orderId, newStatus) => {
     setOrders((prevOrders) =>
       prevOrders.map((order) =>
-        order.id === orderId 
+        order.id === orderId && order.status !== 'Cancelled' 
           ? { ...order, status: newStatus } // 找到目标订单，只更新 status 字段
+          : order
+      )
+    )
+  }
+
+  const updateShippedDate = (orderId, date) => {
+    setOrders((prevOrders) =>
+      prevOrders.map((order) =>
+        order.id === orderId 
+          ? { ...order, shippedDate: date } // 找到目标订单，只更新 status 字段
           : order
       )
     )
@@ -94,6 +104,7 @@ export function OrderProvider({ children }) {
         resetOrders,   // 重置订单列表的方法
         updateOrderStatus, // 更新订单状态的方法
         cancelOrder, // 取消订单的方法 (给 OrderDetailPage 用)
+        updateShippedDate,
       }}
     >
       {children}
