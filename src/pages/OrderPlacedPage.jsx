@@ -199,7 +199,7 @@ export default function OrderPlacedPage() {
 					</div>
 				</div>
 
-				<div className="hide-scrollbar absolute inset-x-0 bottom-[80px] top-[95px] overflow-y-auto pb-8">
+				<div className="hide-scrollbar absolute inset-x-0 bottom-[72px] top-[95px] overflow-y-auto pb-8">
 					<div className="mx-auto w-full max-w-[360px] px-3 pt-4">
 						<div className="mb-4 rounded-[16px] bg-white p-[20px] px-[16px]">
 							<div className="flex flex-col items-center">

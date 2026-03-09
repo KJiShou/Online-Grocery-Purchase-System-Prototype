@@ -20,7 +20,7 @@ function CategoryPage() {
           </div>
         </div>
 
-        <div className="hide-scrollbar absolute inset-x-0 bottom-[86px] top-[88px] overflow-y-auto pb-6">
+        <div className="hide-scrollbar absolute inset-x-0 bottom-[72px] top-[88px] overflow-y-auto pb-6">
           <div className="mx-auto w-full max-w-[360px] px-5 pt-4">
             <div className="grid grid-cols-2 gap-2">
               {productCategories.map((category) => (

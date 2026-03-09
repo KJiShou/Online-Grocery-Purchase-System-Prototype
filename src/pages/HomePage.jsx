@@ -123,7 +123,7 @@ function HomePage() {
         </div>
       </div>
 
-      <div className="hide-scrollbar absolute inset-x-0 bottom-[86px] top-[88px] overflow-y-auto pb-6">
+      <div className="hide-scrollbar absolute inset-x-0 bottom-[72px] top-[88px] overflow-y-auto pb-6">
         <div className="mx-auto w-full max-w-[360px] px-5 pt-5">
           <section className="home-carousel relative mb-6 h-[155px] overflow-hidden rounded-[26px]">
             {bannerItems.map((item, index) => (
