@@ -101,7 +101,7 @@ export default function WishlistPage() {
         </div>
       </div>
 
-      <div className="hide-scrollbar absolute inset-x-0 bottom-[94px] top-[88px] overflow-y-auto bg-[#F4F4F5]">
+      <div className="hide-scrollbar absolute inset-x-0 bottom-[72px] top-[88px] overflow-y-auto bg-[#F4F4F5]">
         <div className="mx-auto w-full max-w-[360px] px-4 py-4">
           {wishlistItems.length === 0 ? (
             <div className="mx-auto flex min-h-full w-full max-w-[360px] flex-col items-center justify-center px-5 pb-20 pt-10">

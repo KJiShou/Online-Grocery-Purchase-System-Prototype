@@ -129,7 +129,11 @@ export default function OrderDetailPage() {
         </div>
 
         {/* === 中间滚动详情区 === */}
-        <div className="hide-scrollbar absolute inset-x-0 bottom-[40px] top-[88px] overflow-y-auto">
+        <div
+          className={`hide-scrollbar absolute inset-x-0 top-[88px] overflow-y-auto ${
+            orderData.status === 'Out for Delivery' || orderData.status === 'Pending' ? 'bottom-[40px]' : 'bottom-0'
+          }`}
+        >
         {/* 严厉提醒：确保包裹这段代码的最外层父级有 bg-[#f4f5f9] 这样的灰色底，否则白卡片显示不出来边缘！ */}
           <div className="mx-auto flex w-full max-w-[360px] flex-col px-5 pb-10 pt-4">
             

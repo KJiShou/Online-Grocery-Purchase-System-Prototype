@@ -172,7 +172,7 @@ export default function CategoryProductsPage() {
           </div>
         </div>
 
-        <div className="hide-scrollbar flex-1 overflow-y-auto pb-[96px]">
+        <div className="hide-scrollbar flex-1 overflow-y-auto pb-[72px]">
           <div className="mx-auto w-full max-w-[360px] px-5 pt-4">
             <p className="mb-2 font-['Plus_Jakarta_Sans','Rubik',sans-serif] text-[14px] font-medium leading-[18px] tracking-[0.005em] text-[#6F7384]">
               Showing <b>{displayProducts.length}</b> items in <b>{selectedCategory.label}</b>

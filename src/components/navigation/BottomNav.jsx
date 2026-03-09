@@ -196,7 +196,7 @@ function BottomNav() {
 
   return (
     <nav
-      className="absolute bottom-0 left-0 z-20 w-full border-t border-[#F4F5FD] bg-white pb-2 pt-3"
+      className="absolute bottom-0 left-0 z-20 w-full bg-white pb-2 pt-3"
     >
       <div className="mx-auto w-full max-w-[360px] bg-white px-2">
         <div className="mb-2 grid grid-cols-5">
