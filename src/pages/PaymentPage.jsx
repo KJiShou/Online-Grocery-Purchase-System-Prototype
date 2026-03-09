@@ -88,6 +88,13 @@ export default function CheckoutPage() {
     grandTotal,
   }
 
+  const generateCheckoutDataWithoutFrom = () => {
+    return {
+      ...checkoutData,
+      from: undefined
+    }
+  }
+
   //console.log(checkoutData)
 
   useEffect(() => {
@@ -364,7 +371,7 @@ export default function CheckoutPage() {
 
                 removeMultiple(selectedItems.map(item => item.id))
                 setShowConfirmPaymentModal(false)
-                navigate('/order-placed', { state: { from: location.pathname, checkoutData: {...checkoutData, currentOrderId} }, replace: true  })
+                navigate('/order-placed', { state: { from: location.pathname, checkoutData: {...generateCheckoutDataWithoutFrom(), currentOrderId} }, replace: true  })
                     
                   }}
                   className="h-10 rounded-lg bg-[#EE4D4D] text-[14px] font-semibold text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#EE4D4D]"
