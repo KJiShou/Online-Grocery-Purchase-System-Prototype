@@ -52,6 +52,7 @@ export default function SelectVoucherPage() {
       replace: true 
     })
   }
+  // console.log(data)
 
   return (
     <>
@@ -137,6 +138,10 @@ export default function SelectVoucherPage() {
             {/* 优惠摘要 */}
             <div className="mb-4 flex flex-col gap-1 text-[13px]">
               <p className="font-semibold text-[#1C1B1B]">{selectedCount} Vouchers / Discount Selected</p>
+              <div className="flex items-center">
+                  <span className="text-[#4b5563]">Subtotal : </span>
+                  <span className="ml-1 font-medium text-[#4b5563]">{formatPrice(subtotal)}</span>
+              </div>
               {currentVoucherObj && (
                 <div className="flex items-center">
                   <span className="text-[#4b5563]">Item Discount {currentVoucherObj.rate * 100}% : </span>
@@ -148,11 +153,11 @@ export default function SelectVoucherPage() {
                   {selectedShipping && (
                     <span className="ml-1 font-semibold  text-[#4b5563]">RM 0.00</span>
                     )}
-                  <span className={`ml-1 font-semibold ${selectedShipping ? 'line-through text-[#9CA3AF]' : ''}`}>RM 5.00</span>
-            </div>
+                  <span className={`ml-1 font-semibold ${selectedShipping ? 'line-through text-[#ee4d4d]' : ''}`}>RM 5.00</span>
+              </div>
               
               <div className="mt-1 flex items-center text-[14px]">
-                <span className="text-[#4b5563]">Grand Total : </span>
+                <span className="font-bold text-[#1C1B1B]"> Total : </span>
                 <span className="ml-1 font-bold text-[#1C1B1B]">{formatPrice(grandTotal)}</span>
               </div>
             </div>

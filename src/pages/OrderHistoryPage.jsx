@@ -3,10 +3,11 @@ import { useOrder } from '../contexts/OrderContext'
 import { OrderStatusTag } from '../utils/orderStatus'
 import { BackIcon, ChevronRightIcon } from '../components/Icons'
 import cartIcon from '../assets/order-history/cart-icon.png'
+import Item from '@arco-design/web-react/es/Breadcrumb/item'
 
 export default function OrderListPage() {
   const navigate = useNavigate()
-  const { orders } = useOrder();
+  const { orders, resetOrders } = useOrder();
   const location = useLocation()
    const data = { ...(location.state || {}) }
 
@@ -21,8 +22,11 @@ export default function OrderListPage() {
                   <BackIcon />
                 </button>
                 <h1 className="font-['Plus_Jakarta_Sans','Rubik',sans-serif] text-[25px] font-bold leading-[1.2] text-black">
-              Order History
-            </h1>
+                  Order History
+                </h1>
+                {/* <button onClick={() => resetOrders()} className="text-[#1C1B1B] transition hover:scale-110">
+                  Clear Orders
+                </button> */}
               </div>
             </header>
           </div>
@@ -88,10 +92,10 @@ export default function OrderListPage() {
                 <div className="mb-5 flex items-center justify-between">
                   <div className="flex flex-col gap-0.5">
                     <span className="text-[15px] font-bold text-[#1C1B1B]">
-                      Items: {order.itemsCount}
+                      {order.itemsCount > 1 ? 'Items: ' + order.itemsCount : 'Item: ' + order.itemsCount}
                     </span>
                     <span className="text-[15px] font-bold text-[#1C1B1B]">
-                      Amount: RM{order.summary.total.toFixed(2)}
+                      Total: RM{order.summary.total.toFixed(2)}
                     </span>
                   </div>
                   <ChevronRightIcon />
@@ -99,9 +103,9 @@ export default function OrderListPage() {
 
                 {/* 底部：日期信息 */}
                 <div className="flex flex-col gap-1 text-[12px] text-[#6b7280]">
-                  <p>Order Date: <span className="text-[#4b5563]">{order.date}</span></p>
+                  <p className="text-[#1C1B1B]">Order Date: <span className="text-[#4b5563]">{order.date}</span></p>
                   {order.shippedDate && (
-                    <p>Shipped Date: <span className="text-[#4b5563]">{order.shippedDate}</span></p>
+                    <p className="text-[#1C1B1B]">Shipped Date: <span className="text-[#4b5563]">{order.shippedDate}</span></p>
                   )}
                 </div>
 
