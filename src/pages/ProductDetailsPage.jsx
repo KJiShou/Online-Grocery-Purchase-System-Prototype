@@ -177,7 +177,7 @@ export default function ProductDetailPage() {
 
         {/* === 中间滚动内容区 === */}
         {/* 注意 bottom-[140px] 留出了底部操作栏和导航栏的空间 */}
-        <div className="hide-scrollbar absolute inset-x-0 bottom-[180px] top-[88px] overflow-y-auto">
+        <div className="hide-scrollbar absolute inset-x-0 bottom-[108px] top-[88px] overflow-y-auto">
           <div className="mx-auto w-full max-w-[360px] flex flex-col pt-4">
             
             {/* 1. 顶部商品图展示区 */}
@@ -307,7 +307,7 @@ export default function ProductDetailPage() {
 
         {/* === 底部双按钮操作栏 === */}
         {/* 注意：bottom-[72px] 悬浮在 BottomNav 之上 */}
-        <div className="absolute bottom-[72px] left-0 z-20 w-full border-t border-[#e4e4e7] bg-[#f8fafc] pb-2 pt-3">
+        <div className="absolute bottom-0 left-0 z-20 w-full border-t border-[#e4e4e7] bg-[#f8fafc] pb-4 pt-3">
           <div className="mx-auto w-full max-w-[360px] px-5">
             <div className="mb-3 flex items-center justify-center gap-4">
               <span className="text-[16px] font-medium text-[#1f2937]">In Cart</span>

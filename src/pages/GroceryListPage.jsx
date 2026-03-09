@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react'
 import { useNavigate, useSearchParams } from 'react-router-dom'
 import { products, productCategories } from '../data/homeData'
-import BottomNav from '../components/navigation/BottomNav'
 import { loadWishlistIds, toggleWishlistId } from '../utils/wishlist'
 
 function formatCurrentTime() {
@@ -412,7 +411,6 @@ function GroceryListPage() {
           </div>
         )}
 
-        <BottomNav />
       </section>
     </div>
   )
