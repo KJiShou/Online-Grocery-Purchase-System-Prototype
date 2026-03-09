@@ -198,7 +198,7 @@ export default function SelectAddressPage() {
           <button
             onClick={() =>
               selectedAddress
-                ? navigate(from.startsWith('/select') ? '/payment' : from, {
+                ? navigate(from.startsWith('/select') || from === '/cart' ? '/payment' : from, {
                   state: {
                     ...data,
                     selectedAddress,
