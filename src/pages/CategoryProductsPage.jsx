@@ -1,8 +1,8 @@
 import { useEffect, useMemo, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
-import BottomNav from '../components/navigation/BottomNav'
 import { productCategories, products } from '../data/homeData'
 import { loadWishlistIds, toggleWishlistId } from '../utils/wishlist'
+import TopCartButton from '../components/navigation/TopCartButton'
 
 function formatCurrentTime() {
   const now = new Date()
@@ -113,7 +113,7 @@ export default function CategoryProductsPage() {
               <StatusIcons />
             </div>
 
-            <header className="flex items-center justify-between gap-2">
+            <header className="flex min-h-[40px] items-center justify-between gap-2">
               <div className="flex min-w-0 items-center gap-2">
                 <button onClick={() => navigate('/categories')} className="shrink-0 text-[#1f2937] transition hover:scale-110 hover:text-[#42c236]" aria-label="Back to categories">
                   <BackIcon />
@@ -122,9 +122,12 @@ export default function CategoryProductsPage() {
                   {selectedCategory.label}
                 </h1>
               </div>
-              <button onClick={() => setFilterOpen(true)} className="shrink-0 text-[#1f2937] transition hover:scale-110 hover:text-[#42c236]" aria-label="Open filter">
-                <img src="/src/assets/grocery-list/filter-toggle.png" alt="Filter" className="h-6 w-6" />
-              </button>
+              <div className="flex h-10 shrink-0 items-center justify-end gap-2">
+                <button onClick={() => setFilterOpen(true)} className="flex h-8 w-8 items-center justify-center text-[#1f2937] transition hover:scale-110 hover:text-[#42c236]" aria-label="Open filter">
+                  <img src="/src/assets/grocery-list/filter-toggle.png" alt="Filter" className="h-6 w-6" />
+                </button>
+                <TopCartButton />
+              </div>
             </header>
           </div>
         </div>
@@ -319,8 +322,6 @@ export default function CategoryProductsPage() {
             </div>
           </div>
         ) : null}
-
-        <BottomNav />
       </section>
     </div>
   )

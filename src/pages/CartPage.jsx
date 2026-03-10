@@ -1,7 +1,7 @@
 import { useNavigate, useLocation } from 'react-router-dom'
 import { useCart } from '../contexts/CartContext'
 import { formatPrice } from '../utils/helper'
-import { TrashIcon, MinusIcon, PlusIcon } from '../components/Icons'
+import { BackIcon, TrashIcon, MinusIcon, PlusIcon } from '../components/Icons'
 
 function QuantityControl({ quantity, onIncrement, onDecrement }) {
   return (
@@ -43,15 +43,31 @@ function CartPage() {
     <>
         <div className="absolute inset-x-0 top-[44px] z-20 bg-white min-h-[44px]">
           <div className="mx-auto w-full max-w-[360px] px-5">
-            <header>
-              <h1 className="font-['Plus_Jakarta_Sans','Rubik',sans-serif] text-[25px] font-bold leading-[1.2] text-black">
-                My Cart
-              </h1>
+            <header className="flex min-h-[40px] items-center justify-between gap-2">
+              <div className="flex min-w-0 items-center gap-3">
+                <button
+                  onClick={() => {
+                    if (location.state?.from) {
+                      navigate(-1)
+                      return
+                    }
+
+                    navigate('/home')
+                  }}
+                  className="shrink-0 text-[#1C1B1B] transition hover:scale-110"
+                  aria-label="Back"
+                >
+                  <BackIcon />
+                </button>
+                <h1 className="font-['Plus_Jakarta_Sans','Rubik',sans-serif] text-[25px] font-bold leading-[1.2] text-black">
+                  My Cart
+                </h1>
+              </div>
             </header>
           </div>
         </div>
 
-        <div className="hide-scrollbar absolute inset-x-0 bottom-[170px] top-[88px] overflow-y-auto pb-6">
+        <div className="hide-scrollbar absolute inset-x-0 bottom-[98px] top-[88px] overflow-y-auto pb-6">
             <div className="mx-auto w-full max-w-[360px] px-5 pt-4">
 
               {cartItems.length === 0 && (
@@ -253,7 +269,7 @@ function CartPage() {
             </div>
             </div>
 
-        <div className="absolute bottom-[72px] left-0 z-20 w-full border-t border-[#e4e4e7] bg-[#f8fafc] pb-2 pt-3">
+        <div className="absolute bottom-0 left-0 z-20 w-full border-t border-[#e4e4e7] bg-[#f8fafc] pb-2 pt-3">
           <div className="mx-auto w-full max-w-[360px] px-5">
             <div className="mb-3 flex items-center justify-center gap-4">
               <span className="text-[16px] font-medium text-[#1f2937]">Subtotal</span>
