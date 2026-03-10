@@ -5,6 +5,9 @@ import { useCart } from '../contexts/CartContext'
 import { usePreference } from '../contexts/PreferenceContext'
 import { formatPrice, generateOrderID, generateOrderDate, paymentMethods } from '../utils/helper'
 import { BackIcon, LocationIcon, ChevronRightIcon, TruckIcon } from '../components/Icons'
+import tickIcon from '../assets/order-placed/tick.png'
+import orderIcon from '../assets/order-placed/order.png'
+import homeIcon from '../assets/order-placed/home.png'
 
 function formatAddressDisplay(address, unitNo) {
   const trimmedAddress = (address || '').trim()
@@ -16,17 +19,21 @@ function formatAddressDisplay(address, unitNo) {
 export default function CheckoutPage() {
   const navigate = useNavigate()
   const location = useLocation()
-  const { addOrder, updateOrderStatus, resetOrders, updateShippedDate, getOrderById } = useOrder()
+  const { addOrder, updateOrderStatus, resetOrders, updateShippedDate } = useOrder()
   const { selectedItems, subtotal, removeMultiple } = useCart()
   const { defaultAddressId, defaultPaymentMethod, getAddressById } = usePreference()
 
   const isPaymentSuccessful = useRef(false)
   const [showConfirmPaymentModal, setShowConfirmPaymentModal] = useState(false)
   const [showCancelPaymentModal, setShowCancelPaymentModal] = useState(false)
+  const [showOrderPlacedModal, setShowOrderPlacedModal] = useState(false)
+  const [currentOrderId, setCurrentOrderId] = useState(null)
 
   // 2. 安全地提取数据。如果用户是直接在浏览器输入网址进来的（没有经过购物车），
   // location.state 会是 null，我们需要给它一个默认值防止页面崩溃。
   const data = location.state || {}
+  const shouldRestoreOrderPlacedPopup = Boolean(data?.showOrderPlacedPopup)
+  const restoredOrderId = data?.currentOrderId || null
 
   const fallbackAddress = {
     id: 'andrew',
@@ -65,6 +72,14 @@ export default function CheckoutPage() {
     from = ''
   } = data
 
+  useEffect(() => {
+    if (shouldRestoreOrderPlacedPopup && restoredOrderId) {
+      isPaymentSuccessful.current = true
+      setCurrentOrderId(restoredOrderId)
+      setShowOrderPlacedModal(true)
+    }
+  }, [restoredOrderId, shouldRestoreOrderPlacedPopup])
+
   const checkoutDirectBuyProduct = directBuyProduct ? {
     ...directBuyProduct,
     quantity: directBuyProductQuantity
@@ -88,21 +103,12 @@ export default function CheckoutPage() {
     grandTotal,
   }
 
-  const generateCheckoutDataWithoutFrom = () => {
-    return {
-      ...checkoutData,
-      from: undefined
-    }
-  }
-
-  //console.log(checkoutData)
-
   useEffect(() => {
-    if (selectedItems.length === 0 && !isPaymentSuccessful.current && !directBuyProduct) {
+    if (selectedItems.length === 0 && !isPaymentSuccessful.current && !directBuyProduct && !shouldRestoreOrderPlacedPopup) {
       alert('Your cart is empty or invalid. Returning to cart.')
       navigate('/cart')
     }
-  }, [navigate, selectedItems.length])
+  }, [directBuyProduct, navigate, selectedItems.length, shouldRestoreOrderPlacedPopup])
 
   return (
     <>  
@@ -333,6 +339,7 @@ export default function CheckoutPage() {
                     // 这里填入取消订单的逻辑
                 isPaymentSuccessful.current = true
                 const currentOrderId = generateOrderID();
+                    setCurrentOrderId(currentOrderId)
                 addOrder({
                 id: currentOrderId,
                 status: 'Pending',
@@ -373,7 +380,7 @@ export default function CheckoutPage() {
 
                 removeMultiple(selectedItems.map(item => item.id))
                 setShowConfirmPaymentModal(false)
-                navigate('/order-placed', { state: { from: location.pathname, checkoutData: {...generateCheckoutDataWithoutFrom(), currentOrderId} }, replace: true  })
+                    setShowOrderPlacedModal(true)
                     
                   }}
                   className="h-10 rounded-lg bg-[#EE4D4D] text-[14px] font-semibold text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#EE4D4D]"
@@ -412,6 +419,46 @@ export default function CheckoutPage() {
             </div>
           </div>
         ) : null}
+
+      {showOrderPlacedModal ? (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/35">
+          <div className="w-full max-w-[360px] rounded-2xl bg-white p-5 shadow-[0_16px_36px_rgba(0,0,0,0.22)] mx-4">
+            <div className="flex flex-col items-center">
+              <img src={tickIcon} alt="Order placed" className="h-[72px] w-[72px] object-contain" />
+              <h2 className="mt-5 text-center text-[22px] font-bold leading-[1.1] tracking-[-0.03em] text-[#1C1B1B]">
+                Order Placed!
+              </h2>
+            </div>
+
+            <div className="mt-6 grid grid-cols-2 gap-2">
+              <button
+                onClick={() => {
+                  navigate('/home')
+                }}
+                className="flex h-[46px] items-center justify-center gap-2 rounded-[12px] border border-[#e4e4e7] bg-white text-[15px] font-semibold text-[#1C1B1B] hover:bg-gray-100"
+              >
+                <img src={homeIcon} alt="Back to Home" className="h-[20px] w-[20px] object-contain" />
+                <span>Back to Home</span>
+              </button>
+
+              <button
+                onClick={() => {
+                  navigate('/order-detail/' + currentOrderId.substring(1), {
+                    state: {
+                      returnToPaymentWithOrderPlacedPopup: true,
+                      currentOrderId,
+                    },
+                  })
+                }}
+                className="flex h-[46px] items-center justify-center gap-2 rounded-[12px] bg-[#1C1B1B] text-[15px] font-semibold text-white"
+              >
+                <img src={orderIcon} alt="Order detail" className="h-[20px] w-[20px] object-contain" />
+                <span>Order Detail</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      ) : null}
 
      </>
   )
