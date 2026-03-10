@@ -118,6 +118,16 @@ export default function OrderDetailPage() {
             <header className="flex items-center justify-between">
               <div className="flex items-center gap-3">
                 <button onClick={() => {
+                if (location.state?.returnToPaymentWithOrderPlacedPopup && orderData?.id) {
+                  navigate('/payment', {
+                    state: {
+                      showOrderPlacedPopup: true,
+                      currentOrderId: orderData.id,
+                    },
+                    replace: true,
+                  })
+                  return
+                }
                   navigate(-1)
                   }} className="text-[#1C1B1B] transition hover:scale-110">
                   <BackIcon />
