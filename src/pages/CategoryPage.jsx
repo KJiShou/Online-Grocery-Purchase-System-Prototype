@@ -1,6 +1,6 @@
 import { useNavigate } from 'react-router-dom'
-import BottomNav from '../components/navigation/BottomNav'
 import { productCategories } from '../data/homeData'
+import TopCartButton from '../components/navigation/TopCartButton'
 
 function CategoryPage() {
   const navigate = useNavigate()
@@ -12,10 +12,15 @@ function CategoryPage() {
       >
         <div className="absolute inset-x-0 top-[44px] z-20 bg-white min-h-[44px]">
           <div className="mx-auto w-full max-w-[360px] px-5">
-            <header>
-              <h1 className="font-['Plus_Jakarta_Sans','Rubik',sans-serif] text-[25px] font-bold leading-[1.2] text-black">
-                Categories
-              </h1>
+            <header className="flex min-h-[40px] items-center justify-between gap-2">
+              <div className="min-w-0">
+                <h1 className="font-['Plus_Jakarta_Sans','Rubik',sans-serif] text-[25px] font-bold leading-[1.2] text-black">
+                  Categories
+                </h1>
+              </div>
+              <div className="flex h-10 shrink-0 items-center justify-end gap-2">
+                <TopCartButton />
+              </div>
             </header>
           </div>
         </div>
@@ -42,8 +47,6 @@ function CategoryPage() {
             </div>
           </div>
         </div>
-
-        <BottomNav />
       </section>
     </div>
   )

@@ -177,7 +177,6 @@ function BottomIcon({ type, active = false }) {
 const navItems = [
   { id: 'home', path: '/', label: 'Home', icon: 'home' },
   { id: 'categories', path: '/categories', label: 'Categories', icon: 'grid' },
-  { id: 'cart', path: '/cart', label: 'My Cart', icon: 'cart' },
   { id: 'wishlist', path: '/wishlist', label: 'Wishlist', icon: 'wishlist' },
   { id: 'profile', path: '/profile', label: 'Profile', icon: 'profile' },
 ]
@@ -199,7 +198,7 @@ function BottomNav() {
       className="absolute bottom-0 left-0 z-20 w-full bg-white pb-2 pt-3"
     >
       <div className="mx-auto w-full max-w-[360px] bg-white px-2">
-        <div className="mb-2 grid grid-cols-5">
+        <div className="mb-2 grid grid-cols-4">
           {navItems.map((item) => {
             const active = activeTab === item.id
 

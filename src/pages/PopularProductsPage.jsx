@@ -1,8 +1,8 @@
 import { useEffect, useMemo, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import BottomNav from '../components/navigation/BottomNav'
 import { products, productCategories } from '../data/homeData'
 import { loadWishlistIds, toggleWishlistId } from '../utils/wishlist'
+import TopCartButton from '../components/navigation/TopCartButton'
 
 function formatCurrentTime() {
   const now = new Date()
@@ -133,18 +133,21 @@ export default function PopularProductsPage() {
               <StatusIcons />
             </div>
 
-            <header className="flex items-center justify-between gap-2">
+            <header className="flex min-h-[40px] items-center justify-between gap-2">
               <div className="flex min-w-0 items-center gap-2">
                 <button onClick={() => navigate('/home')} className="shrink-0 text-[#1f2937] transition hover:scale-110 hover:text-[#42c236]" aria-label="Back to home">
                   <BackIcon />
                 </button>
-                <h1 className="font-['Plus_Jakarta_Sans','Rubik',sans-serif] text-[25px] font-bold leading-[1.2] text-black">
+                <h1 className="truncate whitespace-nowrap font-['Plus_Jakarta_Sans','Rubik',sans-serif] text-[20px] font-bold leading-[1.1] text-black">
                   Popular Products
                 </h1>
               </div>
-              <button onClick={() => setFilterOpen(true)} className="shrink-0 text-[#1f2937] transition hover:scale-110 hover:text-[#42c236]" aria-label="Open filter">
-                <img src="/src/assets/grocery-list/filter-toggle.png" alt="Filter" className="h-6 w-6" />
-              </button>
+              <div className="flex h-10 shrink-0 items-center justify-end gap-2">
+                <button onClick={() => setFilterOpen(true)} className="flex h-8 w-8 items-center justify-center text-[#1f2937] transition hover:scale-110 hover:text-[#42c236]" aria-label="Open filter">
+                  <img src="/src/assets/grocery-list/filter-toggle.png" alt="Filter" className="h-6 w-6" />
+                </button>
+                <TopCartButton />
+              </div>
             </header>
           </div>
         </div>
@@ -389,8 +392,6 @@ export default function PopularProductsPage() {
             </div>
           </div>
         ) : null}
-
-        <BottomNav />
       </section>
     </div>
   )

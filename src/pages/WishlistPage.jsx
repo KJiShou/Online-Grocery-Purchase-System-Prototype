@@ -5,6 +5,7 @@ import { loadWishlistIds, toggleWishlistId } from '../utils/wishlist'
 import { useCart } from '../contexts/CartContext'
 import { ToastCheckIcon, ToastCartIcon, CartAddIcon } from '../components/Icons'
 import { Message } from '@arco-design/web-react'
+import TopCartButton from '../components/navigation/TopCartButton'
 
 function TrashIcon() {
   return (
@@ -95,9 +96,16 @@ export default function WishlistPage() {
       {messageContextHolder}
       <div className="absolute inset-x-0 top-[44px] z-20 bg-white min-h-[44px]">
         <div className="mx-auto w-full max-w-[360px] px-5">
-          <h1 className="font-['Plus_Jakarta_Sans','Rubik',sans-serif] text-[25px] font-bold leading-[1.2] text-black">
-            Wishlist
-          </h1>
+          <header className="flex min-h-[40px] items-center justify-between gap-2">
+            <div className="min-w-0">
+              <h1 className="font-['Plus_Jakarta_Sans','Rubik',sans-serif] text-[25px] font-bold leading-[1.2] text-black">
+                Wishlist
+              </h1>
+            </div>
+            <div className="flex h-10 shrink-0 items-center justify-end gap-2">
+              <TopCartButton />
+            </div>
+          </header>
         </div>
       </div>
 

@@ -4,6 +4,7 @@ import StatusBar from './StatusBar'
 
 function MainLayout() {
   const location = useLocation()
+  const isCartPage = location.pathname === '/cart'
   const isPaymentPage = location.pathname === '/payment'
   const pageBgClass = 'bg-[#f4f4f5]'
   const isSelectPaymentPage = location.pathname === '/select-payment'
@@ -22,7 +23,7 @@ function MainLayout() {
       <section className={`relative h-screen w-full overflow-hidden ${pageBgClass} max-[420px]:mx-auto max-[420px]:h-[min(800px,100dvh)] max-[420px]:w-[min(360px,100vw)] max-[420px]:rounded-[24px] max-[420px]:border max-[420px]:border-[#d4d4d8] max-[420px]:shadow-[0_12px_36px_rgba(0,0,0,0.12)]`}>
         <StatusBar />
         <Outlet />
-        {!isOrderDetailPage && !isOrderHistoryPage && !isPaymentPage && !isSelectPaymentPage && !isSelectVoucherPage && !isSelectAddressPage && !isNewAddressPage && !isEditAddressPage && !isAddressDetailsPage && !isProductDetailPage && !isGroceryListPage && <BottomNav />}
+        {!isCartPage && !isOrderDetailPage && !isOrderHistoryPage && !isPaymentPage && !isSelectPaymentPage && !isSelectVoucherPage && !isSelectAddressPage && !isNewAddressPage && !isEditAddressPage && !isAddressDetailsPage && !isProductDetailPage && !isGroceryListPage && <BottomNav />}
       </section>
     </div>
   )

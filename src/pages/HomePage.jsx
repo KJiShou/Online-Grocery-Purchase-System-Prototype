@@ -10,6 +10,7 @@ import {
 import { bannerItems, categories, products } from '../data/homeData'
 import { loadWishlistIds, saveWishlistIds, toggleWishlistId } from '../utils/wishlist'
 import { useNavigate } from 'react-router-dom'
+import TopCartButton from '../components/navigation/TopCartButton'
 
 function formatPrice(value) {
   return `RM${value.toFixed(2)}`
@@ -108,17 +109,20 @@ function HomePage() {
     <>
       <div className="absolute inset-x-0 top-[44px] z-20 bg-white min-h-[44px]">
         <div className="mx-auto w-full max-w-[360px] px-5">
-          <header className="flex items-center justify-between">
+          <header className="flex min-h-[40px] items-center justify-between gap-2">
             <h1 className="font-['Plus_Jakarta_Sans','Rubik',sans-serif] text-[25px] font-bold leading-[1.2] text-black">
               Home Page
             </h1>
-            <button
-              onClick={() => setSearchOpen(true)}
-              className="text-[#1f2937] transition hover:scale-110 hover:text-[#42c236]"
-              aria-label="Open search"
-            >
-              <SearchIcon />
-            </button>
+            <div className="flex h-10 shrink-0 items-center justify-end gap-2">
+              <button
+                onClick={() => setSearchOpen(true)}
+                className="flex h-8 w-8 items-center justify-center text-[#1f2937] transition hover:scale-110 hover:text-[#42c236]"
+                aria-label="Open search"
+              >
+                <SearchIcon />
+              </button>
+              <TopCartButton />
+            </div>
           </header>
         </div>
       </div>
@@ -136,9 +140,9 @@ function HomePage() {
                 }`}
                 aria-label={`View ${item.title}`}
               >
-                <img src={item.image} alt={item.title} className="h-full w-full object-cover" />
+                <img src={item.image} alt={item.title} className="h-full w-full object-contain" />
                 <div className="absolute inset-0 bg-gradient-to-r from-black/55 via-black/20 to-transparent"></div>
-                <div className="absolute left-4 top-4 rounded-lg bg-black/70 px-[6px] py-[6px] text-[10px] font-semibold leading-[13px] tracking-[0.015em] text-white">
+                <div className="absolute left-4 top-4 rounded-lg bg-[#42c236] px-[6px] py-[6px] text-[10px] font-semibold leading-[13px] tracking-[0.015em] text-white">
                   {item.discount}
                 </div>
                 <div className="absolute bottom-4 left-4 text-left text-white">

@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import { useNavigate, useSearchParams } from 'react-router-dom'
 import { products, productCategories } from '../data/homeData'
 import { loadWishlistIds, toggleWishlistId } from '../utils/wishlist'
+import TopCartButton from '../components/navigation/TopCartButton'
 
 function formatCurrentTime() {
   const now = new Date()
@@ -137,7 +138,7 @@ function GroceryListPage() {
               <StatusIcons />
             </div>
 
-            <header className="flex items-center justify-between gap-2">
+            <header className="flex min-h-[40px] items-center justify-between gap-2">
               <div className="flex items-center gap-2">
                 <button onClick={() => navigate('/home')} className="text-[#1f2937] transition hover:scale-110 hover:text-[#42c236]">
                   <BackIcon />
@@ -146,9 +147,12 @@ function GroceryListPage() {
                   Search Result
                 </h1>
               </div>
-              <button onClick={() => setFilterOpen(true)} className="text-[#1f2937] transition hover:scale-110 hover:text-[#42c236]">
-                <img src="/src/assets/grocery-list/filter-toggle.png" alt="Filter" className="h-6 w-6" />
-              </button>
+              <div className="flex h-10 shrink-0 items-center justify-end gap-2">
+                <button onClick={() => setFilterOpen(true)} className="flex h-8 w-8 items-center justify-center text-[#1f2937] transition hover:scale-110 hover:text-[#42c236]">
+                  <img src="/src/assets/grocery-list/filter-toggle.png" alt="Filter" className="h-6 w-6" />
+                </button>
+                <TopCartButton />
+              </div>
             </header>
           </div>
         </div>
