@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { useNavigate, useLocation, useNavigationType } from 'react-router-dom'
-import { CardIcon, LogoutIcon, BoxIcon, ReceiptIcon, ChevronRightIcon, ShieldIcon, DocumentIcon, ChatIcon, LockIcon, PhoneIcon } from '../components/Icons'
+import { CardIcon, LogoutIcon, BoxIcon, ReceiptIcon, ChevronRightIcon, ShieldIcon, DocumentIcon, ChatIcon, LockIcon, PhoneIcon, CartAddIcon } from '../components/Icons'
 import { usePreference } from '../contexts/PreferenceContext'
 import { ToastCheckIcon } from '../components/Icons'
 
@@ -122,6 +122,7 @@ export default function ProfilePage() {
             <div className="mb-6">
             <h3 className="mb-2 text-[14px] font-bold text-[#1C1B1B]">My Order</h3>
             <div className="flex flex-col">
+              <MenuItem icon={<CartAddIcon />} label="My Cart" onClick={() => navigate('/cart', { state: { from: '/profile' } })} />
               <MenuItem icon={<ReceiptIcon />} label="Order History" onClick={() => navigate('/order-history')} />
             </div>
           </div>

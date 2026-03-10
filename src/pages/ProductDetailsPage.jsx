@@ -21,15 +21,12 @@ function ProductImagePlaceholder({ name }) {
 export default function ProductDetailPage() {
   const navigate = useNavigate()
   const location = useLocation()
-  const { addToCart, cartItems } = useCart()
+  const { addToCart } = useCart()
 
   // 数量状态管理
   const [quantity, setQuantity] = useState(1)
 
   const { id } = useParams()
-
-  const itemInCart = cartItems.find((item) => item.id === id);
-  const productQuantityInCart = itemInCart ? itemInCart.quantity : 0;
 
   const product = products.find((p) => p.id === id)
 
@@ -168,8 +165,8 @@ export default function ProductDetailPage() {
 
         {/* === 中间滚动内容区 === */}
         {/* 注意 bottom-[140px] 留出了底部操作栏和导航栏的空间 */}
-        <div className="hide-scrollbar absolute inset-x-0 bottom-[108px] top-[88px] overflow-y-auto">
-          <div className="mx-auto w-full max-w-[360px] flex flex-col pt-4">
+        <div className="hide-scrollbar absolute inset-x-0 bottom-[78px] top-[88px] overflow-y-auto">
+          <div className="mx-auto w-full max-w-[360px] flex flex-col pt-4 pb-4">
              <div className='flex justify-end pr-[20px]'>
              <button
                 onClick={() => {
@@ -248,7 +245,7 @@ export default function ProductDetailPage() {
             </div>
 
             {/* 2. 详情白色卡片区 */}
-            <div className="min-h-[350px] w-full flex-1 rounded-t-3xl bg-white px-5 pt-6 pb-8 shadow-[0_-4px_20px_rgba(0,0,0,0.02)]">
+            <div className="min-h-[350px] w-full flex-1 rounded-3xl bg-white px-5 pt-6 pb-8 shadow-[0_-4px_20px_rgba(0,0,0,0.02)]">
               
               {/* 标签 */}
               <div className="mb-3 flex items-center gap-2">
@@ -312,22 +309,15 @@ export default function ProductDetailPage() {
 
         {/* === 底部双按钮操作栏 === */}
         {/* 注意：bottom-[72px] 悬浮在 BottomNav 之上 */}
-        <div className="absolute bottom-0 left-0 z-20 w-full border-t border-[#e4e4e7] bg-[#f8fafc] pb-4 pt-3">
+        <div className="absolute bottom-0 left-0 z-20 w-full border-t border-[#e4e4e7] bg-[#f8fafc] py-3">
           <div className="mx-auto w-full max-w-[360px] px-5">
-            <div className="mb-3 flex items-center justify-center gap-4">
-              <span className="text-[16px] font-medium text-[#1f2937]">In Cart</span>
-              {/* 总价会自动根据打勾状态更新 */}
-              <span className="text-[18px] font-bold text-[#42c236]">
-                {productQuantityInCart > 0 ? productQuantityInCart : 0}
-              </span>
-            </div>
             <div className="flex items-center gap-3">
             <button 
               onClick={() => {
                 const data = {
                   directBuyProduct: product,
-                  directBuyProductQuantity: quantity + productQuantityInCart,
-                  directBuyProductSubtotal: (quantity + productQuantityInCart) * product.price
+                  directBuyProductQuantity: quantity,
+                  directBuyProductSubtotal: quantity * product.price
                 }
                 navigate('/payment',  { state: {...data, from: location.pathname} })
               }}
