@@ -118,14 +118,8 @@ export default function OrderDetailPage() {
             <header className="flex items-center justify-between">
               <div className="flex items-center gap-3">
                 <button onClick={() => {
-                if (location.state?.returnToPaymentWithOrderPlacedPopup && orderData?.id) {
-                  navigate('/payment', {
-                    state: {
-                      showOrderPlacedPopup: true,
-                      currentOrderId: orderData.id,
-                    },
-                    replace: true,
-                  })
+                if (location.state?.returnToOrderHistory) {
+                  navigate('/order-history', { replace: true })
                   return
                 }
                   navigate(-1)
