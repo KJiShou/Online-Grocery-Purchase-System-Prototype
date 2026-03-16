@@ -307,7 +307,7 @@ export default function CheckoutPage() {
                 }}
               className="flex-1 rounded-xl border-2 border-[#ee4d4d] bg-white py-3.5 text-[16px] font-bold text-[#ee4d4d] transition hover:bg-[#fff5f5] active:scale-95"
             >
-              Cancel
+              Cancel Payment
             </button>
             <button 
               onClick={() => {
@@ -315,7 +315,7 @@ export default function CheckoutPage() {
               }}
               className="flex-1 rounded-xl bg-[#1C1B1B] py-3.5 text-[16px] font-bold text-white transition hover:bg-black hover:shadow-lg active:scale-95"
             >
-              Confirm
+              Pay Now
             </button>
           </div>
         </div>
@@ -324,14 +324,14 @@ export default function CheckoutPage() {
           <div className="absolute inset-0 z-30 flex items-center justify-center bg-black/35 px-4">
             <div className="w-full max-w-[328px] rounded-2xl bg-white p-4 shadow-[0_16px_36px_rgba(0,0,0,0.22)]">
               <h3 className="font-['Plus_Jakarta_Sans','Rubik',sans-serif] text-[18px] font-bold text-[#1C1B1B]">Confirm Payment</h3>
-              <p className="mt-2 text-[14px] leading-5 text-[#4B5563]">Confirm to place order?</p>
+              <p className="mt-2 text-[14px] leading-5 text-[#4B5563]">Proceed with payment and place this order?</p>
               <div className="mt-4 grid grid-cols-2 gap-3">
                 <button
                   type="button"
                   onClick={() => setShowConfirmPaymentModal(false)}
                   className="h-10 rounded-lg border border-[#D4D4D8] bg-white text-[14px] font-semibold text-[#1C1B1B] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#1C1B1B]"
                 >
-                    Cancel
+                    Go Back
                 </button>
                 <button
                   type="button"
@@ -383,9 +383,9 @@ export default function CheckoutPage() {
                     setShowOrderPlacedModal(true)
                     
                   }}
-                  className="h-10 rounded-lg bg-[#EE4D4D] text-[14px] font-semibold text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#EE4D4D]"
+                  className="h-10 rounded-lg bg-[#1C1B1B] text-[14px] font-semibold text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#1C1B1B]"
                 >
-                  Confirm
+                  Pay Now
                 </button>
               </div>
             </div>
@@ -396,14 +396,14 @@ export default function CheckoutPage() {
           <div className="absolute inset-0 z-30 flex items-center justify-center bg-black/35 px-4">
             <div className="w-full max-w-[328px] rounded-2xl bg-white p-4 shadow-[0_16px_36px_rgba(0,0,0,0.22)]">
               <h3 className="font-['Plus_Jakarta_Sans','Rubik',sans-serif] text-[18px] font-bold text-[#1C1B1B]">Cancel Payment</h3>
-              <p className="mt-2 text-[14px] leading-5 text-[#4B5563]">Confirm to cancel payment?</p>
+              <p className="mt-2 text-[14px] leading-5 text-[#4B5563]">Are you sure you want to cancel this payment?</p>
               <div className="mt-4 grid grid-cols-2 gap-3">
                 <button
                   type="button"
                   onClick={() => setShowCancelPaymentModal(false)}
                   className="h-10 rounded-lg border border-[#D4D4D8] bg-white text-[14px] font-semibold text-[#1C1B1B] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#1C1B1B]"
                 >
-                    Cancel
+                    Keep Payment
                 </button>
                 <button
                   type="button"
@@ -413,7 +413,7 @@ export default function CheckoutPage() {
                   }}
                   className="h-10 rounded-lg bg-[#EE4D4D] text-[14px] font-semibold text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#EE4D4D]"
                 >
-                  Confirm
+                  Yes, Cancel
                 </button>
               </div>
             </div>
@@ -445,7 +445,7 @@ export default function CheckoutPage() {
                 onClick={() => {
                   navigate('/order-detail/' + currentOrderId.substring(1), {
                     state: {
-                      returnToPaymentWithOrderPlacedPopup: true,
+                      returnToOrderHistory: true,
                       currentOrderId,
                     },
                   })
