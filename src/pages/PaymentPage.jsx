@@ -132,7 +132,7 @@ export default function CheckoutPage() {
             
             {/* 1. 收货地址 (卡片化) */}
             <div
-            onClick={() => navigate('/select-address', { state: checkoutData })}
+            onClick={() => navigate('/select-address', { state: { ...checkoutData, from: location.pathname }, replace: true })}
               className="mb-4 flex cursor-pointer items-start justify-between rounded-2xl bg-white p-5 transition hover:bg-[#f1f5f9] active:scale-[0.98]"
             >
               <div className="flex items-start gap-3">
@@ -222,7 +222,7 @@ export default function CheckoutPage() {
             onClick={() => navigate('/select-voucher', { state: { 
               ...checkoutData, 
               from: location.pathname 
-            } })}
+            }, replace: true })}
               className="mb-4 flex cursor-pointer flex-col rounded-2xl bg-white p-5 transition hover:bg-[#f1f5f9] active:scale-[0.98]"
             >
               <div className="mb-3 flex items-center justify-between">
@@ -248,7 +248,7 @@ export default function CheckoutPage() {
 
             {/* 4. 支付方式 (卡片化) */}
             <div
-            onClick={() => navigate('/select-payment', { state: checkoutData, from: location.pathname })}
+            onClick={() => navigate('/select-payment', { state: { checkoutData, from: location.pathname }, replace: true })}
               className="mb-4 flex cursor-pointer items-center justify-between rounded-2xl bg-white p-5 transition hover:bg-[#f1f5f9] active:scale-[0.98]"
             >
               <div className="flex flex-col gap-3">
@@ -409,7 +409,7 @@ export default function CheckoutPage() {
                   type="button"
                   onClick={() => {
                     setShowCancelPaymentModal(false)
-                    navigate(from === '/product' || from.startsWith('/product') ? -1 : '/cart', { state: { from: location.pathname }, replace: true })
+                    navigate(-1)
                   }}
                   className="h-10 rounded-lg bg-[#EE4D4D] text-[14px] font-semibold text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#EE4D4D]"
                 >
