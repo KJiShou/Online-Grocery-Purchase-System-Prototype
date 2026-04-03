@@ -288,7 +288,7 @@ function CartPage() {
               className={`mb-2 w-full rounded-xl py-3 text-[15px] font-semibold text-white transition 
                 ${totalSelectedQuantity === 0 
                   ? 'bg-gray-300 cursor-not-allowed' // 未选中任何商品时的灰色状态
-                  : 'bg-[#111827] hover:bg-[#1f2937] shadow-lg hover:-translate-y-0.5' // 有选中商品时的黑色状态
+                  : 'bg-[#42c236] hover:bg-[#37a423] shadow-lg hover:-translate-y-0.5' // 有选中商品时的系统绿色状态
                 }`}
             >
               Payment ({totalSelectedQuantity})
