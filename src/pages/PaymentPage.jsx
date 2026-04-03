@@ -348,6 +348,7 @@ export default function CheckoutPage() {
                 products: checkoutDirectBuyProduct ? [checkoutDirectBuyProduct] : selectedItems,
                 itemsCount: checkoutDirectBuyProduct ? 1 : selectedItems.length,
                 shippingInfo: {
+                  id: selectedAddress.id,
                   address: formatAddressDisplay(selectedAddress.address, selectedAddress.unitNo),
                   name: selectedAddress.name,
                   phone: selectedAddress.phone

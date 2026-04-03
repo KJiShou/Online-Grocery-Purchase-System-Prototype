@@ -53,10 +53,22 @@ export default function OrderDetailPage() {
 
   const data = { ...(location.state || {}) }
 
+  const matchedAddress =
+    data.selectedAddress ||
+    (orderData?.shippingInfo
+      ? {
+          id: orderData.shippingInfo.id,
+          name: orderData.shippingInfo.name || '',
+          phone: orderData.shippingInfo.phone || '',
+          address: orderData.shippingInfo.address || '',
+          unitNo: orderData.shippingInfo.unitNo || '',
+        }
+      : null)
+
   const {
 		items = orderData?.products || [],
 		subtotal = orderData?.summary.subtotal || 0,
-		selectedAddress = orderData?.shippingInfo || {},
+		selectedAddress = matchedAddress || {},
 		discountAmount = orderData?.summary.discount || 0,
 		shippingDiscount = orderData?.summary.shippingCost || 0,
 		grandTotal = orderData?.summary.total || 0,
@@ -70,10 +82,14 @@ export default function OrderDetailPage() {
 
   useEffect(() => {
       if (data.from && navigationType !== 'POP') {
-        const shippingInfo = orderData.shippingInfo;
-        shippingInfo.address = formatAddressDisplay(data.selectedAddress.address, data.selectedAddress.unitNo);
-        shippingInfo.name = data.selectedAddress.name;
-        shippingInfo.phone = data.selectedAddress.phone;
+        const shippingInfo = {
+          ...orderData.shippingInfo,
+          id: data.selectedAddress.id,
+          address: formatAddressDisplay(data.selectedAddress.address, data.selectedAddress.unitNo),
+          name: data.selectedAddress.name,
+          phone: data.selectedAddress.phone,
+          unitNo: data.selectedAddress.unitNo,
+        }
         updateOrder(orderData.id, { shippingInfo })
         
         // Show toast when shipping address is updated
@@ -90,7 +106,7 @@ export default function OrderDetailPage() {
           setShowToast(false)
         }, 3000)
     }
-    }, [orderData.id, data.from])
+    }, [data.from, data.selectedAddress, navigationType, orderData, updateOrder])
 
   function resetToastMessageTimer() {
       if (toastTimerRef.current) {
@@ -204,7 +220,19 @@ export default function OrderDetailPage() {
                 {orderData.status === 'Pending' && (
                   <button 
                     onClick={() => {
-                      navigate('/select-address', { state: {...data, from: location.pathname } })
+                      navigate('/select-address', {
+                        state: {
+                          ...data,
+                          selectedAddress: {
+                            id: orderData.shippingInfo.id,
+                            name: orderData.shippingInfo.name || '',
+                            phone: orderData.shippingInfo.phone || '',
+                            address: orderData.shippingInfo.address || '',
+                            unitNo: orderData.shippingInfo.unitNo || '',
+                          },
+                          from: location.pathname,
+                        },
+                      })
                     }}
                     className="rounded-md px-3 py-1.5 text-[13px] font-bold text-[#42c236] transition-all hover:bg-[#42c236]/10 active:scale-95"
                   >

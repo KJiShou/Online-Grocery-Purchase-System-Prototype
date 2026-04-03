@@ -42,6 +42,19 @@ function toFlatAddress(item) {
   }
 }
 
+function matchesSelectedAddress(candidate, selectedAddress) {
+  if (!candidate || !selectedAddress) return false
+
+  const normalize = (value) => (value || '').trim().toLowerCase()
+
+  return (
+    normalize(candidate.name) === normalize(selectedAddress.name) &&
+    normalize(candidate.phone) === normalize(selectedAddress.phone) &&
+    normalize(candidate.address) === normalize(selectedAddress.address) &&
+    normalize(candidate.unitNo) === normalize(selectedAddress.unitNo)
+  )
+}
+
 export default function SelectAddressPage() {
   const navigate = useNavigate()
   const location = useLocation()
@@ -53,9 +66,11 @@ export default function SelectAddressPage() {
   } = data
 
   const addressList = addresses.map(toFlatAddress)
+  const matchedSelectedAddress = addressList.find((item) => matchesSelectedAddress(item, data.selectedAddress))
 
   const initialAddressId =
     data.selectedAddress?.id ||
+    matchedSelectedAddress?.id ||
     defaultAddressId ||
     addressList.find((item) => item.isDefault)?.id ||
     addressList[0]?.id ||
