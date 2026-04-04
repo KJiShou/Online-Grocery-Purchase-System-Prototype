@@ -1,0 +1,7 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(python3 \"C:\\\\Users\\\\jisho\\\\.claude\\\\skills\\\\ui-ux-pro-max\\\\scripts\\\\search.py\" \"ecommerce checkout voucher discount promotion\" --design-system -p \"Checkout Voucher Alert\")"
+    ]
+  }
+}

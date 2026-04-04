@@ -3,6 +3,17 @@ import { useNavigate } from 'react-router-dom'
 import { products, productCategories } from '../data/homeData'
 import { loadWishlistIds, toggleWishlistId } from '../utils/wishlist'
 import TopCartButton from '../components/navigation/TopCartButton'
+import { useCart } from '../contexts/CartContext'
+
+function CartAddIcon() {
+  return (
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <circle cx="9" cy="21" r="1"></circle>
+      <circle cx="20" cy="21" r="1"></circle>
+      <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
+    </svg>
+  )
+}
 
 function formatCurrentTime() {
   const now = new Date()
@@ -72,6 +83,7 @@ const categories = productCategories.map((category) => category.label)
 
 export default function PopularProductsPage() {
   const navigate = useNavigate()
+  const { addToCart } = useCart()
   const [currentTime, setCurrentTime] = useState(formatCurrentTime())
   const [sortBy, setSortBy] = useState('bestMatch')
   const [priceDirection, setPriceDirection] = useState('asc')
@@ -221,7 +233,7 @@ export default function PopularProductsPage() {
                     <article
                       key={key}
                       onClick={() => navigate(`/product/${product.id}`)}
-                      className="group transform rounded-xl bg-white p-2.5 shadow-sm transition duration-300 ease-in-out hover:-translate-y-1 hover:shadow-md"
+                      className="group relative overflow-hidden rounded-xl bg-white p-2.5 shadow-sm transition duration-300 ease-in-out hover:-translate-y-1 hover:shadow-md"
                     >
                       <div className="relative mb-2 h-32 overflow-hidden rounded-xl bg-gray-100">
                         {product.image ? (
@@ -255,6 +267,16 @@ export default function PopularProductsPage() {
                           {formatPrice(product.oldPrice)}
                         </p>
                       ) : null}
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation()
+                          addToCart(product, 1)
+                        }}
+                        aria-label="Add to cart"
+                        className="absolute bottom-2 right-2 flex h-9 w-9 items-center justify-center rounded-full bg-[#42c236] text-white shadow-sm transition hover:bg-[#2f9e44] hover:shadow-md active:scale-95"
+                      >
+                        <CartAddIcon />
+                      </button>
                     </article>
                   )
                 })}

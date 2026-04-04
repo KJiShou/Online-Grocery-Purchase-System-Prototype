@@ -226,7 +226,12 @@ export default function CheckoutPage() {
               className="mb-4 flex cursor-pointer flex-col rounded-2xl bg-white p-5 transition hover:bg-[#f1f5f9] active:scale-[0.98]"
             >
               <div className="mb-3 flex items-center justify-between">
-                <span className="text-[15px] font-bold text-[#1C1B1B]">Voucher</span>
+                <div className="flex items-center gap-2">
+                  <span className="text-[15px] font-bold text-[#1C1B1B]">Voucher</span>
+                  {!appliedVoucher && shippingDiscount === 0 && (
+                    <span className="rounded-full bg-[#f97316] px-2 py-0.5 text-[11px] font-semibold text-white">5 available</span>
+                  )}
+                </div>
                 <div className="text-[#1C1B1B]"><ChevronRightIcon /></div>
               </div>
               {/* 渐变色 Pill */}
