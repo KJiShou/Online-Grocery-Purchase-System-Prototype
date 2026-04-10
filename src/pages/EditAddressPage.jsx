@@ -1,6 +1,7 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useRef } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
 import { usePreference } from '../contexts/PreferenceContext'
+import { ToastFailIcon } from '../components/Icons'
 
 function BackIcon() {
   return (
@@ -58,6 +59,10 @@ export default function EditAddressPage() {
   const [showDeleteModal, setShowDeleteModal] = useState(false)
   const deleteTargetLabel = getAddressPreview(name, addressLine, unitNo)
 
+  const [showToast, setShowToast] = useState(false)
+  const [toastMessage, setToastMessage] = useState('')
+  const toastTimerRef = useRef(null)
+
   useEffect(() => {
     console.log('EditAddressPage received data:', data)
     console.log('Used data in this page - editAddress:', editAddress, 'formDraft:', formDraft)
@@ -89,15 +94,54 @@ export default function EditAddressPage() {
 
   const handleOpenSubmit = () => {
     if (!addressLine.trim()) {
-      alert('Address is required.')
+      setToastMessage('Address is required !')
+      //alert('Address is required.')
+      // 触发动画显示
+      setShowToast(true)
+
+      // 严厉警告：必须先清除上一个定时器！
+      if (toastTimerRef.current) {
+        clearTimeout(toastTimerRef.current)
+      }
+
+      // 设定 3 秒后自动隐藏
+      toastTimerRef.current = setTimeout(() => {
+        setShowToast(false)
+      }, 3000)
       return
     }
     if (!name.trim()) {
-      alert('Name is required.')
+      setToastMessage('Name is required !')
+      // alert('Name is required.')
+      // 触发动画显示
+      setShowToast(true)
+
+      // 严厉警告：必须先清除上一个定时器！
+      if (toastTimerRef.current) {
+        clearTimeout(toastTimerRef.current)
+      }
+
+      // 设定 3 秒后自动隐藏
+      toastTimerRef.current = setTimeout(() => {
+        setShowToast(false)
+      }, 3000)
       return
     }
     if (!phone.trim()) {
-      alert('Phone is required.')
+      setToastMessage('Phone number is required !')
+      // alert('Phone is required.')
+      // 触发动画显示
+      setShowToast(true)
+
+      // 严厉警告：必须先清除上一个定时器！
+      if (toastTimerRef.current) {
+        clearTimeout(toastTimerRef.current)
+      }
+
+      // 设定 3 秒后自动隐藏
+      toastTimerRef.current = setTimeout(() => {
+        setShowToast(false)
+      }, 3000)
       return
     }
     setShowSubmitModal(true)
@@ -148,6 +192,12 @@ export default function EditAddressPage() {
     })
   }
 
+  useEffect(() => {
+    return () => {
+      if (toastTimerRef.current) clearTimeout(toastTimerRef.current)
+    }
+  }, [])
+
   return (
     <>
       <div className="absolute inset-x-0 top-[44px] z-20 min-h-[44px] bg-white">
@@ -159,6 +209,17 @@ export default function EditAddressPage() {
             <h1 className="font-['Plus_Jakarta_Sans','Rubik',sans-serif] text-[25px] font-bold leading-[1.2] text-black">
               {isNewAddress ? 'New Address' : 'Edit Address'}
             </h1>
+            <div 
+                        className={`absolute left-1/2 top-[50px] z-50 flex w-[calc(100%-40px)] max-w-[320px] -translate-x-1/2 items-center justify-between rounded-2xl border border-[#f3f4f6] bg-white p-3 shadow-[0_12px_30px_rgba(0,0,0,0.08)] transition-all duration-300 ease-out 
+                        ${showToast ? 'translate-y-0 opacity-100 pointer-events-auto' : '-translate-y-6 opacity-0 pointer-events-none'}`}
+                        >
+                          <div className="flex items-center gap-3">
+                              <ToastFailIcon />
+                              <p className="w-full text-[13px] font-bold leading-tight text-[#EE4B2B]">
+                                  {toastMessage}
+                              </p>
+                          </div>
+                        </div>
           </header>
         </div>
       </div>
