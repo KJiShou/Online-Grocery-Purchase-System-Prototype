@@ -1,7 +1,7 @@
 import { useEffect, useState, useRef } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
 import { usePreference } from '../contexts/PreferenceContext'
-import { ToastFailIcon } from '../components/Icons'
+import { ToastFailIcon, CloseErrorIcon, CloseIcon } from '../components/Icons'
 
 function BackIcon() {
   return (
@@ -98,16 +98,6 @@ export default function EditAddressPage() {
       //alert('Address is required.')
       // 触发动画显示
       setShowToast(true)
-
-      // 严厉警告：必须先清除上一个定时器！
-      if (toastTimerRef.current) {
-        clearTimeout(toastTimerRef.current)
-      }
-
-      // 设定 3 秒后自动隐藏
-      toastTimerRef.current = setTimeout(() => {
-        setShowToast(false)
-      }, 3000)
       return
     }
     if (!name.trim()) {
@@ -115,16 +105,6 @@ export default function EditAddressPage() {
       // alert('Name is required.')
       // 触发动画显示
       setShowToast(true)
-
-      // 严厉警告：必须先清除上一个定时器！
-      if (toastTimerRef.current) {
-        clearTimeout(toastTimerRef.current)
-      }
-
-      // 设定 3 秒后自动隐藏
-      toastTimerRef.current = setTimeout(() => {
-        setShowToast(false)
-      }, 3000)
       return
     }
     if (!phone.trim()) {
@@ -132,16 +112,6 @@ export default function EditAddressPage() {
       // alert('Phone is required.')
       // 触发动画显示
       setShowToast(true)
-
-      // 严厉警告：必须先清除上一个定时器！
-      if (toastTimerRef.current) {
-        clearTimeout(toastTimerRef.current)
-      }
-
-      // 设定 3 秒后自动隐藏
-      toastTimerRef.current = setTimeout(() => {
-        setShowToast(false)
-      }, 3000)
       return
     }
     setShowSubmitModal(true)
@@ -210,16 +180,23 @@ export default function EditAddressPage() {
               {isNewAddress ? 'New Address' : 'Edit Address'}
             </h1>
             <div 
-                        className={`absolute left-1/2 top-[50px] z-50 flex w-[calc(100%-40px)] max-w-[320px] -translate-x-1/2 items-center justify-between rounded-2xl border border-[#f3f4f6] bg-white p-3 shadow-[0_12px_30px_rgba(0,0,0,0.08)] transition-all duration-300 ease-out 
-                        ${showToast ? 'translate-y-0 opacity-100 pointer-events-auto' : '-translate-y-6 opacity-0 pointer-events-none'}`}
-                        >
-                          <div className="flex items-center gap-3">
-                              <ToastFailIcon />
-                              <p className="w-full text-[13px] font-bold leading-tight text-[#EE4B2B]">
-                                  {toastMessage}
-                              </p>
-                          </div>
-                        </div>
+              className={`absolute left-1/2 top-[50px] z-50 flex w-[calc(100%-40px)] max-w-[320px] -translate-x-1/2 items-center justify-between rounded-2xl border border-[#f3f4f6] bg-white p-3 shadow-[0_12px_30px_rgba(0,0,0,0.08)] transition-all duration-300 ease-out 
+              ${showToast ? 'translate-y-0 opacity-100 pointer-events-auto' : '-translate-y-6 opacity-0 pointer-events-none'}`}
+              >
+                <div className="flex items-center gap-3">
+                    <ToastFailIcon />
+                    <p className="w-full text-[13px] font-bold leading-tight text-[#EE4B2B]">
+                        {toastMessage}
+                    </p>
+                </div>
+                 <button 
+                    onClick={() => setShowToast(false)}
+                    className="flex flex-col items-center min-w-[70px] justify-center border-l border-[#f3f4f6] pl-3 transition hover:opacity-70"
+                  >
+                    <CloseIcon />
+                    {/*<span className="mt-1 text-[11px] font-bold text-black]">Close</span>*/}
+                </button>
+              </div>
           </header>
         </div>
       </div>
