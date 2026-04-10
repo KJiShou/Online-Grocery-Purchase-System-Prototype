@@ -48,6 +48,15 @@ export function CloseIcon() {
   )
 }
 
+export function CloseErrorIcon() {
+  return (
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="#EE4B2B" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+      <path d="M6 6L18 18" stroke="#EE4B2B" strokeWidth="1.8" strokeLinecap="round" />
+      <path d="M18 6L6 18" stroke="#EE4B2B" strokeWidth="1.8" strokeLinecap="round" />
+    </svg>
+  )
+}
+
 export function FilterIcon() {
   return (
     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
